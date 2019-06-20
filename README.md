@@ -30,7 +30,7 @@ class BaseField < GraphQL::Schema::Field
 end
 ```
 
-Include the `ApolloFederation::Object` base object class:
+Include the `ApolloFederation::Object` module in your base object class:
 
 ```ruby
 class BaseObject < GraphQL::Schema::Object
@@ -55,6 +55,8 @@ See the `examples` folder for a Ruby implementation of Apollo's [`federation-dem
 The API is designed to mimic the API of Apollo's [`@apollo/federation`](https://www.apollographql.com/docs/apollo-server/api/apollo-federation/) library. It's best to read and understand the way federation works, in general, before attempting to use this library.
 
 ### Extending a type
+[Apollo documentation](https://www.apollographql.com/docs/apollo-server/federation/core-concepts/#extending-external-types)
+
 Call `extend_type` within your class definition:
 
 ```ruby
@@ -64,6 +66,8 @@ end
 ```
 
 ### The `@key` directive
+[Apollo documentation](https://www.apollographql.com/docs/apollo-server/federation/core-concepts/#entities-and-keys)
+
 Call `key` within your class definition:
 
 ```ruby
@@ -73,6 +77,8 @@ end
 ```
 
 ### The `@external` directive
+[Apollo documentation](https://www.apollographql.com/docs/apollo-server/federation/core-concepts/#referencing-external-types)
+
 Pass the `external: true` option to your field definition:
 
 ```ruby
@@ -82,6 +88,8 @@ end
 ```
 
 ### The `@requires` directive
+[Apollo documentation](https://www.apollographql.com/docs/apollo-server/federation/advanced-features/#computed-fields)
+
 Pass the `requires:` option to your field definition:
 
 ```ruby
@@ -93,6 +101,8 @@ end
 ```
 
 ### The `@provides` directive
+[Apollo documentation](https://www.apollographql.com/docs/apollo-server/federation/advanced-features/#using-denormalized-data)
+
 Pass the `provides:` option to your field definition:
 
 ```ruby
@@ -102,6 +112,8 @@ end
 ```
 
 ## Reference resolvers
+[Apollo documentation](https://www.apollographql.com/docs/apollo-server/api/apollo-federation/#__resolvereference)
+
 Define a `resolve_reference` class method on your object. The method will be passed the reference from another service and the context for the query.
 
 ```ruby
