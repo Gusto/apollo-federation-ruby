@@ -1,0 +1,33 @@
+{
+  "name": "gateway",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start-gateway": "nodemon --delay 2 ./example/gateway.js",
+    "start-service-accounts": "nodemon --exec \"bundle exec ruby\" ./example/accounts.rb",
+    "start-service-reviews": "nodemon --exec \"bundle exec ruby\" ./example/reviews.rb",
+    "start-service-products": "nodemon --exec \"bundle exec ruby\" ./example/products.rb",
+    "start-service-inventory": "nodemon --exec \"bundle exec ruby\" ./example/inventory.rb",
+    "start-services": "concurrently \"npm:start-service-*\"",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@apollo/gateway": "0.6.6",
+    "apollo-server": "2.6.3",
+    "graphql": "14.3.1"
+  },
+  "devDependencies": {
+    "@babel/core": "7.4.5",
+    "@babel/preset-env": "7.4.5",
+    "apollo-server-core": "2.6.3",
+    "apollo-server-testing": "2.6.3",
+    "babel-jest": "24.8.0",
+    "concurrently": "4.1.0",
+    "eslint-config-gusto": "^9.5.1",
+    "graphql-tag": "2.10.1",
+    "jest": "24.8.0",
+    "nodemon": "1.19.1"
+  }
+}
