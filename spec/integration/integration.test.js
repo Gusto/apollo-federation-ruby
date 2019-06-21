@@ -4,12 +4,6 @@ import { createTestClient } from 'apollo-server-testing';
 import gql from 'graphql-tag';
 import { spawn } from 'child_process';
 
-jest.setTimeout(8000);
-
-let testClient;
-let serviceProcesses;
-
-// TODO: Move to a separate file?
 const startService = serviceName =>
   new Promise((resolve, reject) => {
     const child = spawn('bundle', ['exec', 'ruby', `./example/${serviceName}.rb`, '--test']);
@@ -35,12 +29,16 @@ const startService = serviceName =>
     });
   });
 
+let testClient;
+let serviceProcesses;
 const serviceList = [
   { name: 'accounts', url: 'http://localhost:5001/graphql' },
   { name: 'reviews', url: 'http://localhost:5002/graphql' },
   { name: 'products', url: 'http://localhost:5003/graphql' },
   { name: 'inventory', url: 'http://localhost:5004/graphql' },
 ];
+
+jest.setTimeout(8000);
 
 beforeAll(async () => {
   serviceProcesses = await Promise.all(serviceList.map(({ name }) => startService(name)));
@@ -64,7 +62,6 @@ afterAll(() => {
   });
 });
 
-// TODO: Use snapshots?
 it('works with a gateway', async () => {
   const query = gql`
     {
@@ -94,7 +91,6 @@ it('works with a gateway', async () => {
 
   const result = await testClient.query({ query });
 
-  // TODO: Better expectation?
   expect(result.errors).toBeUndefined();
   expect(result.data).toEqual({
     me: {
