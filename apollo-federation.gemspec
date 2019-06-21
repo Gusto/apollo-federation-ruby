@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
     'bug_tracker_uri' => 'https://github.com/Gusto/apollo-federation-ruby/issues',
   }
 
-  spec.files = Dir['{lib}/**/*', 'README.md']
+  spec.files = `git ls-files bin lib *.md LICENSE`.split("\n")
 
   spec.add_dependency 'graphql'
 
