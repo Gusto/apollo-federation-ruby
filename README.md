@@ -2,6 +2,10 @@
 
 This gem extends the [GraphQL Ruby](http://graphql-ruby.org/) gem to add support for creating an [Apollo Federation](https://www.apollographql.com/docs/apollo-server/federation/introduction/) schema.
 
+## DISCLAIMER
+
+This gem is still in a beta stage and may have some bugs or incompatibilities. See the [Known Issues and Limitations](#known-issues-and-limitations) below. If you run into any problems, please [file an issue](https://github.com/Gusto/apollo-federation-ruby/issues).
+
 ## Installation
 
 Add this line to your application's Gemfile:
