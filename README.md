@@ -71,7 +71,7 @@ This will start up the gateway and serve it at http://localhost:5000.
 
 ## Usage
 
-The API is designed to mimic the API of Apollo's [`@apollo/federation`](https://www.apollographql.com/docs/apollo-server/federation/introduction/) library. It's best to read and understand the way federation works, in general, before attempting to use this library.
+The API is designed to mimic the API of [Apollo's federation library](https://www.apollographql.com/docs/apollo-server/federation/introduction/). It's best to read and understand the way federation works, in general, before attempting to use this library.
 
 ### Extending a type
 [Apollo documentation](https://www.apollographql.com/docs/apollo-server/federation/core-concepts/#extending-external-types)
