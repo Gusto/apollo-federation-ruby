@@ -1,6 +1,6 @@
 {
-  "name": "gateway",
-  "version": "1.0.0",
+  "name": "apollo-federation-ruby",
+  "private": true,
   "main": "index.js",
   "license": "MIT",
   "scripts": {
