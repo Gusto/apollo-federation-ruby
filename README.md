@@ -48,7 +48,26 @@ class MySchema < GraphQL::Schema
 end
 ```
 
-See the `examples` folder for a Ruby implementation of Apollo's [`federation-demo`](https://github.com/apollographql/federation-demo).
+## Example
+
+The [`example`](./example/) folder contains a Ruby implementation of Apollo's [`federation-demo`](https://github.com/apollographql/federation-demo). To run it locally, install the Ruby dependencies:
+
+    $ bundle
+
+Install the Node dependencies:
+
+    $ yarn
+
+Start all of the services:
+
+    $ yarn start-services
+
+Start the gateway:
+
+    $ yarn start-gateway
+
+This will start up the gateway and serve it at http://localhost:5000.
+
 
 ## Usage
 
