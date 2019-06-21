@@ -112,10 +112,10 @@ end
 Pass the `requires:` option to your field definition:
 
 ```ruby
-class User < BaseObject
-  field :first_name, String, null: false
-  field :last_name, String, null: false
-  field :full_name, String, null: false, requires: { fields: 'firstName lastName' }
+class Product < BaseObject
+  field :price, Int, null: true, external: true
+  field :weight, Int, null: true, external: true
+  field :shipping_estimate, Int, null: true, requires: { fields: "price weight"}
 end
 ```
 
@@ -145,4 +145,4 @@ end
 
 ## Known Limitations and Issues
  - Currently only works with class-based schemas
- - Does not modify the output of `Schema.to_definition`. The enhanced definition (with directives) will only be visible to the [Apollo Gateway](https://www.apollographql.com/docs/apollo-server/api/apollo-gateway/) through the `Query._service` field (see the [Apollo Federation specification](https://www.apollographql.com/docs/apollo-server/federation/federation-spec/))
+ - Does add directives to the output of `Schema.to_definition`. Since `graphql-ruby` doesn't natively support schema directives, the directives will only be visible to the [Apollo Gateway](https://www.apollographql.com/docs/apollo-server/api/apollo-gateway/) through the `Query._service` field (see the [Apollo Federation specification](https://www.apollographql.com/docs/apollo-server/federation/federation-spec/))
