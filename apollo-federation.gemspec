@@ -1,24 +1,29 @@
 
-lib = File.expand_path("../lib", __FILE__)
+lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "apollo-federation/version"
+
+require 'apollo-federation/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "apollo-federation"
+  spec.name          = 'apollo-federation'
   spec.version       = ApolloFederation::VERSION
-  spec.authors       = ["Gusto"]
+  spec.authors       = ['Noa Elad', 'Rylan Collins']
+  spec.email         = ['noa.elad@gusto.com', 'rylan@gusto.com']
 
-  spec.summary       = 'This gem extends the graphql gem to add support for creating a federated schema'
+  spec.summary       = 'A Ruby implementation of Apollo Federation'
   spec.description   = spec.summary
-  spec.homepage      = 'https://www.gusto.com'
+  spec.homepage      = 'https://github.com/Gusto/apollo-federation-ruby'
+  spec.license       = 'MIT'
+  spec.required_ruby_version = '>= 2.2.0' # bc of `.to_sym`
 
-  # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
-  # to allow pushing to a single host or delete this section to allow pushing to any host.
-  if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = 'https://gemstash.zp-int.com/private'
-  else
-    raise 'RubyGems 2.0 or newer is required to protect against public gem pushes.'
-  end
+  spec.metadata    = {
+    'homepage_uri' => 'https://github.com/Gusto/apollo-federation-ruby',
+    'changelog_uri' => 'https://github.com/Gusto/apollo-federation-ruby/releases',
+    'source_code_uri' => 'https://github.com/Gusto/apollo-federation-ruby',
+    'bug_tracker_uri' => 'https://github.com/Gusto/apollo-federation-ruby/issues',
+  }
+
+  spec.files = Dir['{lib}/**/*', 'README.md']
 
   spec.add_dependency 'graphql'
 
