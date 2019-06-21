@@ -56,7 +56,7 @@ class Query < BaseObject
 end
 
 class ProductSchema < GraphQL::Schema
-  extend ApolloFederation::Schema
+  include ApolloFederation::Schema
 
   query(Query)
 end

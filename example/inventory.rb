@@ -40,7 +40,7 @@ class Product < BaseObject
 end
 
 class InventorySchema < GraphQL::Schema
-  extend ApolloFederation::Schema
+  include ApolloFederation::Schema
 
   orphan_types Product
 end

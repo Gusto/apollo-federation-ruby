@@ -94,7 +94,7 @@ class Product < BaseObject
 end
 
 class ReviewSchema < GraphQL::Schema
-  extend ApolloFederation::Schema
+  include ApolloFederation::Schema
 
   orphan_types User, Review, Product
 end
