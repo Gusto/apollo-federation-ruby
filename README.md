@@ -130,7 +130,7 @@ class Review < BaseObject
 end
 ```
 
-## Reference resolvers
+### Reference resolvers
 [Apollo documentation](https://www.apollographql.com/docs/apollo-server/api/apollo-federation/#__resolvereference)
 
 Define a `resolve_reference` class method on your object. The method will be passed the reference from another service and the context for the query.
