@@ -12,7 +12,7 @@ let serviceProcesses;
 // TODO: Move to a separate file?
 const startService = serviceName =>
   new Promise((resolve, reject) => {
-    const child = spawn('bundle', ['exec', 'ruby', `./example/${serviceName}.rb`]);
+    const child = spawn('bundle', ['exec', 'ruby', `./example/${serviceName}.rb`, '--test']);
 
     child.stdout.on('data', data => {
       if (data.toString().includes('_READY_')) {
