@@ -34,17 +34,17 @@ Include the `ApolloFederation::Object` module in your base object class:
 
 ```ruby
 class BaseObject < GraphQL::Schema::Object
-  extend ApolloFederation::Object
+  include ApolloFederation::Object
 
   field_class BaseField
 end
 ```
 
-Finally, extend your schema with the `ApolloFederation::Schema` module:
+Finally, include the `ApolloFederation::Schema` module in your schema:
 
 ```ruby
 class MySchema < GraphQL::Schema
-  extend ApolloFederation::Schema
+  include ApolloFederation::Schema
 end
 ```
 

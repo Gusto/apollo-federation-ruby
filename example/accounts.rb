@@ -46,7 +46,7 @@ class Query < BaseObject
 end
 
 class AccountSchema < GraphQL::Schema
-  extend ApolloFederation::Schema
+  include ApolloFederation::Schema
 
   query(Query)
 end

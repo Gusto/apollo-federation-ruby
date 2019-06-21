@@ -9,7 +9,7 @@ class BaseField < GraphQL::Schema::Field
 end
 
 class BaseObject < GraphQL::Schema::Object
-  extend ApolloFederation::Object
+  include ApolloFederation::Object
 
   field_class BaseField
 end

@@ -15,7 +15,7 @@ describe ApolloFederation::ServiceField do
 
   let(:base_schema) do
     Class.new(GraphQL::Schema) do
-      extend ApolloFederation::Schema
+      include ApolloFederation::Schema
     end
   end
 
@@ -25,7 +25,7 @@ describe ApolloFederation::ServiceField do
     end
 
     Class.new(GraphQL::Schema::Object) do
-      extend ApolloFederation::Object
+      include ApolloFederation::Object
       field_class base_field
     end
   end

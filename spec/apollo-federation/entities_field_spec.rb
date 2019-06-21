@@ -15,7 +15,7 @@ describe ApolloFederation::EntitiesField do
 
   let(:base_schema) do
     Class.new(GraphQL::Schema) do
-      extend ApolloFederation::Schema
+      include ApolloFederation::Schema
     end
   end
 
@@ -25,7 +25,7 @@ describe ApolloFederation::EntitiesField do
     end
 
     Class.new(GraphQL::Schema::Object) do
-      extend ApolloFederation::Object
+      include ApolloFederation::Object
       field_class base_field
     end
   end
@@ -169,7 +169,9 @@ describe ApolloFederation::EntitiesField do
             let(:typename) { 'TypeNotInSchema' }
 
             it 'raises' do
-              expect(-> {execute_query}).to raise_error
+              expect(-> {execute_query}).to raise_error(
+                /The _entities resolver tried to load an entity for type "TypeNotInSchema"/
+              )
             end
           end
 
