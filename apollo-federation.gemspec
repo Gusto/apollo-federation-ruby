@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
 
   spec.files = `git ls-files bin lib *.md LICENSE`.split("\n")
 
-  spec.add_dependency 'graphql'
+  spec.add_dependency 'graphql', '>= 1.9.6'
 
   spec.add_development_dependency 'pry-byebug'
   spec.add_development_dependency 'rack'
