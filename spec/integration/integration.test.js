@@ -54,8 +54,6 @@ const serviceList = [
   { name: 'inventory', url: 'http://localhost:5004/graphql' },
 ];
 
-jest.setTimeout(8000);
-
 beforeAll(async () => {
   serviceProcesses = await Promise.all(serviceList.map(({ name }) => startService(name)));
 
