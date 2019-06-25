@@ -8,8 +8,18 @@ const startService = serviceName =>
   new Promise((resolve, reject) => {
     const child = spawn('bundle', ['exec', 'ruby', `./example/${serviceName}.rb`, '--test']);
 
+    let ready = false;
+    const readyTimeout = setTimeout(() => {
+      if (!ready) {
+        child.kill();
+        reject(new Error(`Starting the ${serviceName} service timed out`));
+      }
+    }, 4000);
+
     child.stdout.on('data', data => {
       if (data.toString().includes('_READY_')) {
+        clearTimeout(readyTimeout);
+        ready = true;
         resolve(child);
       }
     });
@@ -18,7 +28,13 @@ const startService = serviceName =>
 
     child.on('exit', code => {
       if (code) {
-        throw new Error(`The ${serviceName} service exited unexpectedly`);
+        const err = new Error(`The ${serviceName} service exited unexpectedly`);
+        if (ready) {
+          throw err;
+        } else {
+          clearTimeout(readyTimeout);
+          reject(err);
+        }
       }
     });
 
@@ -30,15 +46,13 @@ const startService = serviceName =>
   });
 
 let testClient;
-let serviceProcesses;
+let serviceProcesses = [];
 const serviceList = [
   { name: 'accounts', url: 'http://localhost:5001/graphql' },
   { name: 'reviews', url: 'http://localhost:5002/graphql' },
   { name: 'products', url: 'http://localhost:5003/graphql' },
   { name: 'inventory', url: 'http://localhost:5004/graphql' },
 ];
-
-jest.setTimeout(8000);
 
 beforeAll(async () => {
   serviceProcesses = await Promise.all(serviceList.map(({ name }) => startService(name)));
@@ -53,7 +67,6 @@ beforeAll(async () => {
   });
 
   testClient = createTestClient(server);
-  await new Promise(res => setTimeout(res, 5000));
 });
 
 afterAll(() => {
