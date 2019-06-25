@@ -150,3 +150,7 @@ end
 ## Known Limitations and Issues
  - Currently only works with class-based schemas
  - Does add directives to the output of `Schema.to_definition`. Since `graphql-ruby` doesn't natively support schema directives, the directives will only be visible to the [Apollo Gateway](https://www.apollographql.com/docs/apollo-server/api/apollo-gateway/) through the `Query._service` field (see the [Apollo Federation specification](https://www.apollographql.com/docs/apollo-server/federation/federation-spec/))
+
+## Maintainers
+ * [Rylan Collins](https://github.com/rylanc)
+ * [Noa Elad](https://github.com/noaelad)
