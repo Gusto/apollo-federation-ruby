@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require 'spec_helper'
 require 'apollo-federation/any'
 
-describe ApolloFederation::Any do
+RSpec.describe ApolloFederation::Any do
   it 'converts the keys to symbols' do
     expect(
       described_class.coerce_input({ 'one' => 1, 'two' => 2, '__typename' => 'Thing' }, nil),

@@ -43,7 +43,7 @@ class Product < BaseObject
   field :weight, Int, null: true
 
   def self.resolve_reference(reference, _context)
-    PRODUCTS.find { |product| product[:upc] === reference[:upc] }
+    PRODUCTS.find { |product| product[:upc] == reference[:upc] }
   end
 end
 

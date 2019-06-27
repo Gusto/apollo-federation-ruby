@@ -13,34 +13,6 @@ Gemspec/RequiredRubyVersion:
   Exclude:
     - 'apollo-federation.gemspec'
 
-# Offense count: 1
-# Configuration parameters: EnforcedStyleForLeadingUnderscores.
-# SupportedStylesForLeadingUnderscores: disallowed, required, optional
-Naming/MemoizedInstanceVariableName:
-  Exclude:
-    - 'lib/apollo-federation/schema.rb'
-
-# Offense count: 1
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: snake_case, camelCase
-Naming/VariableName:
-  Exclude:
-    - 'example/graphql_server.rb'
-
-# Offense count: 8
-# Configuration parameters: Prefixes.
-# Prefixes: when, with, without
-RSpec/ContextWording:
-  Exclude:
-    - 'spec/apollo-federation/entities_field_spec.rb'
-
-# Offense count: 13
-# Configuration parameters: Max.
-RSpec/ExampleLength:
-  Exclude:
-    - 'spec/apollo-federation/entities_field_spec.rb'
-    - 'spec/apollo-federation/service_field_spec.rb'
-
 # Offense count: 3
 # Configuration parameters: CustomTransform, IgnoreMethods.
 RSpec/FilePath:
@@ -48,48 +20,6 @@ RSpec/FilePath:
     - 'spec/apollo-federation/any_spec.rb'
     - 'spec/apollo-federation/entities_field_spec.rb'
     - 'spec/apollo-federation/service_field_spec.rb'
-
-# Offense count: 2
-# Configuration parameters: AssignmentOnly.
-RSpec/InstanceVariable:
-  Exclude:
-    - 'spec/apollo-federation/entities_field_spec.rb'
-    - 'spec/apollo-federation/service_field_spec.rb'
-
-# Offense count: 9
-RSpec/NestedGroups:
-  Max: 8
-
-# Offense count: 1
-Style/CaseEquality:
-  Exclude:
-    - 'example/products.rb'
-
-# Offense count: 28
-Style/Documentation:
-  Exclude:
-    - 'spec/**/*'
-    - 'test/**/*'
-    - 'example/accounts.rb'
-    - 'example/graphql_server.rb'
-    - 'example/inventory.rb'
-    - 'example/products.rb'
-    - 'example/reviews.rb'
-    - 'lib/apollo-federation/any.rb'
-    - 'lib/apollo-federation/entities_field.rb'
-    - 'lib/apollo-federation/entity.rb'
-    - 'lib/apollo-federation/federated_document_from_schema_definition.rb'
-    - 'lib/apollo-federation/field.rb'
-    - 'lib/apollo-federation/has_directives.rb'
-    - 'lib/apollo-federation/object.rb'
-    - 'lib/apollo-federation/schema.rb'
-    - 'lib/apollo-federation/service.rb'
-    - 'lib/apollo-federation/service_field.rb'
-
-# Offense count: 1
-Style/MultilineTernaryOperator:
-  Exclude:
-    - 'lib/apollo-federation/entities_field.rb'
 
 # Offense count: 23
 # Cop supports --auto-correct.

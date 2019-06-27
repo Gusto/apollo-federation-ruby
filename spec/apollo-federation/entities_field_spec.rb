@@ -1,20 +1,12 @@
 # frozen_string_literal: true
 
+require 'spec_helper'
 require 'graphql'
 require 'apollo-federation/schema'
 require 'apollo-federation/field'
 require 'apollo-federation/object'
 
-describe ApolloFederation::EntitiesField do
-  RSpec::Matchers.define :match_sdl do |expected|
-    match do |actual|
-      @actual = "#{actual}\n"
-      @actual == expected
-    end
-
-    diffable
-  end
-
+RSpec.describe ApolloFederation::EntitiesField do
   let(:base_schema) do
     Class.new(GraphQL::Schema) do
       include ApolloFederation::Schema
@@ -159,18 +151,18 @@ describe ApolloFederation::EntitiesField do
         let(:selection) { 'id otherField' }
         let(:errors) { execute_query['errors'] }
 
-        context 'representations is empty' do
+        context 'when representations is empty' do
           let(:representations) { '[]' }
 
           it { is_expected.to match_array [] }
           it { expect(errors).to be_nil }
         end
 
-        context 'representations is not empty' do
+        context 'when representations is not empty' do
           let(:representations) { "[{__typename: #{typename}, id: #{id}}]" }
           let(:id) { 123 }
 
-          context 'typename corresponds to a type that does not exist in the schema' do
+          context 'when typename corresponds to a type that does not exist in the schema' do
             let(:typename) { 'TypeNotInSchema' }
 
             it 'raises' do
@@ -180,18 +172,18 @@ describe ApolloFederation::EntitiesField do
             end
           end
 
-          context 'typename corresponds to a type that exists in the schema' do
+          context 'when typename corresponds to a type that exists in the schema' do
             let(:typename) { type_with_key.graphql_name }
 
-            context 'the type does not define a resolve_reference method' do
-              context 'selection includes fields that are not part of the reference' do
+            context 'when the type does not define a resolve_reference method' do
+              context 'when selection includes fields that are not part of the reference' do
                 let(:selection) { 'id otherField' }
 
                 it { is_expected.to match_array [nil] }
                 it { expect(errors).to eq ['message' => 'Cannot return null for non-nullable field TypeWithKey.otherField'] }
               end
 
-              context 'selection only includes fields that are part of the reference' do
+              context 'when selection only includes fields that are part of the reference' do
                 let(:selection) { 'id' }
 
                 it { is_expected.to match_array [{ 'id' => id.to_s }] }
@@ -199,7 +191,7 @@ describe ApolloFederation::EntitiesField do
               end
             end
 
-            context 'the type defines a resolve_reference method' do
+            context 'when the type defines a resolve_reference method' do
               let(:type_with_key) do
                 Class.new(base_object) do
                   graphql_name 'TypeWithKey'
