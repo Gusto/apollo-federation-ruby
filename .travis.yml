@@ -9,8 +9,8 @@ matrix:
       - gem update --system
       - gem install bundler
     script:
-      - rake
-      - rake rubocop
+      - bundle exec rake
+      - bundle exec rake rubocop
   - name: "Integration Tests"
     language: node_js
     node_js: node
