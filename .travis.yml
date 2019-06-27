@@ -9,6 +9,7 @@ matrix:
   - language: node_js
     name: "Integration Tests"
     node_js: node
+    cache: yarn
     before_install:
       - rvm use 2.3 --install --binary --fuzzy
       - ruby --version
