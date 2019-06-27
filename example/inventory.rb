@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative './graphql_server'
 
 # extend type Product @key(fields: "upc") {
@@ -9,9 +11,9 @@ require_relative './graphql_server'
 # }
 
 INVENTORY = [
-  { upc: "1", in_stock: true },
-  { upc: "2", in_stock: false },
-  { upc: "3", in_stock: true }
+  { upc: '1', in_stock: true },
+  { upc: '2', in_stock: false },
+  { upc: '3', in_stock: true }
 ]
 
 class Product < BaseObject
@@ -22,9 +24,9 @@ class Product < BaseObject
   field :weight, Int, null: true, external: true
   field :price, Int, null: true, external: true
   field :in_stock, Boolean, null: true
-  field :shipping_estimate, Int, null: true, requires: { fields: "price weight"}
+  field :shipping_estimate, Int, null: true, requires: { fields: 'price weight' }
 
-  def self.resolve_reference(reference, context)
+  def self.resolve_reference(reference, _context)
     reference.merge(INVENTORY.find { |product| product[:upc] == reference[:upc] })
   end
 
@@ -33,7 +35,7 @@ class Product < BaseObject
     if object[:price] > 1000
       0
     else
-    # estimate is based on weight
+      # estimate is based on weight
       object[:weight] * 0.5
     end
   end

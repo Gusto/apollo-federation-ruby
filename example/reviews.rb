@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative './graphql_server'
 
 # type Review @key(fields: "id") {
@@ -20,34 +22,34 @@ require_relative './graphql_server'
 
 REVIEWS = [
   {
-    id: "1",
-    authorID: "1",
-    product: { upc: "1" },
-    body: "Love it!"
+    id: '1',
+    authorID: '1',
+    product: { upc: '1' },
+    body: 'Love it!'
   },
   {
-    id: "2",
-    authorID: "1",
-    product: { upc: "2" },
-    body: "Too expensive."
+    id: '2',
+    authorID: '1',
+    product: { upc: '2' },
+    body: 'Too expensive.'
   },
   {
-    id: "3",
-    authorID: "2",
-    product: { upc: "3" },
-    body: "Could be better."
+    id: '3',
+    authorID: '2',
+    product: { upc: '3' },
+    body: 'Could be better.'
   },
   {
-    id: "4",
-    authorID: "2",
-    product: { upc: "1" },
-    body: "Prefer something else."
+    id: '4',
+    authorID: '2',
+    product: { upc: '1' },
+    body: 'Prefer something else.'
   }
 ]
 
 USERNAMES = [
-  { id: "1", username: "@ada" },
-  { id: "2", username: "@complete" }
+  { id: '1', username: '@ada' },
+  { id: '2', username: '@complete' }
 ]
 
 class Review < BaseObject

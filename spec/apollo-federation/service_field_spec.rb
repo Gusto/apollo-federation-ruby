@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'graphql'
 require 'apollo-federation/schema'
 require 'apollo-federation/field'
@@ -98,13 +100,13 @@ describe ApolloFederation::ServiceField do
 
     expect(execute_sdl(schema)).to match_sdl(
       <<~GRAPHQL
-      type Product {
-        upc: String!
-      }
+        type Product {
+          upc: String!
+        }
 
-      type Query {
-        product: Product
-      }
+        type Query {
+          product: Product
+        }
       GRAPHQL
     )
   end
@@ -129,13 +131,13 @@ describe ApolloFederation::ServiceField do
 
     expect(execute_sdl(schema)).to match_sdl(
       <<~GRAPHQL
-      type Product @extends {
-        upc: String!
-      }
+        type Product @extends {
+          upc: String!
+        }
 
-      type Query {
-        product: Product
-      }
+        type Query {
+          product: Product
+        }
       GRAPHQL
     )
   end
@@ -161,13 +163,13 @@ describe ApolloFederation::ServiceField do
 
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL
-        type Product @key(fields: "upc") {
-          upc: String!
-        }
+          type Product @key(fields: "upc") {
+            upc: String!
+          }
 
-        type Query {
-          product: Product
-        }
+          type Query {
+            product: Product
+          }
         GRAPHQL
       )
     end
@@ -188,9 +190,9 @@ describe ApolloFederation::ServiceField do
 
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL
-        type Product @key(fields: "upc") {
-          upc: String!
-        }
+          type Product @key(fields: "upc") {
+            upc: String!
+          }
         GRAPHQL
       )
     end
@@ -212,10 +214,10 @@ describe ApolloFederation::ServiceField do
 
     expect(execute_sdl(schema)).to match_sdl(
       <<~GRAPHQL
-      type Product @key(fields: "upc") @key(fields: "name") {
-        name: String
-        upc: String!
-      }
+        type Product @key(fields: "upc") @key(fields: "name") {
+          name: String
+          upc: String!
+        }
       GRAPHQL
     )
   end
@@ -236,10 +238,10 @@ describe ApolloFederation::ServiceField do
 
     expect(execute_sdl(schema)).to match_sdl(
       <<~GRAPHQL
-      type Product @extends @key(fields: "upc") {
-        price: Int
-        upc: String! @external
-      }
+        type Product @extends @key(fields: "upc") {
+          price: Int
+          upc: String! @external
+        }
       GRAPHQL
     )
   end
@@ -259,7 +261,7 @@ describe ApolloFederation::ServiceField do
       key fields: 'id'
 
       field :id, 'ID', null: false
-      field :product, product, provides: { fields: "upc" }, null: true
+      field :product, product, provides: { fields: 'upc' }, null: true
     end
 
     schema = Class.new(base_schema) do
@@ -268,15 +270,15 @@ describe ApolloFederation::ServiceField do
 
     expect(execute_sdl(schema)).to match_sdl(
       <<~GRAPHQL
-      type Product @extends @key(fields: "upc") {
-        price: Int
-        upc: String! @external
-      }
+        type Product @extends @key(fields: "upc") {
+          price: Int
+          upc: String! @external
+        }
 
-      type Review @key(fields: "id") {
-        id: ID!
-        product: Product @provides(fields: "upc")
-      }
+        type Review @key(fields: "id") {
+          id: ID!
+          product: Product @provides(fields: "upc")
+        }
       GRAPHQL
     )
   end
@@ -290,7 +292,7 @@ describe ApolloFederation::ServiceField do
       field :upc, String, null: false, external: true
       field :weight, Integer, null: true, external: true
       field :price, Integer, null: true, external: true
-      field :shipping_estimate, Integer, null: true, requires: { fields: "price weight"}
+      field :shipping_estimate, Integer, null: true, requires: { fields: 'price weight' }
     end
 
     schema = Class.new(base_schema) do
@@ -299,12 +301,12 @@ describe ApolloFederation::ServiceField do
 
     expect(execute_sdl(schema)).to match_sdl(
       <<~GRAPHQL
-      type Product @extends @key(fields: "upc") {
-        price: Int @external
-        shippingEstimate: Int @requires(fields: "price weight")
-        upc: String! @external
-        weight: Int @external
-      }
+        type Product @extends @key(fields: "upc") {
+          price: Int @external
+          shippingEstimate: Int @requires(fields: "price weight")
+          upc: String! @external
+          weight: Int @external
+        }
       GRAPHQL
     )
   end

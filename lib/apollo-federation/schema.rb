@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'apollo-federation/entities_field'
 require 'apollo-federation/service_field'
 require 'apollo-federation/entity'
@@ -28,7 +30,7 @@ module ApolloFederation
 
         possible_entities = orig_defn.types.values.select do |type|
           !type.introspection? && !type.default_scalar? &&
-            type.metadata[:federation_directives]&.any? {|directive| directive[:name] == 'key'}
+            type.metadata[:federation_directives]&.any? { |directive| directive[:name] == 'key' }
         end
 
         if possible_entities.length > 0
@@ -54,4 +56,3 @@ module ApolloFederation
     end
   end
 end
-

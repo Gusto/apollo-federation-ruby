@@ -1,0 +1,43 @@
+inherit_from: .rubocop_todo.yml
+
+require: rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 2.3
+  DisplayCopNames: true
+
+#
+# We prefer trailing commas so that the git diff is reduced when adding elements
+#
+Style/TrailingCommaInArguments:
+  Enabled: true
+  EnforcedStyleForMultiline: consistent_comma
+Style/TrailingCommaInArrayLiteral:
+  Enabled: true
+  EnforcedStyleForMultiline: consistent_comma
+Style/TrailingCommaInHashLiteral:
+  Enabled: true
+  EnforcedStyleForMultiline: consistent_comma
+Style/BracesAroundHashParameters:
+  EnforcedStyle: context_dependent
+Style/ConditionalAssignment:
+  EnforcedStyle: assign_inside_condition
+  IncludeTernaryExpressions: false
+Style/HashSyntax:
+  EnforcedStyle: ruby19_no_mixed_keys
+Style/IfUnlessModifier:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+Metrics/BlockLength:
+  Enabled: false
+Metrics/MethodLength:
+  Enabled: false
+Metrics/ParameterLists:
+  Max: 5
+  CountKeywordArgs: false
+
+Naming/FileName:
+  Exclude:
+    - 'lib/apollo-federation.rb'

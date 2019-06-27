@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative './graphql_server'
 
 # extend type Query {
@@ -13,20 +15,20 @@ require_relative './graphql_server'
 
 PRODUCTS = [
   {
-    upc: "1",
-    name: "Table",
+    upc: '1',
+    name: 'Table',
     price: 899,
     weight: 100
   },
   {
-    upc: "2",
-    name: "Couch",
+    upc: '2',
+    name: 'Couch',
     price: 1299,
     weight: 1000
   },
   {
-    upc: "3",
-    name: "Chair",
+    upc: '3',
+    name: 'Chair',
     price: 54,
     weight: 50
   }
@@ -40,7 +42,7 @@ class Product < BaseObject
   field :price, Int, null: true
   field :weight, Int, null: true
 
-  def self.resolve_reference(reference, context)
+  def self.resolve_reference(reference, _context)
     PRODUCTS.find { |product| product[:upc] === reference[:upc] }
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'graphql'
 require 'apollo-federation/schema'
 require 'apollo-federation/field'
@@ -36,7 +38,7 @@ describe ApolloFederation::EntitiesField do
       end
 
       expect(schema.to_definition).to match_sdl(
-      <<~GRAPHQL
+        <<~GRAPHQL
           type Query {
             _service: _Service!
           }
@@ -44,7 +46,7 @@ describe ApolloFederation::EntitiesField do
           type _Service {
             sdl: String
           }
-      GRAPHQL
+        GRAPHQL
       )
     end
   end
@@ -77,26 +79,26 @@ describe ApolloFederation::EntitiesField do
 
       it 'adds an _entities field to the Query object' do
         expect(schema.to_definition).to match_sdl(
-        <<~GRAPHQL
-          type Query {
-            _entities(representations: [_Any!]!): [_Entity]!
-            _service: _Service!
-            typeWithKey: TypeWithKey
-          }
+          <<~GRAPHQL
+            type Query {
+              _entities(representations: [_Any!]!): [_Entity]!
+              _service: _Service!
+              typeWithKey: TypeWithKey
+            }
 
-          type TypeWithKey {
-            id: ID!
-            otherField: String!
-          }
+            type TypeWithKey {
+              id: ID!
+              otherField: String!
+            }
 
-          scalar _Any
+            scalar _Any
 
-          union _Entity = TypeWithKey
+            union _Entity = TypeWithKey
 
-          type _Service {
-            sdl: String
-          }
-        GRAPHQL
+            type _Service {
+              sdl: String
+            }
+          GRAPHQL
         )
       end
     end
@@ -146,30 +148,32 @@ describe ApolloFederation::EntitiesField do
       end
 
       describe 'resolver for _entities' do
+        subject(:entities_result) { execute_query['data']['_entities'] }
+
         let(:execute_query) do
           schema.execute(
             "{ _entities(representations: #{representations}) { ... on TypeWithKey {#{selection}} } }"
           )
         end
         let(:selection) { 'id otherField' }
-        subject(:entities_result) { execute_query['data']['_entities'] }
         let(:errors) { execute_query['errors'] }
 
         context 'representations is empty' do
-          let(:representations) {'[]'}
+          let(:representations) { '[]' }
+
           it { is_expected.to match_array [] }
           it { expect(errors).to be_nil }
         end
 
         context 'representations is not empty' do
-          let(:representations) {"[{__typename: #{typename}, id: #{id}}]"}
+          let(:representations) { "[{__typename: #{typename}, id: #{id}}]" }
           let(:id) { 123 }
 
           context 'typename corresponds to a type that does not exist in the schema' do
             let(:typename) { 'TypeNotInSchema' }
 
             it 'raises' do
-              expect(-> {execute_query}).to raise_error(
+              expect(-> { execute_query }).to raise_error(
                 /The _entities resolver tried to load an entity for type "TypeNotInSchema"/
               )
             end
@@ -181,13 +185,15 @@ describe ApolloFederation::EntitiesField do
             context 'the type does not define a resolve_reference method' do
               context 'selection includes fields that are not part of the reference' do
                 let(:selection) { 'id otherField' }
+
                 it { is_expected.to match_array [nil] }
                 it { expect(errors).to eq ['message' => 'Cannot return null for non-nullable field TypeWithKey.otherField'] }
               end
 
               context 'selection only includes fields that are part of the reference' do
                 let(:selection) { 'id' }
-                it { is_expected.to match_array [{'id' => id.to_s}] }
+
+                it { is_expected.to match_array [{ 'id' => id.to_s }] }
                 it { expect(errors).to be_nil }
               end
             end
@@ -201,15 +207,12 @@ describe ApolloFederation::EntitiesField do
                   field :other_field, 'String', null: false
 
                   def self.resolve_reference(reference, _context)
-                    if reference[:id] == 123
-                      {id: 123, other_field: 'more data'}
-                    else
-                      nil
-                    end
+                    { id: 123, other_field: 'more data' } if reference[:id] == 123
                   end
                 end
               end
-              it { is_expected.to match_array [{'id' => id.to_s, 'otherField' => 'more data'}] }
+
+              it { is_expected.to match_array [{ 'id' => id.to_s, 'otherField' => 'more data' }] }
               it { expect(errors).to be_nil }
             end
           end
