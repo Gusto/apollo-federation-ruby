@@ -38,7 +38,7 @@ describe ApolloFederation::EntitiesField do
       end
 
       expect(schema.to_definition).to match_sdl(
-        <<~GRAPHQL
+        <<~GRAPHQL,
           type Query {
             _service: _Service!
           }
@@ -79,7 +79,7 @@ describe ApolloFederation::EntitiesField do
 
       it 'adds an _entities field to the Query object' do
         expect(schema.to_definition).to match_sdl(
-          <<~GRAPHQL
+          <<~GRAPHQL,
             type Query {
               _entities(representations: [_Any!]!): [_Entity]!
               _service: _Service!
@@ -104,7 +104,8 @@ describe ApolloFederation::EntitiesField do
     end
 
     context 'when a Query object is not provided' do
-      let(:mutation) do # creating a mutation with the TypeWithKey object so it gets included in the schema
+      let(:mutation) do
+        # creating a mutation with the TypeWithKey object so it gets included in the schema
         type_with_key_class = type_with_key
         Class.new(base_object) do
           graphql_name 'Mutation'
@@ -121,7 +122,7 @@ describe ApolloFederation::EntitiesField do
 
       it 'creates a Query object and adds an _entities field to it' do
         expect(schema.to_definition).to match_sdl(
-          <<~GRAPHQL
+          <<~GRAPHQL,
             type Mutation {
               typeWithKey: TypeWithKey
             }
@@ -152,7 +153,7 @@ describe ApolloFederation::EntitiesField do
 
         let(:execute_query) do
           schema.execute(
-            "{ _entities(representations: #{representations}) { ... on TypeWithKey {#{selection}} } }"
+            "{ _entities(representations: #{representations}) { ... on TypeWithKey {#{selection}} } }",
           )
         end
         let(:selection) { 'id otherField' }
@@ -174,7 +175,7 @@ describe ApolloFederation::EntitiesField do
 
             it 'raises' do
               expect(-> { execute_query }).to raise_error(
-                /The _entities resolver tried to load an entity for type "TypeNotInSchema"/
+                /The _entities resolver tried to load an entity for type "TypeNotInSchema"/,
               )
             end
           end

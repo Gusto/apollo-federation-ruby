@@ -25,32 +25,32 @@ REVIEWS = [
     id: '1',
     authorID: '1',
     product: { upc: '1' },
-    body: 'Love it!'
+    body: 'Love it!',
   },
   {
     id: '2',
     authorID: '1',
     product: { upc: '2' },
-    body: 'Too expensive.'
+    body: 'Too expensive.',
   },
   {
     id: '3',
     authorID: '2',
     product: { upc: '3' },
-    body: 'Could be better.'
+    body: 'Could be better.',
   },
   {
     id: '4',
     authorID: '2',
     product: { upc: '1' },
-    body: 'Prefer something else.'
-  }
-]
+    body: 'Prefer something else.',
+  },
+].freeze
 
 USERNAMES = [
   { id: '1', username: '@ada' },
-  { id: '2', username: '@complete' }
-]
+  { id: '2', username: '@complete' },
+].freeze
 
 class Review < BaseObject
   key fields: 'id'

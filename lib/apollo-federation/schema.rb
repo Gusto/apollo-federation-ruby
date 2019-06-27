@@ -33,7 +33,7 @@ module ApolloFederation
             type.metadata[:federation_directives]&.any? { |directive| directive[:name] == 'key' }
         end
 
-        if possible_entities.length > 0
+        if !possible_entities.empty?
           entity_type = Class.new(Entity) do
             possible_types(*possible_entities)
           end

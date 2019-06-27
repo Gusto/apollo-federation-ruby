@@ -64,7 +64,7 @@ class GraphQLServer
     result = schema.execute(
       query,
       operation_name: operationName,
-      variables: vars
+      variables: vars,
     )
     ['200', { 'Content-Type' => 'application/json' }, [JSON.dump(result.to_h)]]
   end

@@ -27,6 +27,12 @@ Style/HashSyntax:
   EnforcedStyle: ruby19_no_mixed_keys
 Style/IfUnlessModifier:
   Enabled: false
+Style/NumericPredicate:
+  Enabled: false
+Style/WordArray:
+  Enabled: false
+Style/NegatedIf:
+  Enabled: false
 
 Metrics/AbcSize:
   Enabled: false
@@ -37,6 +43,8 @@ Metrics/MethodLength:
 Metrics/ParameterLists:
   Max: 5
   CountKeywordArgs: false
+# Metrics/LineLength:
+#   Max: 100
 
 Naming/FileName:
   Exclude:

@@ -13,8 +13,8 @@ require_relative './graphql_server'
 INVENTORY = [
   { upc: '1', in_stock: true },
   { upc: '2', in_stock: false },
-  { upc: '3', in_stock: true }
-]
+  { upc: '3', in_stock: true },
+].freeze
 
 class Product < BaseObject
   extend_type

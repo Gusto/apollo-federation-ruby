@@ -9,11 +9,11 @@ module ApolloFederation
       '_Any',
       '_Entity',
       '_Service',
-    ]
+    ].freeze
     FEDERATION_QUERY_FIELDS = [
       '_entities',
       '_service',
-    ]
+    ].freeze
 
     def build_object_type_node(object_type)
       object_node = super
@@ -50,7 +50,7 @@ module ApolloFederation
       (directives || []).each do |directive|
         node = node.merge_directive(
           name: directive[:name],
-          arguments: build_arguments_node(directive[:arguments])
+          arguments: build_arguments_node(directive[:arguments]),
         )
       end
       node

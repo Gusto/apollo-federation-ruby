@@ -49,7 +49,7 @@ describe ApolloFederation::ServiceField do
       end
 
       expect(schema.to_definition).to match_sdl(
-        <<~GRAPHQL
+        <<~GRAPHQL,
           type Query {
             _service: _Service!
             test: String!
@@ -68,7 +68,7 @@ describe ApolloFederation::ServiceField do
       schema = Class.new(base_schema)
 
       expect(schema.to_definition).to match_sdl(
-        <<~GRAPHQL
+        <<~GRAPHQL,
           type Query {
             _service: _Service!
           }
@@ -99,7 +99,7 @@ describe ApolloFederation::ServiceField do
     end
 
     expect(execute_sdl(schema)).to match_sdl(
-      <<~GRAPHQL
+      <<~GRAPHQL,
         type Product {
           upc: String!
         }
@@ -130,7 +130,7 @@ describe ApolloFederation::ServiceField do
     end
 
     expect(execute_sdl(schema)).to match_sdl(
-      <<~GRAPHQL
+      <<~GRAPHQL,
         type Product @extends {
           upc: String!
         }
@@ -162,7 +162,7 @@ describe ApolloFederation::ServiceField do
       end
 
       expect(execute_sdl(schema)).to match_sdl(
-        <<~GRAPHQL
+        <<~GRAPHQL,
           type Product @key(fields: "upc") {
             upc: String!
           }
@@ -189,7 +189,7 @@ describe ApolloFederation::ServiceField do
       end
 
       expect(execute_sdl(schema)).to match_sdl(
-        <<~GRAPHQL
+        <<~GRAPHQL,
           type Product @key(fields: "upc") {
             upc: String!
           }
@@ -213,7 +213,7 @@ describe ApolloFederation::ServiceField do
     end
 
     expect(execute_sdl(schema)).to match_sdl(
-      <<~GRAPHQL
+      <<~GRAPHQL,
         type Product @key(fields: "upc") @key(fields: "name") {
           name: String
           upc: String!
@@ -237,7 +237,7 @@ describe ApolloFederation::ServiceField do
     end
 
     expect(execute_sdl(schema)).to match_sdl(
-      <<~GRAPHQL
+      <<~GRAPHQL,
         type Product @extends @key(fields: "upc") {
           price: Int
           upc: String! @external
@@ -269,7 +269,7 @@ describe ApolloFederation::ServiceField do
     end
 
     expect(execute_sdl(schema)).to match_sdl(
-      <<~GRAPHQL
+      <<~GRAPHQL,
         type Product @extends @key(fields: "upc") {
           price: Int
           upc: String! @external
@@ -300,7 +300,7 @@ describe ApolloFederation::ServiceField do
     end
 
     expect(execute_sdl(schema)).to match_sdl(
-      <<~GRAPHQL
+      <<~GRAPHQL,
         type Product @extends @key(fields: "upc") {
           price: Int @external
           shippingEstimate: Int @requires(fields: "price weight")
