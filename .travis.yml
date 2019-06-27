@@ -1,14 +1,15 @@
 matrix:
   include:
-  - language: ruby
+  - name: 'rspec Tests'
+    language: ruby
     rvm:
       - 2.3
     cache: bundler
     before_install:
       - gem update --system
       - gem install bundler
-  - language: node_js
-    name: "Integration Tests"
+  - name: "Integration Tests"
+    language: node_js
     node_js: node
     cache: yarn
     before_install:
