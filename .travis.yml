@@ -4,11 +4,13 @@ matrix:
     rvm:
       - 2.3
     before_install:
+      - which ruby
       - gem update --system
       - gem install bundler
   - language: node_js
     node_js: node
     before_install:
+      - which ruby
       - ruby --version
       - gem update --system
       - gem install bundler
