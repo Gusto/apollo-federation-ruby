@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rack'
 require 'json'
 require 'graphql'
@@ -48,8 +50,8 @@ class GraphQLServer
     req = Rack::Request.new(env)
     req_vars = JSON.parse(req.body.read)
     query = req_vars['query']
-    operationName = req_vars["operationName"]
-    vars = req_vars["variables"] || {}
+    operationName = req_vars['operationName']
+    vars = req_vars['variables'] || {}
 
     graphql_debugging = {
       query: query,
@@ -62,9 +64,9 @@ class GraphQLServer
     result = schema.execute(
       query,
       operation_name: operationName,
-      variables: vars
+      variables: vars,
     )
-    ['200', {'Content-Type' => 'application/json'}, [JSON.dump(result.to_h)]]
+    ['200', { 'Content-Type' => 'application/json' }, [JSON.dump(result.to_h)]]
   end
 
   private

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative './graphql_server'
 
 # extend type Query {
@@ -12,18 +14,18 @@ require_relative './graphql_server'
 
 USERS = [
   {
-    id: "1",
-    name: "Ada Lovelace",
-    birthDate: "1815-12-10",
-    username: "@ada"
+    id: '1',
+    name: 'Ada Lovelace',
+    birthDate: '1815-12-10',
+    username: '@ada',
   },
   {
-    id: "2",
-    name: "Alan Turing",
-    birthDate: "1912-06-23",
-    username: "@complete"
-  }
-];
+    id: '2',
+    name: 'Alan Turing',
+    birthDate: '1912-06-23',
+    username: '@complete',
+  },
+].freeze
 
 class User < BaseObject
   key fields: 'id'

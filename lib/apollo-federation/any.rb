@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'graphql'
 
 module ApolloFederation
@@ -6,7 +8,7 @@ module ApolloFederation
 
     def self.coerce_input(value, _ctx)
       # TODO: Should we convert it to a Mash-like object?
-      result = Hash.new
+      result = {}
       value.each_key do |key|
         result[key.to_sym] = value[key]
       end
