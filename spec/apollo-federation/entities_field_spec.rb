@@ -169,7 +169,7 @@ RSpec.describe ApolloFederation::EntitiesField do
         end
 
         context 'when representations is not empty' do
-          let(:representations) { [{__typename: typename, id: id}] }
+          let(:representations) { [{ __typename: typename, id: id }] }
           let(:id) { 123 }
 
           context 'when typename corresponds to a type that does not exist in the schema' do
