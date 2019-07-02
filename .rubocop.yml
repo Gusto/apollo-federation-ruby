@@ -59,3 +59,8 @@ RSpec/NestedGroups:
 Rails/FilePath:
   CustomTransform:
     ApolloFederation: apollo-federation
+
+# Disabled so we can support Ruby 2.2
+# Rubocop only supports >= 2.3
+Gemspec/RequiredRubyVersion:
+  Enabled: false
