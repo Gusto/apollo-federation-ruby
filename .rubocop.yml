@@ -56,5 +56,6 @@ RSpec/ExampleLength:
   Enabled: false
 RSpec/NestedGroups:
   Enabled: false
-# Rails/FilePath:
-#   Enabled: false
+Rails/FilePath:
+  CustomTransform:
+    ApolloFederation: apollo-federation

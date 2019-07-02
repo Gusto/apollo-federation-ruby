@@ -12,11 +12,3 @@
 Gemspec/RequiredRubyVersion:
   Exclude:
     - 'apollo-federation.gemspec'
-
-# Offense count: 3
-# Configuration parameters: CustomTransform, IgnoreMethods.
-RSpec/FilePath:
-  Exclude:
-    - 'spec/apollo-federation/any_spec.rb'
-    - 'spec/apollo-federation/entities_field_spec.rb'
-    - 'spec/apollo-federation/service_field_spec.rb'
