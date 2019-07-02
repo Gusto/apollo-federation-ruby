@@ -45,8 +45,8 @@ Metrics/MethodLength:
 Metrics/ParameterLists:
   Max: 5
   CountKeywordArgs: false
-# Metrics/LineLength:
-#   Max: 100
+Metrics/LineLength:
+  Max: 100
 
 Naming/FileName:
   Exclude:

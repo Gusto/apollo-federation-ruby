@@ -26,7 +26,8 @@ module ApolloFederation
         type = context.warden.get_type(typename)
         if type.nil? || type.kind != GraphQL::TypeKinds::OBJECT
           # TODO: Raise a specific error class?
-          raise "The _entities resolver tried to load an entity for type \"#{typename}\", but no object type of that name was found in the schema"
+          raise "The _entities resolver tried to load an entity for type \"#{typename}\"," \
+                ' but no object type of that name was found in the schema'
         end
 
         # TODO: Handle non-class types?
