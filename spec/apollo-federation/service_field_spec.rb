@@ -1,20 +1,12 @@
 # frozen_string_literal: true
 
+require 'spec_helper'
 require 'graphql'
 require 'apollo-federation/schema'
 require 'apollo-federation/field'
 require 'apollo-federation/object'
 
-describe ApolloFederation::ServiceField do
-  RSpec::Matchers.define :match_sdl do |expected|
-    match do |actual|
-      @actual = "#{actual}\n"
-      @actual == expected
-    end
-
-    diffable
-  end
-
+RSpec.describe ApolloFederation::ServiceField do
   let(:base_schema) do
     Class.new(GraphQL::Schema) do
       include ApolloFederation::Schema

@@ -31,9 +31,11 @@ module ApolloFederation
 
         # TODO: Handle non-class types?
         type_class = type.metadata[:type_class]
-        result = type_class.respond_to?(:resolve_reference) ?
-          type_class.resolve_reference(reference, context) :
-          reference
+        if type_class.respond_to?(:resolve_reference)
+          result = type_class.resolve_reference(reference, context)
+        else
+          result = reference
+        end
 
         # TODO: This isn't 100% correct: if (for some reason) 2 different resolve_reference calls
         # return the same object, it might not have the right type

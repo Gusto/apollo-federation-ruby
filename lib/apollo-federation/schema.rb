@@ -48,7 +48,7 @@ module ApolloFederation
       end
 
       def federation_sdl
-        @sdl ||= begin
+        @federation_sdl ||= begin
           document_from_schema = FederatedDocumentFromSchemaDefinition.new(self)
           GraphQL::Language::Printer.new.print(document_from_schema.document)
         end
