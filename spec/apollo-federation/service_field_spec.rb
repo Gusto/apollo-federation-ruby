@@ -47,6 +47,11 @@ RSpec.describe ApolloFederation::ServiceField do
             test: String!
           }
 
+          """
+          The sdl representing the federated service capabilities. Includes federation
+          directives, removes federation types, and includes rest of full schema after
+          schema directives have been applied
+          """
           type _Service {
             sdl: String
           }
@@ -65,6 +70,11 @@ RSpec.describe ApolloFederation::ServiceField do
             _service: _Service!
           }
 
+          """
+          The sdl representing the federated service capabilities. Includes federation
+          directives, removes federation types, and includes rest of full schema after
+          schema directives have been applied
+          """
           type _Service {
             sdl: String
           }
