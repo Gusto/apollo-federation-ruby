@@ -1,5 +1,3 @@
-inherit_from: .rubocop_todo.yml
-
 require: rubocop-rspec
 
 AllCops:
@@ -45,8 +43,8 @@ Metrics/MethodLength:
 Metrics/ParameterLists:
   Max: 5
   CountKeywordArgs: false
-# Metrics/LineLength:
-#   Max: 100
+Metrics/LineLength:
+  Max: 100
 
 Naming/FileName:
   Exclude:
@@ -56,5 +54,11 @@ RSpec/ExampleLength:
   Enabled: false
 RSpec/NestedGroups:
   Enabled: false
-# Rails/FilePath:
-#   Enabled: false
+Rails/FilePath:
+  CustomTransform:
+    ApolloFederation: apollo-federation
+
+# Disabled so we can support Ruby 2.2
+# Rubocop only supports >= 2.3
+Gemspec/RequiredRubyVersion:
+  Enabled: false
