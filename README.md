@@ -147,7 +147,7 @@ class User < BaseObject
 end
 ```
 
-## Known Limitations and Issues
+## Known Issues and Limitations
  - Currently only works with class-based schemas
  - Does not add directives to the output of `Schema.to_definition`. Since `graphql-ruby` doesn't natively support schema directives, the directives will only be visible to the [Apollo Gateway](https://www.apollographql.com/docs/apollo-server/api/apollo-gateway/) through the `Query._service` field (see the [Apollo Federation specification](https://www.apollographql.com/docs/apollo-server/federation/federation-spec/))
 
