@@ -9,6 +9,8 @@ module ApolloFederation
     def self.coerce_input(value, _ctx)
       # TODO: Should we convert it to a Mash-like object?
       result = {}
+
+      # `value` can be an ActionController::Parameters instance
       value.each_pair do |key, val|
         result[key.to_sym] = val
       end
