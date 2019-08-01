@@ -27,10 +27,9 @@ jobs:
     #     - yarn lint
     # Define the release stage that runs semantic-release
     - stage: "Release"
-      node_js: lts/*
+      # node_js: lts/*
       # Advanced: optionally overwrite your default `script` step to skip the tests
-      # script:
-      #   - make
+      script: skip
       # before_install:
       #     - gem update --system
       #     - gem install bundler
