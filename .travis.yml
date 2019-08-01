@@ -32,7 +32,5 @@ jobs:
       #   - make
       deploy:
         provider: script
-        skip_cleanup: true
-        script:
-          # Use nvm to install and use the Node LTS version (nvm is installed on all Travis images)
-          - echo 'RELEASE'
+        # skip_cleanup: true
+        script: echo 'RELEASE'
