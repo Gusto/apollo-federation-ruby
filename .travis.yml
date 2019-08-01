@@ -37,3 +37,5 @@ jobs:
         provider: script
         # skip_cleanup: true
         script: echo 'RELEASE'
+        on:
+          all_branches: true
