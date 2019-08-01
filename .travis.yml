@@ -1,6 +1,6 @@
 jobs:
   include:
-    - stage: test
+    - stage: "Tests"
       - name: 'rspec Tests'
         language: ruby
         rvm:
@@ -26,7 +26,7 @@ jobs:
           - yarn test
           - yarn lint
     # Define the release stage that runs semantic-release
-    - stage: release
+    - stage: "Release"
       # Advanced: optionally overwrite your default `script` step to skip the tests
       # script:
       #   - make
