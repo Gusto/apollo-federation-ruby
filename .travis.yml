@@ -5,17 +5,17 @@ jobs:
       language: ruby
       rvm:
         - 2.3
-      # cache: bundler
-      # before_install:
-      #   - gem update --system
-      #   - gem install bundler
+      cache: bundler
+      before_install:
+        - gem update --system
+        - gem install bundler
       script: echo 'UNIT'
         # - bundle exec rake
         # - bundle exec rake rubocop
     - name: "Integration Tests"
       language: node_js
       node_js: node
-      # cache: yarn
+      cache: yarn
       # before_install:
       #   - rvm use 2.3 --install --binary --fuzzy
       #   - ruby --version
