@@ -33,4 +33,7 @@ jobs:
       deploy:
         provider: script
         # skip_cleanup: true
+        before_install:
+          - gem update --system
+          - gem install bundler
         script: echo 'RELEASE'
