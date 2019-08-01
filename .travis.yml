@@ -30,9 +30,9 @@ jobs:
       # node_js: lts/*
       # Advanced: optionally overwrite your default `script` step to skip the tests
       script: skip
-      # before_install:
-      #     - gem update --system
-      #     - gem install bundler
+      before_install:
+          - gem update --system
+          - gem install bundler
       deploy:
         provider: script
         # skip_cleanup: true
