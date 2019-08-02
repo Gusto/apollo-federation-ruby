@@ -8,7 +8,7 @@ def set_version
 end
 
 def build_gem
-  system("gem build apollo-federation.gemspec")
+  system('gem build apollo-federation.gemspec')
 end
 
 set_version
