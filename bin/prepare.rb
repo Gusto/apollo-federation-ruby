@@ -9,10 +9,14 @@ def set_version
   File.write('lib/apollo-federation/version.rb', new_contents)
 end
 
+def bundle_install
+  system('bundle install')
+end
+
 def build_gem
   system('gem build apollo-federation.gemspec')
 end
 
 set_version
-# TODO bundle install?
+bundle_install
 build_gem
