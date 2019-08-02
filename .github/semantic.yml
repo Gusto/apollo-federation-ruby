@@ -1,2 +1,2 @@
-# Enforce PR titles follow smeantic-release format
+# Enforce PR titles follow semantic-release format
 titleOnly: true
