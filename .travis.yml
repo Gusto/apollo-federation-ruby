@@ -35,4 +35,4 @@ jobs:
         on:
           # TODO: Change to just master
           all_branches: true
-        script: npx semantic-release -b rc-semantic-release
+        script: npx semantic-release -d -b rc-semantic-release
