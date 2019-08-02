@@ -1,53 +1,38 @@
 jobs:
   include:
-    - stage: "Tests"
-      name: 'rspec Tests'
-      language: ruby
-      rvm:
-        - 2.3
-      cache: bundler
-      before_install:
-        - gem update --system
-        - gem install bundler
-      script:
-        - bundle exec rake
-        - bundle exec rake rubocop
-    - name: "Integration Tests"
-      language: node_js
-      node_js: node
-      cache: yarn
-      before_install:
-        - rvm use 2.3 --install --binary --fuzzy
-        - ruby --version
-        - gem update --system
-        - gem install bundler
-        - bundle install --jobs=3 --retry=3 --deployment
-      script:
-        - yarn test
-        - yarn lint
-
-
-    # Define the release stage that runs semantic-release
-    - stage: "Release"
+    # - stage: 'Test'
+    #   name: 'rspec Tests'
+    #   language: ruby
+    #   rvm:
+    #     - 2.3
+    #   cache: bundler
+    #   before_install:
+    #     - gem update --system
+    #     - gem install bundler
+    #   script:
+    #     - bundle exec rake
+    #     - bundle exec rake rubocop
+    # - name: "Integration Tests"
+    #   language: node_js
+    #   node_js: node
+    #   cache: yarn
+    #   before_install:
+    #     - rvm use 2.3 --install --binary --fuzzy
+    #     - ruby --version
+    #     - gem update --system
+    #     - gem install bundler
+    #     - bundle install --jobs=3 --retry=3 --deployment
+    #   script:
+    #     - yarn test
+    #     - yarn lint
+    - stage: 'Release'
       language: node_js
       node_js: lts/*
-      # Advanced: optionally overwrite your default `script` step to skip the tests
       script: skip
-      # before_install:
-      #     - gem update --system
-      #     - gem install bundler
       deploy:
         provider: script
         skip_cleanup: true
         on:
+          # TODO: Change to just master
           all_branches: true
-        script: npx semantic-release -d -b rc-semantic-release
-
-    # - stage: "Release"
-    #   language: node_js
-    #   node_js: lts/*
-    #   # Advanced: optionally overwrite your default `script` step to skip the tests
-    #   script: npx semantic-release -d -b rc-semantic-release
-    #   # before_install:
-    #   #     - gem update --system
-    #   #     - gem install bundler
+        script: npx semantic-release -b rc-semantic-release

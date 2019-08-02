@@ -14,4 +14,5 @@ def build_gem
 end
 
 set_version
+# TODO bundle install?
 build_gem
