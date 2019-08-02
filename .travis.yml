@@ -47,7 +47,7 @@ jobs:
       language: node_js
       node_js: lts/*
       # Advanced: optionally overwrite your default `script` step to skip the tests
-      script: npx semantic-release -d --debug
-      before_install:
-          - gem update --system
-          - gem install bundler
+      script: npx semantic-release -d --debug -b rc-semantic-release
+      # before_install:
+      #     - gem update --system
+      #     - gem install bundler
