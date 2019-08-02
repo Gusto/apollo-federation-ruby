@@ -44,6 +44,7 @@ jobs:
     #       # - npx semantic-release -d --debug
 
     - stage: "Release"
+      language: node_js
       node_js: lts/*
       # Advanced: optionally overwrite your default `script` step to skip the tests
       script: npx semantic-release -d --debug
