@@ -1,10 +1,3 @@
-## [0.2.1](https://github.com/Gusto/apollo-federation-ruby/compare/v0.2.0...v0.2.1) (2019-08-02)
-
-
-### Bug Fixes
-
-* Add semantic-release ([b999397](https://github.com/Gusto/apollo-federation-ruby/commit/b999397))
-
 ## [0.2.0](https://github.com/Gusto/apollo-federation-ruby/compare/v0.1.0...v0.2.0) (2019-08-01)
 
 
