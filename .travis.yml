@@ -25,8 +25,8 @@ jobs:
       script:
         - yarn test
         - yarn lint
-    # TODO: Only add this stage on master?
     - stage: 'Release'
+      if: branch = master
       language: node_js
       node_js: lts/*
       script: skip
