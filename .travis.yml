@@ -25,18 +25,28 @@ jobs:
     #   script:
     #     - yarn test
     #     - yarn lint
+
+
     # Define the release stage that runs semantic-release
+    # - stage: "Release"
+    #   # node_js: lts/*
+    #   # Advanced: optionally overwrite your default `script` step to skip the tests
+    #   script: skip
+    #   before_install:
+    #       - gem update --system
+    #       - gem install bundler
+    #   deploy:
+    #     provider: script
+    #     skip_cleanup: true
+    #     on:
+    #       all_branches: true
+    #     script: nvm install lts/*
+    #       # - npx semantic-release -d --debug
+
     - stage: "Release"
-      # node_js: lts/*
+      node_js: lts/*
       # Advanced: optionally overwrite your default `script` step to skip the tests
-      script: skip
+      script: npx semantic-release -d --debug
       before_install:
           - gem update --system
           - gem install bundler
-      deploy:
-        provider: script
-        skip_cleanup: true
-        on:
-          all_branches: true
-        script: nvm install lts/*
-          # - npx semantic-release -d --debug
