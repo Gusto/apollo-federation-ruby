@@ -21,6 +21,9 @@
   "devDependencies": {
     "@babel/core": "7.4.5",
     "@babel/preset-env": "7.4.5",
+    "@semantic-release/changelog": "^3.0.4",
+    "@semantic-release/exec": "^3.3.5",
+    "@semantic-release/git": "^7.0.16",
     "apollo-server-core": "2.6.3",
     "apollo-server-testing": "2.6.3",
     "babel-jest": "24.8.0",
@@ -28,6 +31,7 @@
     "eslint-config-gusto": "^9.5.1",
     "graphql-tag": "2.10.1",
     "jest": "24.8.0",
-    "nodemon": "1.19.1"
+    "nodemon": "1.19.1",
+    "semantic-release": "^15.13.19"
   }
 }
