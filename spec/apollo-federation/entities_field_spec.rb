@@ -221,6 +221,43 @@ RSpec.describe ApolloFederation::EntitiesField do
 
               it { is_expected.to match_array [{ 'id' => id.to_s, 'otherField' => 'more data' }] }
               it { expect(errors).to be_nil }
+
+              context 'when resolve_reference returns a lazy object' do
+                class LazyEntity
+                  def initialize(data)
+                    @data = data
+                  end
+
+                  def load_entity
+                    @data
+                  end
+                end
+
+                let(:schema) do
+                  type_with_key_class = type_with_key
+                  Class.new(base_schema) do
+                    lazy_resolve(LazyEntity, :load_entity)
+
+                    orphan_types type_with_key_class
+                  end
+                end
+
+                let(:type_with_key) do
+                  Class.new(base_object) do
+                    graphql_name 'TypeWithKey'
+                    key fields: 'id'
+                    field :id, 'ID', null: false
+                    field :other_field, 'String', null: false
+
+                    def self.resolve_reference(reference, _context)
+                      LazyEntity.new({ id: 123, other_field: 'more data' }) if reference[:id] == 123
+                    end
+                  end
+                end
+
+                it { is_expected.to match_array [{ 'id' => id.to_s, 'otherField' => 'more data' }] }
+                it { expect(errors).to be_nil }
+              end
             end
           end
         end
