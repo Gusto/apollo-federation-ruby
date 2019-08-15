@@ -12,7 +12,7 @@ jobs:
       script:
         - bundle exec rake
         - bundle exec rake rubocop
-    - name: "Integration Tests"
+    - name: 'Integration Tests'
       language: node_js
       node_js: node
       cache: yarn
@@ -25,12 +25,3 @@ jobs:
       script:
         - yarn test
         - yarn lint
-    - stage: 'Release'
-      if: type = push AND branch = master
-      language: node_js
-      node_js: lts/*
-      script: skip
-      deploy:
-        provider: script
-        skip_cleanup: true
-        script: npx semantic-release

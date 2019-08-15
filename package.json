@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "circle:execute": "circleci config process ./.circleci/config.yml > .circleci/processed-config.yml && circleci local execute -c .circleci/processed-config.yml --job",
     "start-gateway": "nodemon --delay 2 ./example/gateway.js",
     "start-service-accounts": "nodemon --exec \"bundle exec ruby\" ./example/accounts.rb",
     "start-service-reviews": "nodemon --exec \"bundle exec ruby\" ./example/reviews.rb",

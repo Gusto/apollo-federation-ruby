@@ -1,0 +1,38 @@
+version: 2.1
+
+orbs:
+  gusto: gusto/gusto@volatile
+
+jobs:
+  ruby-test:
+    executor: gusto/ruby-2-3
+    steps:
+      - gusto/bundle-install
+      - run: bundle exec rake
+  integration-tests:
+    executor: gusto/ruby-2-3
+    steps:
+      - gusto/bundle-install
+      - gusto/yarn-install
+      - run: yarn test
+      - run: yarn lint
+  release:
+    executor: gusto/ruby-2-3
+    steps:
+      - run: npx semantic-release
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - gusto/ruby-lint
+      - ruby-test
+      - integration-tests
+      - release:
+          filters:
+            branches:
+              only: master
+          requires:
+            - gusto/ruby-lint
+            - ruby-test
+            - integration-tests
