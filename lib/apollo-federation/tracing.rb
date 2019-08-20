@@ -3,16 +3,19 @@
 module ApolloFederation
   module Tracing
     KEY = :ftv1
+    DEBUG_KEY = "#{KEY}_debug".to_sym
 
-    def self.use(schema)
+    module_function
+
+    def use(schema)
       schema.tracer ApolloFederation::Tracing::Tracer
     end
 
-    def self.should_add_traces(headers)
+    def should_add_traces(headers)
       headers && headers['apollo-federation-include-trace'] == KEY.to_s
     end
 
-    def self.attach_trace_to_result(result)
+    def attach_trace_to_result(result)
       return result unless result.context[:tracing_enabled]
 
       trace = result.context.namespace(KEY)
@@ -32,18 +35,17 @@ module ApolloFederation
         root: trace[:node_map].root,
       )
 
-      json = result.to_h
       result[:extensions] ||= {}
       result[:extensions][KEY] = Base64.encode64(proto.class.encode(proto))
 
       if result.context[:debug_tracing]
-        result[:extensions]["#{KEY}_debug".to_sym] = proto.to_h
+        result[:extensions][DEBUG_KEY] = proto.to_h
       end
 
-      json
+      result.to_h
     end
 
-    def self.to_proto_timestamp(time)
+    def to_proto_timestamp(time)
       Google::Protobuf::Timestamp.new(seconds: time.to_i, nanos: time.nsec)
     end
   end
