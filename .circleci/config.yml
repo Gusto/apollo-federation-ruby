@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  gusto: gusto/gusto@volatile
+  gusto: gusto/gusto@0.0.9
 
 jobs:
   ruby-test:
