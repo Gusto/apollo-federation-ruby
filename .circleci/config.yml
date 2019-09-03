@@ -25,7 +25,7 @@ jobs:
             mkdir ~/.gem
             echo -e "---\r\n:rubygems_api_key: $GEM_HOST_API_KEY" > ~/.gem/credentials
             chmod 0600 /home/circleci/.gem/credentials
-      - run: npx semantic-release --dry-run
+      - run: npx semantic-release --dry-run --prepare
 
 workflows:
   version: 2
