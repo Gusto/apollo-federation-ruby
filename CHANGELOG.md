@@ -1,3 +1,10 @@
+## [0.3.1](https://github.com/Gusto/apollo-federation-ruby/compare/v0.3.0...v0.3.1) (2019-09-03)
+
+
+### Bug Fixes
+
+* push up lockfile changes ([4aaa827](https://github.com/Gusto/apollo-federation-ruby/commit/4aaa827))
+
 # [0.3.0](https://github.com/Gusto/apollo-federation-ruby/compare/v0.2.0...v0.3.0) (2019-09-03)
 
 
