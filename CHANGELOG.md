@@ -1,3 +1,10 @@
+## [0.3.2](https://github.com/Gusto/apollo-federation-ruby/compare/v0.3.1...v0.3.2) (2019-09-03)
+
+
+### Bug Fixes
+
+* run bundle-install before semantic-release ([2f60912](https://github.com/Gusto/apollo-federation-ruby/commit/2f60912))
+
 ## [0.3.1](https://github.com/Gusto/apollo-federation-ruby/compare/v0.3.0...v0.3.1) (2019-09-03)
 
 

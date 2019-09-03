@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    apollo-federation (0.3.1)
+    apollo-federation (0.3.2)
       graphql
 
 GEM
