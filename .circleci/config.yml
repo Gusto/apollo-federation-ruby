@@ -19,13 +19,14 @@ jobs:
   release:
     executor: gusto/ruby-2-3
     steps:
+      - gusto/bundle-install
       - gusto/yarn-install
       - run:
           command: |
             mkdir ~/.gem
             echo -e "---\r\n:rubygems_api_key: $GEM_HOST_API_KEY" > ~/.gem/credentials
             chmod 0600 /home/circleci/.gem/credentials
-      - run: npx semantic-release
+      - run: npx semantic-release --debug --dry-run
 
 workflows:
   version: 2
