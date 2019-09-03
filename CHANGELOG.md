@@ -1,3 +1,16 @@
+# [0.3.0](https://github.com/Gusto/apollo-federation-ruby/compare/v0.2.0...v0.3.0) (2019-09-03)
+
+
+### Bug Fixes
+
+* checkout before running semantic-release ([cb67533](https://github.com/Gusto/apollo-federation-ruby/commit/cb67533))
+* install before running semantic-release ([0ebb5b5](https://github.com/Gusto/apollo-federation-ruby/commit/0ebb5b5))
+
+
+### Features
+
+* switch from Travis to CircleCI ([#18](https://github.com/Gusto/apollo-federation-ruby/issues/18)) ([3af14b3](https://github.com/Gusto/apollo-federation-ruby/commit/3af14b3))
+
 ## [0.2.0](https://github.com/Gusto/apollo-federation-ruby/compare/v0.1.0...v0.2.0) (2019-08-01)
 
 
