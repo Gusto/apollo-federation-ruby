@@ -19,7 +19,7 @@ jobs:
   release:
     executor: gusto/ruby-2-3
     steps:
-      - checkout
+      - gusto/yarn-install
       - run: npx semantic-release
 
 workflows:
