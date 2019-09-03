@@ -19,6 +19,7 @@ jobs:
   release:
     executor: gusto/ruby-2-3
     steps:
+      - checkout
       - run: npx semantic-release
 
 workflows:
