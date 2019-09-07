@@ -1,5 +1,36 @@
 # frozen_string_literal: true
 
+# Trace events are nested and fire in this order
+# for a simple single-field query like `{ foo }`:
+#
+# <execute_multiplex>
+#   <lex></lex>
+#   <parse></parse>
+#   <validate></validate>
+#   <analyze_multiplex>
+#     <analyze_query></analyze_query>
+#   </analyze_multiplex>
+#
+#   <execute_query>
+#     <execute_field></execute_field>
+#   </execute_query>
+#
+#   <execute_query_lazy>
+#
+#     # `execute_field_lazy` fires *only* when the field is lazy
+#     # (https://graphql-ruby.org/schema/lazy_execution.html)
+#     # so if it fires we should overwrite the ending times recorded
+#     # in `execute_field` to capture the total execution time.
+#
+#     <execute_field_lazy></execute_field_lazy>
+#
+#   </execute_query_lazy>
+#
+#   # `execute_query_lazy` *always* fires, so it's a
+#   # safe place to capture ending times of the full query.
+#
+# </execute_multiplex>
+
 module ApolloFederation
   module Tracing
     module Tracer

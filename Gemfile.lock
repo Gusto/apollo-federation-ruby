@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     apollo-federation (0.3.2)
+      google-protobuf
       graphql
 
 GEM
@@ -33,8 +34,8 @@ GEM
     crass (1.0.4)
     diff-lcs (1.3)
     erubi (1.8.0)
-    graphql (1.9.11)
-    google-protobuf (3.9.0)
+    google-protobuf (3.9.1)
+    graphql (1.9.12)
     i18n (1.6.0)
       concurrent-ruby (~> 1.0)
     jaro_winkler (1.5.3)

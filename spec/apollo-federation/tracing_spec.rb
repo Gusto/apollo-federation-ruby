@@ -162,6 +162,58 @@ RSpec.describe ApolloFederation::Tracing do
     end
   end
 
+  class Lazy
+    def lazy_method
+      'lazy_value'
+    end
+  end
+
+  describe 'lazy values' do
+    let(:schema) do
+      query_obj = Class.new(GraphQL::Schema::Object) do
+        graphql_name 'Query'
+
+        field :test, String, null: false
+
+        def test
+          Lazy.new
+        end
+      end
+
+      Class.new(base_schema) do
+        query query_obj
+        lazy_resolve(Lazy, :lazy_method)
+      end
+    end
+
+    let(:trace) do
+      result = schema.execute('{ test }', context: { tracing_enabled: true })
+      described_class.attach_trace_to_result(result)
+      ApolloFederation::Tracing::Trace.decode(Base64.decode64(result[:extensions][:ftv1]))
+    end
+
+    it 'works with lazy values' do
+      expect(trace).to eq ApolloFederation::Tracing::Trace.new(
+        start_time: { seconds: 1_564_920_001, nanos: 0 },
+        end_time: { seconds: 1_564_920_002, nanos: 0 },
+        duration_ns: 4,
+        root: {
+          child: [{
+            response_name: 'test',
+            type: 'String!',
+            start_time: 1,
+            # This is the only discrepancy between a normal field and a lazy field.
+            # The fake clock incremented once at the end of the `execute_field` step,
+            # and again at the end of the `execute_field_lazy` step, so we record the
+            # end time as being two nanoseconds after the start time instead of one.
+            end_time: 3,
+            parent_type: 'Query',
+          }],
+        },
+      )
+    end
+  end
+
   describe 'indices and errors' do
     let(:schema) do
       item_obj = Class.new(GraphQL::Schema::Object) do
