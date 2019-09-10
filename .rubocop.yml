@@ -45,6 +45,8 @@ Metrics/ParameterLists:
   CountKeywordArgs: false
 Metrics/LineLength:
   Max: 100
+  Exclude:
+    - lib/apollo-federation/tracing/proto/apollo_pb.rb
 
 Naming/FileName:
   Exclude:
