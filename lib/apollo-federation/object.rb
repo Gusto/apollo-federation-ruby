@@ -11,7 +11,6 @@ module ApolloFederation
     module ClassMethods
       include HasDirectives
 
-      # TODO: We should support extending interfaces at some point
       def extend_type
         add_directive(name: 'extends')
       end

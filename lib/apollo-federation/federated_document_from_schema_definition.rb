@@ -26,6 +26,11 @@ module ApolloFederation
       merge_directives(object_node, object_type.metadata[:federation_directives])
     end
 
+    def build_interface_type_node(interface_type)
+      field_node = super
+      merge_directives(field_node, interface_type.metadata[:federation_directives])
+    end
+
     def build_field_node(field_type)
       field_node = super
       merge_directives(field_node, field_type.metadata[:federation_directives])

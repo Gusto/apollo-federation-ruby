@@ -44,6 +44,18 @@ class BaseObject < GraphQL::Schema::Object
 end
 ```
 
+Include the `ApolloFederation::Interface` module in your base interface module:
+
+```ruby
+include GraphQL::Schema::Interface
+  field_class BaseField
+
+  definition_methods do
+    include ApolloFederation::Interface
+  end
+end
+```
+
 Finally, include the `ApolloFederation::Schema` module in your schema:
 
 ```ruby
