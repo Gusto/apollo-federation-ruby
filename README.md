@@ -47,7 +47,9 @@ end
 Include the `ApolloFederation::Interface` module in your base interface module:
 
 ```ruby
-include GraphQL::Schema::Interface
+module BaseInterface
+  include GraphQL::Schema::Interface
+
   field_class BaseField
 
   definition_methods do
