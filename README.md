@@ -147,6 +147,30 @@ class User < BaseObject
 end
 ```
 
+### Tracing
+
+To support [federated tracing](https://www.apollographql.com/docs/apollo-server/federation/metrics/):
+
+1. Add `use ApolloFederation::Tracing` to your schema class.
+2. Change your controller to add `tracing_enabled: true` to the execution context based on the presence of the "include trace" header:
+    ```ruby
+    def execute
+      # ...
+      context = {
+        tracing_enabled: ApolloFederation::Tracing.should_add_traces(headers)
+      }
+      # ...
+    end
+    ```
+3. Change your controller to attach the traces to the response:
+    ```ruby
+    def execute
+      # ...
+      result = YourSchema.execute(query, ...)
+      render json: ApolloFederation::Tracing.attach_trace_to_result(result)
+    end
+    ```
+
 ## Known Issues and Limitations
  - Currently only works with class-based schemas
  - Does not add directives to the output of `Schema.to_definition`. Since `graphql-ruby` doesn't natively support schema directives, the directives will only be visible to the [Apollo Gateway](https://www.apollographql.com/docs/apollo-server/api/apollo-gateway/) through the `Query._service` field (see the [Apollo Federation specification](https://www.apollographql.com/docs/apollo-server/federation/federation-spec/))

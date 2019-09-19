@@ -1,3 +1,10 @@
+# [0.4.0](https://github.com/Gusto/apollo-federation-ruby/compare/v0.3.2...v0.4.0) (2019-09-10)
+
+
+### Features
+
+* add support for federated tracing ([#16](https://github.com/Gusto/apollo-federation-ruby/issues/16)) ([57ecc5b](https://github.com/Gusto/apollo-federation-ruby/commit/57ecc5b)), closes [#14](https://github.com/Gusto/apollo-federation-ruby/issues/14)
+
 ## [0.3.2](https://github.com/Gusto/apollo-federation-ruby/compare/v0.3.1...v0.3.2) (2019-09-03)
 
 
