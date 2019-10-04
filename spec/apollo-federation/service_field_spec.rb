@@ -5,6 +5,7 @@ require 'graphql'
 require 'apollo-federation/schema'
 require 'apollo-federation/field'
 require 'apollo-federation/object'
+require 'apollo-federation/interface'
 
 RSpec.describe ApolloFederation::ServiceField do
   let(:base_schema) do
@@ -139,6 +140,67 @@ RSpec.describe ApolloFederation::ServiceField do
 
         type Query {
           product: Product
+        }
+      GRAPHQL
+    )
+  end
+
+  it 'returns valid SDL for interface' do
+    base_interface = Module.new do
+      include GraphQL::Schema::Interface
+
+      graphql_name 'Interface'
+
+      definition_methods do
+        include ApolloFederation::Interface
+      end
+    end
+
+    product = Module.new do
+      include base_interface
+
+      graphql_name 'Product'
+
+      key fields: :upc
+      field :upc, String, null: false
+    end
+
+    book = Class.new(base_object) do
+      implements product
+
+      graphql_name 'Book'
+
+      extend_type
+
+      key fields: :upc
+      field :upc, String, null: false, external: true
+    end
+
+    pen = Class.new(base_object) do
+      implements product
+
+      graphql_name 'Pen'
+
+      key fields: :upc
+      field :upc, String, null: false
+    end
+
+    schema = Class.new(base_schema) do
+      orphan_types book, pen
+    end
+
+    expect(execute_sdl(schema)).to match_sdl(
+      <<~GRAPHQL,
+        type Book implements Product @extends @key(fields: "upc") {
+          upc: String! @external
+        }
+
+        type Pen implements Product @key(fields: "upc") {
+          upc: String!
+        }
+
+        interface Product @key(fields: "upc") {
+          upc: String!
         }
       GRAPHQL
     )
