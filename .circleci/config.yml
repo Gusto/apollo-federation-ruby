@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  gusto: gusto/gusto@0.0.9
+  gusto: gusto/gusto@0.0.10
 
 jobs:
   ruby-test:
@@ -19,14 +19,7 @@ jobs:
   release:
     executor: gusto/ruby-2-3
     steps:
-      - gusto/bundle-install
-      - gusto/yarn-install
-      - run:
-          command: |
-            mkdir -p ~/.gem
-            echo -e "---\r\n:rubygems_api_key: $GEM_HOST_API_KEY" > ~/.gem/credentials
-            chmod 0600 /home/circleci/.gem/credentials
-      - run: npx semantic-release --debug
+      - gusto/semantic-release-ruby
 
 workflows:
   version: 2
