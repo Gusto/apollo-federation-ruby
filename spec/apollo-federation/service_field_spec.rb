@@ -145,7 +145,7 @@ RSpec.describe ApolloFederation::ServiceField do
     )
   end
 
-  it 'returns valid SDL for interface' do
+  it 'returns valid SDL for interface types' do
     base_interface = Module.new do
       include GraphQL::Schema::Interface
 
