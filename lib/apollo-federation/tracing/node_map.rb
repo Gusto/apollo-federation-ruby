@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_support/core_ext/array/wrap'
 require 'apollo-federation/tracing/proto'
 
 module ApolloFederation
@@ -28,7 +27,7 @@ module ApolloFederation
       end
 
       def node_for_path(path)
-        nodes[Array.wrap(path).join('.')]
+        nodes[array_wrap(path).join('.')]
       end
 
       def add(path)
@@ -54,10 +53,10 @@ module ApolloFederation
       end
 
       def add_error(error)
-        path = Array.wrap(error['path']).join('.')
+        path = array_wrap(error['path']).join('.')
         node = nodes[path] || root
 
-        locations = Array.wrap(error['locations']).map do |location|
+        locations = array_wrap(error['locations']).map do |location|
           ApolloFederation::Tracing::Location.new(location)
         end
 
@@ -66,6 +65,16 @@ module ApolloFederation
           location: locations,
           json: JSON.dump(error),
         )
+      end
+
+      def array_wrap(object)
+        if object.nil?
+          []
+        elsif object.respond_to?(:to_ary)
+          object.to_ary || [object]
+        else
+          [object]
+        end
       end
     end
   end
