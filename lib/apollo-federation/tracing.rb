@@ -21,7 +21,7 @@ module ApolloFederation
       trace = result.context.namespace(KEY)
       unless trace[:start_time]
         raise StandardError.new, 'Apollo Federation Tracing not installed. \
- Add `use ApollFederation::Tracing` to your schema.'
+ Add `use ApolloFederation::Tracing` to your schema.'
       end
 
       result['errors']&.each do |error|
