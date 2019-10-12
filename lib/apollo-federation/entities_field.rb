@@ -2,6 +2,7 @@
 
 require 'graphql'
 require 'apollo-federation/any'
+require 'apollo-federation/entity_type_resolution_extension'
 
 module ApolloFederation
   module EntitiesField
@@ -15,6 +16,7 @@ module ApolloFederation
       def define_entities_field(entity_type)
         field(:_entities, [entity_type, null: true], null: false) do
           argument :representations, [Any], required: true
+          extension(EntityTypeResolutionExtension)
         end
       end
     end
@@ -38,13 +40,7 @@ module ApolloFederation
           result = reference
         end
 
-        # TODO: This isn't 100% correct: if (for some reason) 2 different resolve_reference calls
-        # return the same object, it might not have the right type
-        # Right now, apollo-federation just adds a __typename property to the result,
-        # but I don't really like the idea of modifying the resolved object
-        context[result] = type
-        # TODO: Handle lazy objects?
-        result
+        [type, result]
       end
     end
   end
