@@ -1,3 +1,10 @@
+## [0.4.1](https://github.com/Gusto/apollo-federation-ruby/compare/v0.4.0...v0.4.1) (2019-10-12)
+
+
+### Bug Fixes
+
+* Support lazy objects ([#17](https://github.com/Gusto/apollo-federation-ruby/issues/17)) ([68b0b9a](https://github.com/Gusto/apollo-federation-ruby/commit/68b0b9a))
+
 # [0.4.0](https://github.com/Gusto/apollo-federation-ruby/compare/v0.3.2...v0.4.0) (2019-09-10)
 
 
