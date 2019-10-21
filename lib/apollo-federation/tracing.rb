@@ -4,6 +4,14 @@ module ApolloFederation
   module Tracing
     KEY = :ftv1
     DEBUG_KEY = "#{KEY}_debug".to_sym
+    class NotInstalledError < StandardError
+      MESSAGE = 'Apollo Federation Tracing not installed. \
+Add `use ApolloFederation::Tracing` to your schema.'
+
+      def message
+        MESSAGE
+      end
+    end
 
     module_function
 
@@ -19,10 +27,7 @@ module ApolloFederation
       return result unless result.context[:tracing_enabled]
 
       trace = result.context.namespace(KEY)
-      unless trace[:start_time]
-        raise StandardError.new, 'Apollo Federation Tracing not installed. \
- Add `use ApollFederation::Tracing` to your schema.'
-      end
+      raise NotInstalledError unless trace[:start_time]
 
       result['errors']&.each do |error|
         trace[:node_map].add_error(error)
