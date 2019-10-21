@@ -1,3 +1,10 @@
+## [0.4.2](https://github.com/Gusto/apollo-federation-ruby/compare/v0.4.1...v0.4.2) (2019-10-21)
+
+
+### Bug Fixes
+
+* typo in exception message ([#33](https://github.com/Gusto/apollo-federation-ruby/issues/33)) ([0a337f3](https://github.com/Gusto/apollo-federation-ruby/commit/0a337f3))
+
 ## [0.4.1](https://github.com/Gusto/apollo-federation-ruby/compare/v0.4.0...v0.4.1) (2019-10-12)
 
 
