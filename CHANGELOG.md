@@ -1,3 +1,10 @@
+## [0.5.1](https://github.com/Gusto/apollo-federation-ruby/compare/v0.5.0...v0.5.1) (2019-10-22)
+
+
+### Bug Fixes
+
+* drop actionpack from runtime dependencies ([#34](https://github.com/Gusto/apollo-federation-ruby/issues/34)) ([64acd27](https://github.com/Gusto/apollo-federation-ruby/commit/64acd27))
+
 # [0.5.0](https://github.com/Gusto/apollo-federation-ruby/compare/v0.4.2...v0.5.0) (2019-10-22)
 
 
