@@ -29,7 +29,7 @@ module ApolloFederation
         end
 
         possible_entities = orig_defn.types.values.select do |type|
-          !type.introspection? && !type.default_scalar? &&
+          !type.introspection? && !type.default_scalar? && type.is_a?(GraphQL::ObjectType) &&
             type.metadata[:federation_directives]&.any? { |directive| directive[:name] == 'key' }
         end
 

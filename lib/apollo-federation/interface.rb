@@ -3,12 +3,14 @@
 require 'apollo-federation/has_directives'
 
 module ApolloFederation
-  module Object
+  module Interface
     def self.included(klass)
-      klass.extend(ClassMethods)
+      klass.definition_methods do
+        include DefinitionMethods
+      end
     end
 
-    module ClassMethods
+    module DefinitionMethods
       include HasDirectives
 
       def extend_type
