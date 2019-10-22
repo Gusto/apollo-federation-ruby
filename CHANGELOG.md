@@ -1,3 +1,10 @@
+# [0.5.0](https://github.com/Gusto/apollo-federation-ruby/compare/v0.4.2...v0.5.0) (2019-10-22)
+
+
+### Features
+
+* Support Interfaces ([#27](https://github.com/Gusto/apollo-federation-ruby/issues/27)) ([33d0097](https://github.com/Gusto/apollo-federation-ruby/commit/33d0097))
+
 ## [0.4.2](https://github.com/Gusto/apollo-federation-ruby/compare/v0.4.1...v0.4.2) (2019-10-21)
 
 
