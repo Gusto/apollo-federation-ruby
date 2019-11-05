@@ -49,7 +49,14 @@ module ApolloFederation
 
       def federation_sdl
         @federation_sdl ||= begin
+          warden = GraphQL::Schema::Warden.new(
+            default_filter,
+            schema: self,
+            context: {},
+          )
+
           document_from_schema = FederatedDocumentFromSchemaDefinition.new(self)
+          document_from_schema.instance_variable_set(:@warden, warden)
           GraphQL::Language::Printer.new.print(document_from_schema.document)
         end
       end
