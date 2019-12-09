@@ -2,8 +2,8 @@ PATH
   remote: .
   specs:
     apollo-federation (0.5.1)
-      google-protobuf
-      graphql
+      google-protobuf (~> 3.7)
+      graphql (~> 1.9.8)
 
 GEM
   remote: https://rubygems.org/
