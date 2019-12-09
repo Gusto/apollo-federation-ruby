@@ -1,3 +1,15 @@
+# [1.0.0](https://github.com/Gusto/apollo-federation-ruby/compare/v0.5.1...v1.0.0) (2019-12-09)
+
+
+### Bug Fixes
+
+* specify dependency versions ([#35](https://github.com/Gusto/apollo-federation-ruby/issues/35)) ([0a29bb3](https://github.com/Gusto/apollo-federation-ruby/commit/0a29bb3))
+
+
+### BREAKING CHANGES
+
+* Requires graphql ~> 1.9.8 and google-protobuf ~> 3.7
+
 ## [0.5.1](https://github.com/Gusto/apollo-federation-ruby/compare/v0.5.0...v0.5.1) (2019-10-22)
 
 
