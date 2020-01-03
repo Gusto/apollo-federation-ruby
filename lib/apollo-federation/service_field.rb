@@ -10,7 +10,7 @@ module ApolloFederation
     field(:_service, Service, null: false)
 
     def _service
-      { sdl: context.schema.class.federation_sdl }
+      { sdl: context.schema.class.federation_sdl(context) }
     end
   end
 end
