@@ -53,4 +53,4 @@ class AccountSchema < GraphQL::Schema
   query(Query)
 end
 
-GraphQLServer.run(AccountSchema, Port: 5001)
+GraphQLServer.run(AccountSchema, Port: 50001)

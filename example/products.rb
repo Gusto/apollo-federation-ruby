@@ -63,4 +63,4 @@ class ProductSchema < GraphQL::Schema
   query(Query)
 end
 
-GraphQLServer.run(ProductSchema, Port: 5003)
+GraphQLServer.run(ProductSchema, Port: 50003)

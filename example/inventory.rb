@@ -47,4 +47,4 @@ class InventorySchema < GraphQL::Schema
   orphan_types Product
 end
 
-GraphQLServer.run(InventorySchema, Port: 5004)
+GraphQLServer.run(InventorySchema, Port: 50004)

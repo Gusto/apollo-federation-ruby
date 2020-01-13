@@ -101,4 +101,4 @@ class ReviewSchema < GraphQL::Schema
   orphan_types User, Review, Product
 end
 
-GraphQLServer.run(ReviewSchema, Port: 5002)
+GraphQLServer.run(ReviewSchema, Port: 50002)
