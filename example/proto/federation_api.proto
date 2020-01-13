@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package graphql;
+
+option java_multiple_files = true;
+option java_outer_classname = "FederationApiProto";
+option java_package = "com.graphql";
+
+// The greeting service definition.
+service FederationAPI {
+  // Execute the graphql query.
+  rpc execute(ExecuteRequest) returns (ExecuteResponse);
+}
+
+// The request message containing the body.
+message ExecuteRequest {
+  string body = 1;
+}
+
+// The response message containing the body.
+message ExecuteResponse {
+  string body = 1;
+}

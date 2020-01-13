@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative './graphql_server'
+require_relative './grpc_server'
 
 # extend type Query {
 #   topProducts(first: Int = 5): [Product]
@@ -63,4 +64,5 @@ class ProductSchema < GraphQL::Schema
   query(Query)
 end
 
-GraphQLServer.run(ProductSchema, Port: 50003)
+# GraphQLServer.run(ProductSchema, Port: 50003)
+GrpcServer.run(ProductSchema, Port: 50003)

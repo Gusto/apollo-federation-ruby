@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative './graphql_server'
+require_relative './grpc_server'
 
 # extend type Query {
 #   me: User
@@ -53,4 +54,5 @@ class AccountSchema < GraphQL::Schema
   query(Query)
 end
 
-GraphQLServer.run(AccountSchema, Port: 50001)
+# GraphQLServer.run(AccountSchema, Port: 50001)
+GrpcServer.run(AccountSchema, Port: 50001)

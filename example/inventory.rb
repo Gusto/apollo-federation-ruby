@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative './graphql_server'
+require_relative './grpc_server'
 
 # extend type Product @key(fields: "upc") {
 #   upc: String! @external
@@ -47,4 +48,5 @@ class InventorySchema < GraphQL::Schema
   orphan_types Product
 end
 
-GraphQLServer.run(InventorySchema, Port: 50004)
+# GraphQLServer.run(InventorySchema, Port: 50004)
+GrpcServer.run(InventorySchema, Port: 50004)

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative './graphql_server'
+require_relative './grpc_server'
 
 # type Review @key(fields: "id") {
 #   id: ID!
@@ -101,4 +102,5 @@ class ReviewSchema < GraphQL::Schema
   orphan_types User, Review, Product
 end
 
-GraphQLServer.run(ReviewSchema, Port: 50002)
+# GraphQLServer.run(ReviewSchema, Port: 50002)
+GrpcServer.run(ReviewSchema, Port: 50002)

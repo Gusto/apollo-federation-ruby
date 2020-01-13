@@ -4,6 +4,7 @@ PATH
     apollo-federation (1.0.0)
       google-protobuf (~> 3.7)
       graphql (~> 1.9.8)
+      grpc
 
 GEM
   remote: https://rubygems.org/
@@ -34,8 +35,13 @@ GEM
     crass (1.0.5)
     diff-lcs (1.3)
     erubi (1.8.0)
-    google-protobuf (3.11.1)
-    graphql (1.9.16)
+    google-protobuf (3.11.2)
+    googleapis-common-protos-types (1.0.4)
+      google-protobuf (~> 3.0)
+    graphql (1.9.17)
+    grpc (1.26.0)
+      google-protobuf (~> 3.8)
+      googleapis-common-protos-types (~> 1.0)
     i18n (1.6.0)
       concurrent-ruby (~> 1.0)
     jaro_winkler (1.5.3)
