@@ -1,5 +1,7 @@
 # apollo-federation
 
+[![CircleCI](https://circleci.com/gh/Gusto/apollo-federation-ruby/tree/master.svg?style=svg)](https://circleci.com/gh/Gusto/apollo-federation-ruby/tree/master)
+
 This gem extends the [GraphQL Ruby](http://graphql-ruby.org/) gem to add support for creating an [Apollo Federation](https://www.apollographql.com/docs/apollo-server/federation/introduction/) schema.
 
 ## DISCLAIMER
