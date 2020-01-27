@@ -18,7 +18,11 @@ module ApolloFederation
         if query.nil?
           base = GraphQL::Schema::Object
         else
-          base = query.metadata[:type_class]
+          if Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new("1.10.0")
+            base = query
+          else
+            base = query.metadata[:type_class]
+          end
         end
 
         federation_query = Class.new(base) do
@@ -42,7 +46,7 @@ module ApolloFederation
           federation_query.define_entities_field(entity_type)
         end
 
-        query(federation_query)
+        @query_object = federation_query
 
         super
       end
