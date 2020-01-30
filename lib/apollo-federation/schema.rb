@@ -47,7 +47,7 @@ module ApolloFederation
         super
       end
 
-      def federation_sdl(context:)
+      def federation_sdl(context = nil)
         document_from_schema = FederatedDocumentFromSchemaDefinition.new(self, context: context)
         GraphQL::Language::Printer.new.print(document_from_schema.document)
       end
