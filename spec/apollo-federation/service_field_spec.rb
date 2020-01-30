@@ -386,13 +386,13 @@ RSpec.describe ApolloFederation::ServiceField do
         field :product, product, null: true
       end
 
-      schema = Class.new(base_schema) do
+      Class.new(base_schema) do
         query query_obj
       end
     end
     let(:filter) do
       class PermissionWhitelist
-        def call(schema_member, context)
+        def call(_schema_member, context)
           context[:user_role] == :admin
         end
       end
@@ -400,7 +400,9 @@ RSpec.describe ApolloFederation::ServiceField do
       PermissionWhitelist.new
     end
     let(:context) { { user_role: :admin } }
-    let(:executed_with_context) { schema.execute('{ _service { sdl } }', only: filter, context: context) }
+    let(:executed_with_context) do
+      schema.execute('{ _service { sdl } }', only: filter, context: context)
+    end
     let(:executed_without_context) { schema.execute('{ _service { sdl } }', only: filter) }
 
     it 'passes context to filters' do
@@ -418,18 +420,26 @@ RSpec.describe ApolloFederation::ServiceField do
     end
 
     it 'works without context' do
-      expect(executed_without_context['errors']).to match_array([
-        include({"message"=>"Field '_service' doesn't exist on type 'Query'"})
-      ])
+      expect(executed_without_context['errors']).to(
+        match_array(
+          [
+            include('message' => "Field '_service' doesn't exist on type 'Query'"),
+          ],
+        ),
+      )
     end
 
     context 'when not authorized' do
       let(:context) { { user_role: :foo } }
 
       it 'returns an error message' do
-        expect(executed_with_context['errors']).to match_array([
-          include({"message"=>"Field '_service' doesn't exist on type 'Query'"})
-        ])
+        expect(executed_with_context['errors']).to(
+          match_array(
+            [
+              include('message' => "Field '_service' doesn't exist on type 'Query'"),
+            ],
+          ),
+        )
       end
     end
   end
