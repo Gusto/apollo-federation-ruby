@@ -1,3 +1,17 @@
+## [1.0.2](https://github.com/Gusto/apollo-federation-ruby/compare/v1.0.1...v1.0.2) (2020-02-19)
+
+
+### Bug Fixes
+
+* service field context ([#50](https://github.com/Gusto/apollo-federation-ruby/issues/50)) ([6dd1fe7](https://github.com/Gusto/apollo-federation-ruby/commit/6dd1fe7))
+
+## [1.0.1](https://github.com/Gusto/apollo-federation-ruby/compare/v1.0.0...v1.0.1) (2020-01-29)
+
+
+### Bug Fixes
+
+* Send context to SDL generation / don't cache ([#45](https://github.com/Gusto/apollo-federation-ruby/issues/45)) ([9a29be1](https://github.com/Gusto/apollo-federation-ruby/commit/9a29be1))
+
 # [1.0.0](https://github.com/Gusto/apollo-federation-ruby/compare/v0.5.1...v1.0.0) (2019-12-09)
 
 
