@@ -17,12 +17,10 @@ module ApolloFederation
 
         if query.nil?
           base = GraphQL::Schema::Object
+        elsif Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('1.10.0')
+          base = query
         else
-          if Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new("1.10.0")
-            base = query
-          else
-            base = query.metadata[:type_class]
-          end
+          base = query.metadata[:type_class]
         end
 
         federation_query = Class.new(base) do
