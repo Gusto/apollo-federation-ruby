@@ -29,7 +29,6 @@ RSpec.describe ApolloFederation::EntitiesField do
             type Query {
               _service: _Service!
             }
-
             """
             The sdl representing the federated service capabilities. Includes federation
             directives, removes federation types, and includes rest of full schema after
@@ -77,16 +76,12 @@ RSpec.describe ApolloFederation::EntitiesField do
                 _service: _Service!
                 typeWithKey: TypeWithKey
               }
-
               type TypeWithKey {
                 id: ID!
                 otherField: String
               }
-
               scalar _Any
-
               union _Entity = TypeWithKey
-
               """
               The sdl representing the federated service capabilities. Includes federation
               directives, removes federation types, and includes rest of full schema after
@@ -124,21 +119,16 @@ RSpec.describe ApolloFederation::EntitiesField do
               type Mutation {
                 typeWithKey: TypeWithKey
               }
-
               type Query {
                 _entities(representations: [_Any!]!): [_Entity]!
                 _service: _Service!
               }
-
               type TypeWithKey {
                 id: ID!
                 otherField: String
               }
-
               scalar _Any
-
               union _Entity = TypeWithKey
-
               """
               The sdl representing the federated service capabilities. Includes federation
               directives, removes federation types, and includes rest of full schema after
@@ -221,12 +211,12 @@ RSpec.describe ApolloFederation::EntitiesField do
                 context 'when resolve_reference returns a lazy object' do
                   let(:lazy_entity) do
                     Class.new do
-                      def initialize(data)
-                        @data = data
+                      def initialize(callable)
+                        @callable = callable
                       end
 
                       def load_entity
-                        @data
+                        @callable.call
                       end
                     end
                   end
@@ -241,24 +231,79 @@ RSpec.describe ApolloFederation::EntitiesField do
                     end
                   end
 
-                  let(:type_with_key) do
+                  let(:resolve_method) do
                     lazy_entity_class = lazy_entity
+
+                    lambda do |reference, _context|
+                      if reference[:id] == 123
+                        lazy_entity_class.new(-> { { id: 123, other_field: 'data!' } })
+                      end
+                    end
+                  end
+
+                  let(:type_with_key) do
+                    resolve_method_pointer = resolve_method
+
                     Class.new(base_object) do
                       graphql_name 'TypeWithKey'
                       key fields: 'id'
                       field :id, 'ID', null: false
                       field :other_field, 'String', null: false
 
-                      define_singleton_method :resolve_reference do |reference, _context|
-                        if reference[:id] == 123
-                          lazy_entity_class.new(id: 123, other_field: 'data!')
-                        end
-                      end
+                      define_singleton_method :resolve_reference, &resolve_method_pointer
                     end
                   end
 
                   it { is_expected.to match_array [{ 'id' => id.to_s, 'otherField' => 'data!' }] }
                   it { expect(errors).to be_nil }
+
+                  context 'when lazy object raises an error' do
+                    let(:base_schema) do
+                      Class.new(GraphQL::Schema) do
+                        include ApolloFederation::Schema
+                      end
+                    end
+
+                    let(:id1) { 123 }
+                    let(:id2) { 321 }
+                    let(:representations) do
+                      [
+                        { __typename: typename, id: id1 },
+                        { __typename: typename, id: id2 },
+                      ]
+                    end
+
+                    let(:resolve_method) do
+                      lazy_entity_class = lazy_entity
+
+                      lambda do |reference, _context|
+                        case reference[:id]
+                        when 123
+                          lazy_entity_class.new(-> { { id: 123, other_field: 'more data' } })
+                        when 321
+                          lazy_entity_class.new(-> { raise(GraphQL::ExecutionError, 'error') })
+                        end
+                      end
+                    end
+
+                    specify do
+                      expect(execute_query.to_h).to match(
+                        'data' => {
+                          '_entities' => [
+                            { 'id' => id.to_s, 'otherField' => 'more data' },
+                            nil,
+                          ],
+                        },
+                        'errors' => [
+                          {
+                            'locations' => [{ 'column' => 3, 'line' => 2 }],
+                            'message' => 'error',
+                            'path' => ['_entities', 1],
+                          },
+                        ],
+                      )
+                    end
+                  end
                 end
               end
             end
