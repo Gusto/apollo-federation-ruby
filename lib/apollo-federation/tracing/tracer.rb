@@ -103,7 +103,7 @@ module ApolloFederation
       # because we don't have the error `location` here.
       # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def self.execute_field(data, &block)
-        context = data.fetch(:context) || data.fetch(:query).context
+        context = data.fetch(:context, nil) || data.fetch(:query).context
         return block.call unless context && context[:tracing_enabled]
 
         start_time_nanos = Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)
