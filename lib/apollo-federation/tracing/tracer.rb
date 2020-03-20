@@ -147,7 +147,7 @@ module ApolloFederation
       # Optional Step 3:
       # Overwrite the end times on the trace node if the resolver was lazy.
       def self.execute_field_lazy(data, &block)
-        context = data.fetch(:context) || data.fetch(:query).context
+        context = data.fetch(:context, nil) || data.fetch(:query).context
         return block.call unless context && context[:tracing_enabled]
 
         begin
