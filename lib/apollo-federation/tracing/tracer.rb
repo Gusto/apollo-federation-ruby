@@ -116,16 +116,18 @@ module ApolloFederation
 
         end_time_nanos = Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)
 
-        # interpreter runtime
+        # legacy runtime
         if data.include?(:context)
           path = context.path
           field_name = context.field.graphql_name
           field_type = context.field.type.to_s
           parent_type = context.parent_type.graphql_name
-        else # legacy runtime
+        else # interpreter runtime
           path = data.fetch(:path)
-          field_name = data.fetch(:field).graphql_name
-          field_type = data.fetch(:field).type.unwrap.graphql_name
+          field = data.fetch(:field)
+          field_name = field.graphql_name
+          field_type = field.type.unwrap.graphql_name
+          field_type = field_type + '!' if field.type.non_null?
           parent_type = data.fetch(:owner).graphql_name
         end
 
