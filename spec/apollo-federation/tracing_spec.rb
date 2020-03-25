@@ -252,7 +252,7 @@ RSpec.describe ApolloFederation::Tracing do
       end
 
       it 'records index instead of response_name for items in arrays' do
-        expected_trace = ApolloFederation::Tracing::Trace.new(
+        expect(trace).to eq(ApolloFederation::Tracing::Trace.new(
           start_time: { seconds: 1_564_920_001, nanos: 0 },
           end_time: { seconds: 1_564_920_002, nanos: 0 },
           duration_ns: 11,
@@ -304,8 +304,7 @@ RSpec.describe ApolloFederation::Tracing do
               ],
             }],
           },
-        )
-        expect(trace).to eq(expected_trace)
+        ))
       end
     end
   end
