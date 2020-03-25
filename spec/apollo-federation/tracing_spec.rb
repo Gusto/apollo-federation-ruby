@@ -5,12 +5,6 @@ require 'apollo-federation'
 
 RSpec.describe ApolloFederation::Tracing do
   RSpec.shared_examples 'a basic tracer' do
-    let(:base_schema) do
-      Class.new(GraphQL::Schema) do
-        use ApolloFederation::Tracing
-      end
-    end
-
     # configure clocks to increment by 1 for each call
     before do
       t = Time.new(2019, 8, 4, 12, 0, 0, '+00:00')
@@ -312,6 +306,16 @@ RSpec.describe ApolloFederation::Tracing do
         )
       end
     end
+  end
+
+  context 'with the legacy runtime' do
+    let(:base_schema) do
+      Class.new(GraphQL::Schema) do
+        use ApolloFederation::Tracing
+      end
+    end
+
+    it_behaves_like 'a basic tracer'
   end
 
   context 'with the new interpreter' do

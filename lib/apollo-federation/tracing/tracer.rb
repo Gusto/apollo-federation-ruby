@@ -126,8 +126,7 @@ module ApolloFederation
           path = data.fetch(:path)
           field = data.fetch(:field)
           field_name = field.graphql_name
-          field_type = field.type.unwrap.graphql_name
-          field_type += '!' if field.type.non_null?
+          field_type = field.type.to_type_signature
           parent_type = data.fetch(:owner).graphql_name
         end
 
