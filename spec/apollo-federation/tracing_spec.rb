@@ -252,59 +252,64 @@ RSpec.describe ApolloFederation::Tracing do
       end
 
       it 'records index instead of response_name for items in arrays' do
-        expect(trace).to eq(ApolloFederation::Tracing::Trace.new(
-          start_time: { seconds: 1_564_920_001, nanos: 0 },
-          end_time: { seconds: 1_564_920_002, nanos: 0 },
-          duration_ns: 11,
-          root: {
-            child: [{
-              response_name: 'items',
-              type: '[Item!]!',
-              start_time: 1,
-              end_time: 2,
-              parent_type: 'Query',
-              child: [
-                {
-                  index: 0,
-                  child: [{
-                    response_name: 'id',
-                    type: 'String!',
-                    start_time: 3,
-                    end_time: 4,
-                    parent_type: 'Item',
-                  }, {
-                    response_name: 'name',
-                    type: 'String!',
-                    start_time: 5,
-                    end_time: 6,
-                    parent_type: 'Item',
-                  },],
-                },
-                {
-                  index: 1,
-                  child: [{
-                    response_name: 'id',
-                    type: 'String!',
-                    start_time: 7,
-                    end_time: 8,
-                    parent_type: 'Item',
-                  }, {
-                    response_name: 'name',
-                    type: 'String!',
-                    start_time: 9,
-                    end_time: 10,
-                    parent_type: 'Item',
-                    error: [{
-                      message: "Can't continue with this query",
-                      location: [{ line: 1, column: 15 }],
-                      json: %({"message":"Can't continue with this query","locations":[{"line":1,"column":15}],"path":["items",1,"name"]}),
-                    }],
-                  },],
-                },
-              ],
-            }],
-          },
-        ))
+        expect(trace).to eq(
+          ApolloFederation::Tracing::Trace.new(
+            start_time: { seconds: 1_564_920_001, nanos: 0 },
+            end_time: { seconds: 1_564_920_002, nanos: 0 },
+            duration_ns: 11,
+            root: {
+              child: [{
+                response_name: 'items',
+                type: '[Item!]!',
+                start_time: 1,
+                end_time: 2,
+                parent_type: 'Query',
+                child: [
+                  {
+                    index: 0,
+                    child: [{
+                      response_name: 'id',
+                      type: 'String!',
+                      start_time: 3,
+                      end_time: 4,
+                      parent_type: 'Item',
+                    }, {
+                      response_name: 'name',
+                      type: 'String!',
+                      start_time: 5,
+                      end_time: 6,
+                      parent_type: 'Item',
+                    },],
+                  },
+                  {
+                    index: 1,
+                    child: [{
+                      response_name: 'id',
+                      type: 'String!',
+                      start_time: 7,
+                      end_time: 8,
+                      parent_type: 'Item',
+                    }, {
+                      response_name: 'name',
+                      type: 'String!',
+                      start_time: 9,
+                      end_time: 10,
+                      parent_type: 'Item',
+                      error: [{
+                        message: "Can't continue with this query",
+                        location: [{ line: 1, column: 15 }],
+                        json: {
+                          message: "Can't continue with this query",
+                          locations: [{ line: 1, column: 15 }], path: ['items', 1, 'name'],
+                        }.to_json,
+                      }],
+                    },],
+                  },
+                ],
+              }],
+            },
+          ),
+        )
       end
     end
   end

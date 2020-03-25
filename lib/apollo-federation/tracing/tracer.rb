@@ -127,7 +127,7 @@ module ApolloFederation
           field = data.fetch(:field)
           field_name = field.graphql_name
           field_type = field.type.unwrap.graphql_name
-          field_type = field_type + '!' if field.type.non_null?
+          field_type += '!' if field.type.non_null?
           parent_type = data.fetch(:owner).graphql_name
         end
 
