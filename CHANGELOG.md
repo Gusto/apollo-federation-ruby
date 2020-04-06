@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/Gusto/apollo-federation-ruby/compare/v1.0.3...v1.0.4) (2020-04-06)
+
+
+### Bug Fixes
+
+* Fix spec to account for breaking change to graphql-ruby 1.10.0 ([#62](https://github.com/Gusto/apollo-federation-ruby/issues/62)) ([a631441](https://github.com/Gusto/apollo-federation-ruby/commit/a631441))
+
 ## [1.0.3](https://github.com/Gusto/apollo-federation-ruby/compare/v1.0.2...v1.0.3) (2020-03-25)
 
 
