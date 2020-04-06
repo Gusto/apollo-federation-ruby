@@ -323,6 +323,7 @@ RSpec.describe ApolloFederation::Tracing do
       Class.new(GraphQL::Schema) do
         use ApolloFederation::Tracing
         use GraphQL::Execution::Interpreter
+        use GraphQL::Analysis::AST
       end
     end
 
