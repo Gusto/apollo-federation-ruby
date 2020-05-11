@@ -2,6 +2,9 @@
 yarn-debug.log*
 yarn-error.log*
 
+# ruby
+.byebug_history
+
 # Dependency directories
 node_modules/
 

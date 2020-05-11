@@ -5,6 +5,8 @@ require 'apollo-federation/service'
 
 module ApolloFederation
   class FederatedDocumentFromSchemaDefinition < GraphQL::Language::DocumentFromSchemaDefinition
+    include BackwardCompatibility
+
     FEDERATION_TYPES = [
       '_Any',
       '_Entity',
@@ -23,17 +25,15 @@ module ApolloFederation
         end
         federation_fields.each { |field| object_node = object_node.delete_child(field) }
       end
-      merge_directives(object_node, object_type.metadata[:federation_directives])
+      merge_directives(object_node, extract_federation_directives(object_type))
     end
 
     def build_interface_type_node(interface_type)
-      field_node = super
-      merge_directives(field_node, interface_type.metadata[:federation_directives])
+      merge_directives(super, extract_federation_directives(interface_type))
     end
 
     def build_field_node(field_type)
-      field_node = super
-      merge_directives(field_node, field_type.metadata[:federation_directives])
+      merge_directives(super, extract_federation_directives(field_type))
     end
 
     def build_type_definition_nodes(types)
@@ -54,19 +54,24 @@ module ApolloFederation
     end
 
     def merge_directives(node, directives)
-      (directives || []).each do |directive|
-        node = node.merge_directive(
+      (directives || []).reduce(node) do |reduced_node, directive|
+        reduced_node.merge_directive(
           name: directive[:name],
           arguments: build_arguments_node(directive[:arguments]),
         )
       end
-      node
     end
 
     def build_arguments_node(arguments)
-      (arguments || []).map do |arg|
-        GraphQL::Language::Nodes::Argument.new(name: arg[:name], value: arg[:values])
-      end
+      (arguments || []).map { |arg| build_argument(arg) }
+    end
+
+    def build_argument(arg)
+      GraphQL::Language::Nodes::Argument.new(name: arg[:name], value: arg[:values])
+    end
+
+    def extract_federation_directives(type)
+      get_graphql_type_metadata(type)[:federation_directives]
     end
   end
 end

@@ -3,10 +3,27 @@
 require 'apollo-federation/entities_field'
 require 'apollo-federation/service_field'
 require 'apollo-federation/entity'
-require 'apollo-federation/federated_document_from_schema_definition.rb'
+require 'apollo-federation/federated_document_from_schema_definition'
 
 module ApolloFederation
   module Schema
+    def self.use(schema)
+      possible_entities = possible_entities(schema)
+      entity_type = schema.types['_Entity']
+
+      return unless entity_type.nil? || possible_entities.count.positive?
+
+      entity_type.possible_types(*possible_entities)
+    end
+
+    def self.possible_entities(schema)
+      schema.types.values.select do |type|
+        type = type.to_graphql
+        !type.introspection? && !type.default_scalar? && type.is_a?(GraphQL::ObjectType) &&
+          type.metadata[:federation_directives]&.any? { |directive| directive[:name] == 'key' }
+      end
+    end
+
     def self.included(klass)
       klass.extend(ClassMethods)
     end
@@ -49,11 +66,6 @@ module ApolloFederation
           include EntitiesField
           include ServiceField
         end
-      end
-
-      def federation_sdl(context: nil)
-        document_from_schema = FederatedDocumentFromSchemaDefinition.new(self, context: context)
-        GraphQL::Language::Printer.new.print(document_from_schema.document)
       end
     end
   end

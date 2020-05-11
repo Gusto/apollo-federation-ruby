@@ -3,16 +3,19 @@
 require 'graphql'
 require 'apollo-federation/any'
 require 'apollo-federation/entity_type_resolution_extension'
+require 'apollo-federation/entity'
+require 'apollo-federation/backward_compatibility'
+require 'apollo-federation/errors'
 
 module ApolloFederation
   module EntitiesField
+    include ApolloFederation::BackwardCompatibility
+
     def self.included(base)
       base.extend(ClassMethods)
     end
 
     module ClassMethods
-      extend GraphQL::Schema::Member::HasFields
-
       def define_entities_field(entity_type)
         field(:_entities, [entity_type, null: true], null: false) do
           argument :representations, [Any], required: true
@@ -23,17 +26,14 @@ module ApolloFederation
 
     def _entities(representations:)
       representations.map do |reference|
-        typename = reference[:__typename]
         # TODO: Use warden or schema?
-        type = context.warden.get_type(typename)
+        type = context.warden.get_type(reference[:__typename])
+
         if type.nil? || type.kind != GraphQL::TypeKinds::OBJECT
-          # TODO: Raise a specific error class?
-          raise "The _entities resolver tried to load an entity for type \"#{typename}\"," \
-                ' but no object type of that name was found in the schema'
+          raise UnsupportedEntityType, reference[:__typename]
         end
 
-        # TODO: Handle non-class types?
-        type_class = type.metadata[:type_class]
+        type_class = get_graphql_type(type)
         if type_class.respond_to?(:resolve_reference)
           result = type_class.resolve_reference(reference, context)
         else
