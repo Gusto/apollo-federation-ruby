@@ -5,7 +5,6 @@ module ApolloFederation
     attr_reader :federation_directives
 
     def add_directive(name:, arguments: nil)
-      # TODO: Set in initialize?
       @federation_directives ||= []
       @federation_directives << { name: name, arguments: arguments }
     end

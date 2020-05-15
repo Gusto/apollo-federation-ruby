@@ -54,9 +54,6 @@ module ApolloFederation
     end
 
     def merge_directives(node, type)
-      # Options:
-      #  - Check for both HasDirectives and InstanceDefinable, then set directives to [] if neither
-      #  - Include HasDirectives in the Query object that gets created by the schema
       if type.is_a?(ApolloFederation::HasDirectives)
         directives = type.federation_directives
       elsif type.is_a?(GraphQL::Define::InstanceDefinable)

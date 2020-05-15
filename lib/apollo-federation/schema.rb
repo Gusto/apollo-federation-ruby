@@ -8,7 +8,6 @@ require 'apollo-federation/federated_document_from_schema_definition.rb'
 module ApolloFederation
   module Schema
     def self.included(klass)
-      # # TODO: Maybe make this a "use" interface?
       klass.extend(ClassMethods)
     end
 
