@@ -33,7 +33,7 @@ module ApolloFederation
         end
 
         # TODO: Handle non-class types?
-        type_class = type.metadata[:type_class]
+        type_class = type.is_a?(GraphQL::ObjectType) ? type.metadata[:type_class] : type
         if type_class.respond_to?(:resolve_reference)
           result = type_class.resolve_reference(reference, context)
         else
