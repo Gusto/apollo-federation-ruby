@@ -27,8 +27,8 @@ module ApolloFederation
               entity_type = Class.new(Entity) do
                 possible_types(*possible_entities)
               end
-              # TODO: Should/can we encapsulate all of this inside the module? What's the best/most Ruby
-              # way to split this out?
+              # TODO: Should/can we encapsulate all of this inside the module? What's the best/most
+              # Ruby way to split this out?
               @federation_query_object.define_entities_field(entity_type)
             end
 

@@ -210,12 +210,12 @@ RSpec.describe ApolloFederation::EntitiesField do
                     field :other_field, 'String', null: false
 
                     def self.resolve_reference(reference, _context)
-                      { id: 123, other_field: 'more data' } if reference[:id] == 123
+                      { id: 123, other_field: 'data!' } if reference[:id] == 123
                     end
                   end
                 end
 
-                it { is_expected.to match_array [{ 'id' => id.to_s, 'otherField' => 'more data' }] }
+                it { is_expected.to match_array [{ 'id' => id.to_s, 'otherField' => 'data!' }] }
                 it { expect(errors).to be_nil }
 
                 context 'when resolve_reference returns a lazy object' do
@@ -251,13 +251,13 @@ RSpec.describe ApolloFederation::EntitiesField do
 
                       define_singleton_method :resolve_reference do |reference, _context|
                         if reference[:id] == 123
-                          lazy_entity_class.new(id: 123, other_field: 'more data')
+                          lazy_entity_class.new(id: 123, other_field: 'data!')
                         end
                       end
                     end
                   end
 
-                  it { is_expected.to match_array [{ 'id' => id.to_s, 'otherField' => 'more data' }] }
+                  it { is_expected.to match_array [{ 'id' => id.to_s, 'otherField' => 'data!' }] }
                   it { expect(errors).to be_nil }
                 end
               end
