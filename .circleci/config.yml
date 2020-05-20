@@ -12,7 +12,7 @@ jobs:
     steps:
       - gusto/bundle-install:
           gemfile: << parameters.gemfile >>
-      - run: bundle exec rake
+      - run: bundle exec --gemfile << parameters.gemfile >> rake
   integration-tests:
     parameters:
       gemfile:
@@ -22,7 +22,10 @@ jobs:
       - gusto/bundle-install:
           gemfile: << parameters.gemfile >>
       - gusto/yarn-install
-      - run: yarn test
+      - run:
+          command: yarn test
+          environment:
+            GEMFILE: << parameters.gemfile >>
       - run: yarn lint
   release:
     executor: gusto/ruby-2-3
