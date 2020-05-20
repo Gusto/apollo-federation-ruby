@@ -37,11 +37,11 @@ workflows:
       - ruby-test:
           matrix:
             parameters:
-              gemfile: ["Gemfile", "graphql-1.9"]
+              gemfile: ["Gemfile", "graphql-1.9.gemfile"]
       - integration-tests:
           matrix:
             parameters:
-              gemfile: ["Gemfile", "graphql-1.9"]
+              gemfile: ["Gemfile", "graphql-1.9.gemfile"]
       - release:
           filters:
             branches:
