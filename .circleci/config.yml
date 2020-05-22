@@ -1,20 +1,31 @@
 version: 2.1
 
 orbs:
-  gusto: gusto/gusto@0.0.10
+  gusto: gusto/gusto@0.0.13
 
 jobs:
   ruby-test:
+    parameters:
+      gemfile:
+        type: string
     executor: gusto/ruby-2-3
     steps:
-      - gusto/bundle-install
-      - run: bundle exec rake
+      - gusto/bundle-install:
+          gemfile: << parameters.gemfile >>
+      - run: bundle exec --gemfile << parameters.gemfile >> rake
   integration-tests:
+    parameters:
+      gemfile:
+        type: string
     executor: gusto/ruby-2-3
     steps:
-      - gusto/bundle-install
+      - gusto/bundle-install:
+          gemfile: << parameters.gemfile >>
       - gusto/yarn-install
-      - run: yarn test
+      - run:
+          command: yarn test
+          environment:
+            GEMFILE: << parameters.gemfile >>
       - run: yarn lint
   release:
     executor: gusto/ruby-2-3
@@ -26,8 +37,14 @@ workflows:
   main:
     jobs:
       - gusto/ruby-lint
-      - ruby-test
-      - integration-tests
+      - ruby-test:
+          matrix:
+            parameters:
+              gemfile: ["Gemfile", "graphql-1.9.gemfile"]
+      - integration-tests:
+          matrix:
+            parameters:
+              gemfile: ["Gemfile", "graphql-1.9.gemfile"]
       - release:
           filters:
             branches:

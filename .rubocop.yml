@@ -51,12 +51,13 @@ Metrics/LineLength:
 Naming/FileName:
   Exclude:
     - 'lib/apollo-federation.rb'
+    - 'graphql-1.9.gemfile'
 
 RSpec/ExampleLength:
   Enabled: false
 RSpec/NestedGroups:
   Enabled: false
-Rails/FilePath:
+RSpec/FilePath:
   CustomTransform:
     ApolloFederation: apollo-federation
 
