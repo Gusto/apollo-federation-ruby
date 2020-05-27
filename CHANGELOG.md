@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/Gusto/apollo-federation-ruby/compare/v1.0.4...v1.1.0) (2020-05-27)
+
+
+### Features
+
+* Add support for interpreter runtime ([#65](https://github.com/Gusto/apollo-federation-ruby/issues/65)) ([1957da0](https://github.com/Gusto/apollo-federation-ruby/commit/1957da0))
+
 ## [1.0.4](https://github.com/Gusto/apollo-federation-ruby/compare/v1.0.3...v1.0.4) (2020-04-06)
 
 
