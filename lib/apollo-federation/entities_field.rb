@@ -13,7 +13,14 @@ module ApolloFederation
     module ClassMethods
       extend GraphQL::Schema::Member::HasFields
 
-      def define_entities_field(entity_type)
+      def define_entities_field(possible_entities)
+        # If there are any "entities", define the Entity union and and the Query._entities field
+        return if possible_entities.empty?
+
+        entity_type = Class.new(Entity) do
+          possible_types(*possible_entities)
+        end
+
         field(:_entities, [entity_type, null: true], null: false) do
           argument :representations, [Any], required: true
           extension(EntityTypeResolutionExtension)
@@ -32,8 +39,8 @@ module ApolloFederation
                 ' but no object type of that name was found in the schema'
         end
 
-        # TODO: Handle non-class types?
-        type_class = type.metadata[:type_class]
+        # TODO: What if the type is an interface?
+        type_class = type.is_a?(GraphQL::ObjectType) ? type.metadata[:type_class] : type
         if type_class.respond_to?(:resolve_reference)
           result = type_class.resolve_reference(reference, context)
         else

@@ -10,7 +10,8 @@ module ApolloFederation
     field(:_service, Service, null: false)
 
     def _service
-      { sdl: context.schema.class.federation_sdl(context: context) }
+      schema_class = context.schema.is_a?(GraphQL::Schema) ? context.schema.class : context.schema
+      { sdl: schema_class.federation_sdl(context: context) }
     end
   end
 end
