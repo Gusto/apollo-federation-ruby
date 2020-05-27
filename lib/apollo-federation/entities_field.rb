@@ -15,15 +15,15 @@ module ApolloFederation
 
       def define_entities_field(possible_entities)
         # If there are any "entities", define the Entity union and and the Query._entities field
-        if !possible_entities.empty?
-          entity_type = Class.new(Entity) do
-            possible_types(*possible_entities)
-          end
+        return if possible_entities.empty?
 
-          field(:_entities, [entity_type, null: true], null: false) do
-            argument :representations, [Any], required: true
-            extension(EntityTypeResolutionExtension)
-          end
+        entity_type = Class.new(Entity) do
+          possible_types(*possible_entities)
+        end
+
+        field(:_entities, [entity_type, null: true], null: false) do
+          argument :representations, [Any], required: true
+          extension(EntityTypeResolutionExtension)
         end
       end
     end
