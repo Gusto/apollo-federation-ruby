@@ -29,6 +29,7 @@ RSpec.describe ApolloFederation::EntitiesField do
             type Query {
               _service: _Service!
             }
+
             """
             The sdl representing the federated service capabilities. Includes federation
             directives, removes federation types, and includes rest of full schema after
@@ -76,12 +77,16 @@ RSpec.describe ApolloFederation::EntitiesField do
                 _service: _Service!
                 typeWithKey: TypeWithKey
               }
+
               type TypeWithKey {
                 id: ID!
                 otherField: String
               }
+
               scalar _Any
+
               union _Entity = TypeWithKey
+
               """
               The sdl representing the federated service capabilities. Includes federation
               directives, removes federation types, and includes rest of full schema after
@@ -119,16 +124,21 @@ RSpec.describe ApolloFederation::EntitiesField do
               type Mutation {
                 typeWithKey: TypeWithKey
               }
+
               type Query {
                 _entities(representations: [_Any!]!): [_Entity]!
                 _service: _Service!
               }
+
               type TypeWithKey {
                 id: ID!
                 otherField: String
               }
+
               scalar _Any
+
               union _Entity = TypeWithKey
+
               """
               The sdl representing the federated service capabilities. Includes federation
               directives, removes federation types, and includes rest of full schema after
