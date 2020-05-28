@@ -79,6 +79,16 @@ RSpec.describe ApolloFederation::ServiceField do
       end
     end
 
+    it 'sets the Query as the owner to the _service field' do
+      expect(
+        base_schema.graphql_definition
+              .types['Query']
+              .fields['_service']
+              .metadata[:type_class]
+              .owner.graphql_name,
+      ).to eq('Query')
+    end
+
     it 'returns the federation SDL for the schema' do
       product = Class.new(base_object) do
         graphql_name 'Product'
