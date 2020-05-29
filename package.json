@@ -22,9 +22,9 @@
   "devDependencies": {
     "@babel/core": "^7.10.1",
     "@babel/preset-env": "^7.10.1",
-    "@semantic-release/changelog": "^3.0.4",
-    "@semantic-release/exec": "^3.3.5",
-    "@semantic-release/git": "^7.0.16",
+    "@semantic-release/changelog": "^5.0.1",
+    "@semantic-release/exec": "^5.0.0",
+    "@semantic-release/git": "^9.0.0",
     "apollo-server-core": "2.6.3",
     "apollo-server-testing": "2.6.3",
     "babel-jest": "^26.0.1",
@@ -33,6 +33,6 @@
     "graphql-tag": "2.10.1",
     "jest": "^26.0.1",
     "nodemon": "^2.0.4",
-    "semantic-release": "^15.13.19"
+    "semantic-release": "^17.0.8"
   }
 }
