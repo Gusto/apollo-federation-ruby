@@ -17,7 +17,8 @@ jobs:
     parameters:
       gemfile:
         type: string
-    executor: gusto/ruby-2-3
+    docker:
+      - image: timbru31/ruby-node:2.6
     steps:
       - gusto/bundle-install:
           gemfile: << parameters.gemfile >>
@@ -28,7 +29,8 @@ jobs:
             GEMFILE: << parameters.gemfile >>
       - run: yarn lint
   release:
-    executor: gusto/ruby-2-3
+    docker:
+      - image: timbru31/ruby-node:2.6
     steps:
       - gusto/semantic-release-ruby
 
