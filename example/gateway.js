@@ -12,9 +12,7 @@ const gateway = new ApolloGateway({
 });
 
 (async () => {
-  const { schema, executor } = await gateway.load();
-
-  const server = new ApolloServer({ schema, executor });
+  const server = new ApolloServer({ gateway, subscriptions: false });
 
   server.listen({ port: 5000 }).then(({ url }) => {
     console.log(`🚀 Server ready at ${url}`);
