@@ -18,7 +18,7 @@ jobs:
       gemfile:
         type: string
     docker:
-      - image: timbru31/ruby-node:2.6
+      - image: circleci/ruby:2.6-node
     steps:
       - gusto/bundle-install:
           gemfile: << parameters.gemfile >>
@@ -30,7 +30,7 @@ jobs:
       - run: yarn lint
   release:
     docker:
-      - image: timbru31/ruby-node:2.6
+      - image: circleci/ruby:2.6-node
     steps:
       - gusto/semantic-release-ruby
 
