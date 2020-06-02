@@ -15,9 +15,9 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@apollo/gateway": "0.6.6",
-    "apollo-server": "2.6.3",
-    "graphql": "14.3.1"
+    "@apollo/gateway": "^0.16.2",
+    "apollo-server": "^2.14.1",
+    "graphql": "^14.6.0"
   },
   "devDependencies": {
     "@babel/core": "^7.10.1",
@@ -25,12 +25,12 @@
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/exec": "^5.0.0",
     "@semantic-release/git": "^9.0.0",
-    "apollo-server-core": "2.6.3",
-    "apollo-server-testing": "2.6.3",
+    "apollo-server-core": "^2.14.1",
+    "apollo-server-testing": "^2.14.1",
     "babel-jest": "^26.0.1",
     "concurrently": "4.1.0",
     "eslint-config-gusto": "^10.1.0",
-    "graphql-tag": "2.10.1",
+    "graphql-tag": "^2.10.3",
     "jest": "^26.0.1",
     "nodemon": "^2.0.4",
     "semantic-release": "^17.0.8"
