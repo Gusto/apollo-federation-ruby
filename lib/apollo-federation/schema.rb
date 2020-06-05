@@ -106,7 +106,7 @@ module ApolloFederation
           !type.introspection? && type.include?(ApolloFederation::Object) &&
             (includes_directive?(type.federation_directives, 'key') ||
               type.fields.values.any? do |field|
-                includes_directive?(field.federation_directives, 'requires')
+                field.respond_to?(:federation_directives) && includes_directive?(field.federation_directives, 'requires')
               end)
         end
       end
