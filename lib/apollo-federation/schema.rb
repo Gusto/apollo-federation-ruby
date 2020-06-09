@@ -33,7 +33,7 @@ module ApolloFederation
           base = query_obj.metadata[:type_class]
         end
 
-        Class.new(base) do
+        klass = Class.new(base) do
           # TODO: Maybe the name should inherit from the original Query name
           # Or MAYBE we should just modify the original class?
           graphql_name 'Query'
@@ -41,6 +41,9 @@ module ApolloFederation
           include EntitiesField
           include ServiceField
         end
+
+        klass.define_service_field
+        klass
       end
     end
 

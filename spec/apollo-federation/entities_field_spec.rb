@@ -69,6 +69,16 @@ RSpec.describe ApolloFederation::EntitiesField do
           end
         end
 
+        it 'sets the Query as the owner to the _entities field' do
+          expect(
+            schema.graphql_definition
+              .types['Query']
+              .fields['_entities']
+              .metadata[:type_class]
+              .owner.graphql_name,
+          ).to eq('Query')
+        end
+
         it 'adds an _entities field to the Query object' do
           expect(schema.to_definition).to match_sdl(
             <<~GRAPHQL,
