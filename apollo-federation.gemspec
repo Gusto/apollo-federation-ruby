@@ -30,12 +30,12 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'google-protobuf', '~> 3.7'
 
-  spec.add_development_dependency 'actionpack'
+  spec.add_development_dependency 'actionpack', '~> 6.0'
   spec.add_development_dependency 'appraisal'
   spec.add_development_dependency 'pry-byebug'
-  spec.add_development_dependency 'rack'
-  spec.add_development_dependency 'rake'
-  spec.add_development_dependency 'rspec'
+  spec.add_development_dependency 'rack', '~> 2.0'
+  spec.add_development_dependency 'rake', '~> 13.0'
+  spec.add_development_dependency 'rspec', '~> 3.9'
   spec.add_development_dependency 'rubocop', '~> 0.72.0'
   spec.add_development_dependency 'rubocop-rspec'
 end
