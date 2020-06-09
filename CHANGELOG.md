@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.1...v1.1.2) (2020-06-09)
+
+
+### Bug Fixes
+
+* Fix _service field type owner ([#70](https://github.com/Gusto/apollo-federation-ruby/issues/70)) ([364e54f](https://github.com/Gusto/apollo-federation-ruby/commit/364e54fbb333b7cd4fe30f04bf72733b0e18d3f4))
+
 ## [1.1.1](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.0...v1.1.1) (2020-05-29)
 
 
