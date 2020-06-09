@@ -7,5 +7,3 @@ node_modules/
 
 # built CircleCI configs
 .circleci/processed-config.yml
-
-graphql-1.9.gemfile.lock
