@@ -35,26 +35,26 @@ jobs:
       #     paths:
       #       - ./vendor/bundle
       - run: bundle exec appraisal << parameters.appraisal >> rake
-  integration-tests:
-    parameters:
-      gemfile:
-        type: string
-    docker:
-      - image: circleci/ruby:2.6-node
-    steps:
-      - gusto/bundle-install:
-          gemfile: << parameters.gemfile >>
-      - gusto/yarn-install
-      - run:
-          command: yarn test
-          environment:
-            GEMFILE: << parameters.gemfile >>
-      - run: yarn lint
-  release:
-    docker:
-      - image: circleci/ruby:2.6-node
-    steps:
-      - gusto/semantic-release-ruby
+  # integration-tests:
+  #   parameters:
+  #     gemfile:
+  #       type: string
+  #   docker:
+  #     - image: circleci/ruby:2.6-node
+  #   steps:
+  #     - gusto/bundle-install:
+  #         gemfile: << parameters.gemfile >>
+  #     - gusto/yarn-install
+  #     - run:
+  #         command: yarn test
+  #         environment:
+  #           GEMFILE: << parameters.gemfile >>
+  #     - run: yarn lint
+  # release:
+  #   docker:
+  #     - image: circleci/ruby:2.6-node
+  #   steps:
+  #     - gusto/semantic-release-ruby
 
 workflows:
   version: 2
