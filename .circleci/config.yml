@@ -29,6 +29,7 @@ jobs:
           command: |
             bundle install --jobs=4 --retry=3
             bundle info graphql
+            ~/.bundle
       # - save_cache:
       #       name: Save Ruby Package Cache
       #       key: v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
@@ -47,7 +48,7 @@ jobs:
       - run:
           name: Install appraisal dependencies
           command: |
-            bundle exec appraisal << parameters.appraisal >> bundle install -jobs=4 --retry=3
+            bundle exec appraisal << parameters.appraisal >> bundle install --jobs=4 --retry=3
             bundle exec appraisal << parameters.appraisal >> bundle info graphql
       # - save_cache:
       #     name: Save Ruby Package Cache
