@@ -46,7 +46,8 @@ jobs:
       - run:
           name: Install appraisal dependencies
           command: |
-            BUNDLE_PATH_RELATIVE_TO_CWD=true bundle exec appraisal << parameters.appraisal >> bundle install --jobs=4 --retry=3 --path vendor/bundle
+            bundle config path_relative_to_cwd true
+            bundle exec appraisal << parameters.appraisal >> bundle install --jobs=4 --retry=3 --path vendor/bundle
       # - save_cache:
       #     name: Save Ruby Package Cache
       #     key: v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
