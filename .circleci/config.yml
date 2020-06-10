@@ -20,14 +20,16 @@ jobs:
       - restore_cache:
           name: Restore Ruby Package Cache
           keys:
-            - v1-dependencies-{{ checksum Gemfile.lock" }}
+            - v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - v1-gem-cache-{{ arch }}-{{ .Branch }}-
+            - v1-gem-cache-{{ arch }}-
       - run:
           name: Install base dependencies
           command: |
             bundle install --jobs=4 --retry=3 --path vendor/bundle
       - save_cache:
             name: Save Ruby Package Cache
-            key: v1-dependencies-{{ checksum Gemfile.lock" }}
+            key: v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
             paths:
               - ./vendor/bundle
       - run:
