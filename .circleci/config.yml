@@ -35,7 +35,7 @@ jobs:
       - run:
           name: Copy lockfile
           command: |
-          bundle exec appraisal << parameters.appraisal >>  "cp \$BUNDLE_GEMFILE current_appraisal.gemfile.lock"
+            bundle exec appraisal << parameters.appraisal >>  "cp \$BUNDLE_GEMFILE current_appraisal.gemfile.lock"
       - restore_cache:
           name: Restore Ruby Package Cache
           keys:
