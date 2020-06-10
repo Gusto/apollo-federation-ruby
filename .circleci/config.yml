@@ -29,7 +29,7 @@ jobs:
           command: |
             bundle install --jobs=4 --retry=3
             bundle info graphql
-            ~/.bundle
+            ls ~/.bundle
       # - save_cache:
       #       name: Save Ruby Package Cache
       #       key: v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
