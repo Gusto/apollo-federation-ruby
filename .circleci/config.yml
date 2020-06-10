@@ -62,7 +62,7 @@ workflows:
   version: 2
   main:
     jobs:
-      - gusto/ruby-lint
+      # - gusto/ruby-lint
       - ruby-test:
           matrix:
             parameters:
@@ -76,6 +76,6 @@ workflows:
             branches:
               only: master
           requires:
-            - gusto/ruby-lint
+            # - gusto/ruby-lint
             - ruby-test
             # - integration-tests
