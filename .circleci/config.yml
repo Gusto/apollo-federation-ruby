@@ -22,7 +22,11 @@ jobs:
       #     keys:
       #       - v1-dependencies-{{ checksum "<< parameters.gemfile >>.lock" }}
       - run:
-          name: Install dependencies
+          name: Install base dependencies
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+      - run:
+          name: Install appraisal dependencies
           command: |
             bundle exec appraisal << parameters.appraisal >> bundle install --jobs=4 --retry=3 --path vendor/bundle
       # - save_cache:
