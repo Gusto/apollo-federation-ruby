@@ -6,13 +6,31 @@ orbs:
 jobs:
   ruby-test:
     parameters:
-      gemfile:
+      appraisal:
         type: string
     executor: gusto/ruby-2-3
     steps:
-      - gusto/bundle-install:
-          gemfile: << parameters.gemfile >>
-      - run: bundle exec --gemfile << parameters.gemfile >> rake
+      - checkout
+      - run:
+          name: Configure Bundler
+          command: |
+            echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> $BASH_ENV
+            source $BASH_ENV
+            gem install bundler
+      # - restore_cache:
+      #     name: Restore Ruby Package Cache
+      #     keys:
+      #       - v1-dependencies-{{ checksum "<< parameters.gemfile >>.lock" }}
+      - run:
+          name: Install dependencies
+          command: |
+            bundle exec appraisal << parameters.appraisal >> bundle install --jobs=4 --retry=3 --path vendor/bundle
+      # - save_cache:
+      #     name: Save Ruby Package Cache
+      #     key: v1-dependencies-{{ checksum "<< parameters.gemfile >>.lock" }}
+      #     paths:
+      #       - ./vendor/bundle
+      - run: bundle exec appraisal << parameters.appraisal >> rake
   integration-tests:
     parameters:
       gemfile:
@@ -42,7 +60,7 @@ workflows:
       - ruby-test:
           matrix:
             parameters:
-              gemfile: ["Gemfile", "graphql-1.9.gemfile"]
+              appraisal: ["graphql-1.9", "graphql-1.10"]
       - integration-tests:
           matrix:
             parameters:
