@@ -63,7 +63,7 @@ jobs:
     # environment:
     #   BUNDLE_PATH: vendor/bundle
     steps:
-      # - checkout
+      - checkout
       - bundle-install
       # - appraisal-install:
       #     appraisal: << parameters.appraisal >>
