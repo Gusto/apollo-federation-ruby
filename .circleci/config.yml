@@ -21,7 +21,7 @@ commands:
       - run:
           name: Install base Ruby dependencies
           command: |
-            bundle install --jobs=4 --retry=3 --path=vendor/bundle
+            bundle install --jobs=4 --retry=3
       - save_cache:
             name: Save Ruby Package Cache
             key: v2-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
