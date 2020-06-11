@@ -4,6 +4,58 @@ orbs:
   gusto: gusto/gusto@0.0.13
 
 jobs:
+  # ruby-test:
+  #   parameters:
+  #     appraisal:
+  #       type: string
+  #   executor: gusto/ruby-2-3
+  #   environment:
+  #     BUNDLE_PATH: vendor/bundle
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Configure Bundler
+  #         command: |
+  #           echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> $BASH_ENV
+  #           source $BASH_ENV
+  #           gem install bundler
+  #     - restore_cache:
+  #         name: Restore Ruby Package Cache
+  #         keys:
+  #           - v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+  #           - v1-gem-cache-{{ arch }}-{{ .Branch }}-
+  #           - v1-gem-cache-{{ arch }}-
+  #     - run:
+  #         name: Install base Ruby dependencies
+  #         # TODO: Maybe just install appraisal?
+  #         command: |
+  #           bundle install --jobs=4 --retry=3
+  #     - save_cache:
+  #           name: Save Ruby Package Cache
+  #           key: v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+  #           paths:
+  #             - ./vendor/bundle
+  #     - run:
+  #         name: Copy lockfile
+  #         command: |
+  #           bundle exec appraisal << parameters.appraisal >>  "cp \$BUNDLE_GEMFILE.lock current_appraisal.gemfile.lock"
+  #     - restore_cache:
+  #         name: Restore Ruby Package Cache
+  #         keys:
+  #           - v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
+  #           - v1-gem-cache-{{ arch }}-{{ .Branch }}-
+  #           - v1-gem-cache-{{ arch }}-
+  #     - run:
+  #         name: Install appraisal dependencies
+  #         command: |
+  #           bundle exec appraisal << parameters.appraisal >> bundle install --jobs=4 --retry=3 --path=../vendor/bundle
+  #           bundle config unset path
+  #     - save_cache:
+  #         name: Save Ruby Package Cache
+  #         key: v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
+  #         paths:
+  #           - ./vendor/bundle
+  #     - run: bundle exec appraisal << parameters.appraisal >> rake
   ruby-test:
     parameters:
       appraisal:
@@ -13,48 +65,12 @@ jobs:
       BUNDLE_PATH: vendor/bundle
     steps:
       - checkout
-      - run:
-          name: Configure Bundler
-          command: |
-            echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> $BASH_ENV
-            source $BASH_ENV
-            gem install bundler
-      - restore_cache:
-          name: Restore Ruby Package Cache
-          keys:
-            - v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-            - v1-gem-cache-{{ arch }}-{{ .Branch }}-
-            - v1-gem-cache-{{ arch }}-
-      - run:
-          name: Install base Ruby dependencies
-          # TODO: Maybe just install appraisal?
-          command: |
-            bundle install --jobs=4 --retry=3
-      - save_cache:
-            name: Save Ruby Package Cache
-            key: v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-            paths:
-              - ./vendor/bundle
-      - run:
-          name: Copy lockfile
-          command: |
-            bundle exec appraisal << parameters.appraisal >>  "cp \$BUNDLE_GEMFILE.lock current_appraisal.gemfile.lock"
-      - restore_cache:
-          name: Restore Ruby Package Cache
-          keys:
-            - v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
-            - v1-gem-cache-{{ arch }}-{{ .Branch }}-
-            - v1-gem-cache-{{ arch }}-
+      - gusto/bundle-install
       - run:
           name: Install appraisal dependencies
           command: |
             bundle exec appraisal << parameters.appraisal >> bundle install --jobs=4 --retry=3 --path=../vendor/bundle
             bundle config unset path
-      - save_cache:
-          name: Save Ruby Package Cache
-          key: v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
-          paths:
-            - ./vendor/bundle
       - run: bundle exec appraisal << parameters.appraisal >> rake
   integration-tests:
     parameters:
