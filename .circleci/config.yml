@@ -67,7 +67,8 @@ jobs:
       - bundle-install
       # - appraisal-install:
       #     appraisal: << parameters.appraisal >>
-      - run: bundle exec appraisal << parameters.appraisal >> rake
+      # - run: bundle exec appraisal << parameters.appraisal >> rake
+      - run: bundle exec appraisal << parameters.appraisal >> bundle config list
   integration-tests:
     parameters:
       appraisal:
@@ -98,15 +99,15 @@ workflows:
           matrix:
             parameters:
               appraisal: ["graphql-1.9", "graphql-1.10"]
-      - integration-tests:
-          matrix:
-            parameters:
-              appraisal: ["graphql-1.9", "graphql-1.10"]
-      - release:
-          filters:
-            branches:
-              only: master
-          requires:
-            - gusto/ruby-lint
-            - ruby-test
-            - integration-tests
+      # - integration-tests:
+      #     matrix:
+      #       parameters:
+      #         appraisal: ["graphql-1.9", "graphql-1.10"]
+      # - release:
+      #     filters:
+      #       branches:
+      #         only: master
+      #     requires:
+      #       - gusto/ruby-lint
+      #       - ruby-test
+      #       - integration-tests
