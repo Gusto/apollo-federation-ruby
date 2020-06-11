@@ -21,7 +21,7 @@ commands:
       - run:
           name: Install base Ruby dependencies
           command: |
-            bundle install --jobs=4 --retry=3
+            bundle install --jobs=4 --retry=3 --path=vendor/bundle
       - save_cache:
             name: Save Ruby Package Cache
             key: v2-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
@@ -46,7 +46,7 @@ commands:
           name: Install appraisal dependencies
           command: |
             bundle exec appraisal << parameters.appraisal >> bundle install --jobs=4 --retry=3 --path=../vendor/bundle
-            bundle config unset path
+            bundle config set path "vendor/bundle"
       - save_cache:
           name: Save Appraisal package cache
           key: v2-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
@@ -60,8 +60,8 @@ jobs:
         type: string
     docker:
       - image: circleci/ruby:2.6-node
-    environment:
-      BUNDLE_PATH: vendor/bundle
+    # environment:
+    #   BUNDLE_PATH: vendor/bundle
     steps:
       - checkout
       - bundle-install
