@@ -78,6 +78,8 @@ jobs:
         type: string
     docker:
       - image: circleci/ruby:2.6-node
+    environment:
+      BUNDLE_PATH: vendor/bundle
     steps:
       - gusto/bundle-install
       - run:
