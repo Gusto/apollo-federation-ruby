@@ -74,18 +74,19 @@ jobs:
       - run: bundle exec appraisal << parameters.appraisal >> rake
   integration-tests:
     parameters:
-      gemfile:
+      appraisal:
         type: string
     docker:
       - image: circleci/ruby:2.6-node
     steps:
-      - gusto/bundle-install:
-          gemfile: << parameters.gemfile >>
-      - gusto/yarn-install
+      - gusto/bundle-install
       - run:
-          command: yarn test
-          environment:
-            GEMFILE: << parameters.gemfile >>
+          name: Install appraisal dependencies
+          command: |
+            bundle exec appraisal << parameters.appraisal >> bundle install --jobs=4 --retry=3 --path=../vendor/bundle
+            bundle config unset path
+      - gusto/yarn-install
+      - run: bundle exec appraisal << parameters.appraisal >> yarn test
       - run: yarn lint
   release:
     docker:
@@ -102,15 +103,15 @@ workflows:
           matrix:
             parameters:
               appraisal: ["graphql-1.9", "graphql-1.10"]
-      # - integration-tests:
-      #     matrix:
-      #       parameters:
-      #         gemfile: ["Gemfile", "graphql-1.9.gemfile"]
+      - integration-tests:
+          matrix:
+            parameters:
+              appraisal: ["graphql-1.9", "graphql-1.10"]
       - release:
           filters:
             branches:
               only: master
           requires:
-            # - gusto/ruby-lint
+            - gusto/ruby-lint
             - ruby-test
-            # - integration-tests
+            - integration-tests

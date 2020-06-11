@@ -4,18 +4,9 @@ import { createTestClient } from 'apollo-server-testing';
 import gql from 'graphql-tag';
 import { spawn } from 'child_process';
 
-const GEMFILE = process.env.GEMFILE || 'Gemfile';
-
 const startService = serviceName =>
   new Promise((resolve, reject) => {
-    const child = spawn('bundle', [
-      'exec',
-      '--gemfile',
-      GEMFILE,
-      'ruby',
-      `./example/${serviceName}.rb`,
-      '--test',
-    ]);
+    const child = spawn('bundle', ['exec', 'ruby', `./example/${serviceName}.rb`, '--test']);
 
     let ready = false;
     const readyTimeout = setTimeout(() => {
