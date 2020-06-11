@@ -35,26 +35,26 @@ jobs:
             key: v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
             paths:
               - ./vendor/bundle
-      # - run:
-      #     name: Copy lockfile
-      #     command: |
-      #       bundle exec appraisal << parameters.appraisal >>  "cp \$BUNDLE_GEMFILE.lock current_appraisal.gemfile.lock"
-      # - restore_cache:
-      #     name: Restore Ruby Package Cache
-      #     keys:
-      #       - v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
-      #       - v1-gem-cache-{{ arch }}-{{ .Branch }}-
-      #       - v1-gem-cache-{{ arch }}-
+      - run:
+          name: Copy lockfile
+          command: |
+            bundle exec appraisal << parameters.appraisal >>  "cp \$BUNDLE_GEMFILE.lock current_appraisal.gemfile.lock"
+      - restore_cache:
+          name: Restore Ruby Package Cache
+          keys:
+            - v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
+            - v1-gem-cache-{{ arch }}-{{ .Branch }}-
+            - v1-gem-cache-{{ arch }}-
       - run:
           name: Install appraisal dependencies
           command: |
             bundle exec appraisal << parameters.appraisal >> bundle install --jobs=4 --retry=3 --path=../vendor/bundle
             bundle config unset path
-      # - save_cache:
-      #     name: Save Ruby Package Cache
-      #     key: v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
-      #     paths:
-      #       - ./vendor/bundle
+      - save_cache:
+          name: Save Ruby Package Cache
+          key: v1-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
+          paths:
+            - ./vendor/bundle
       - run: bundle exec appraisal << parameters.appraisal >> rake
   integration-tests:
     parameters:
