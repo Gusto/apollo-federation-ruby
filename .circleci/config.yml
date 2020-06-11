@@ -63,10 +63,10 @@ jobs:
     # environment:
     #   BUNDLE_PATH: vendor/bundle
     steps:
-      - checkout
+      # - checkout
       - bundle-install
-      - appraisal-install:
-          appraisal: << parameters.appraisal >>
+      # - appraisal-install:
+      #     appraisal: << parameters.appraisal >>
       - run: bundle exec appraisal << parameters.appraisal >> rake
   integration-tests:
     parameters:
