@@ -3,6 +3,18 @@ version: 2.1
 orbs:
   gusto: gusto/gusto@0.0.13
 
+commands:
+  appraisal-install:
+    parameters:
+      appraisal:
+        type: string
+    steps:
+      - run:
+          name: Install appraisal dependencies
+          command: |
+            bundle exec appraisal << parameters.appraisal >> bundle install --jobs=4 --retry=3 --path=../vendor/bundle
+            bundle config unset path
+
 jobs:
   # ruby-test:
   #   parameters:
@@ -27,7 +39,6 @@ jobs:
   #           - v1-gem-cache-{{ arch }}-
   #     - run:
   #         name: Install base Ruby dependencies
-  #         # TODO: Maybe just install appraisal?
   #         command: |
   #           bundle install --jobs=4 --retry=3
   #     - save_cache:
@@ -66,11 +77,8 @@ jobs:
     steps:
       - checkout
       - gusto/bundle-install
-      - run:
-          name: Install appraisal dependencies
-          command: |
-            bundle exec appraisal << parameters.appraisal >> bundle install --jobs=4 --retry=3 --path=../vendor/bundle
-            bundle config unset path
+      - appraisal-install:
+          appraisal: << parameters.appraisal >>
       - run: bundle exec appraisal << parameters.appraisal >> rake
   integration-tests:
     parameters:
@@ -82,11 +90,8 @@ jobs:
       BUNDLE_PATH: vendor/bundle
     steps:
       - gusto/bundle-install
-      - run:
-          name: Install appraisal dependencies
-          command: |
-            bundle exec appraisal << parameters.appraisal >> bundle install --jobs=4 --retry=3 --path=../vendor/bundle
-            bundle config unset path
+      - appraisal-install:
+          appraisal: << parameters.appraisal >>
       - gusto/yarn-install
       - run: bundle exec appraisal << parameters.appraisal >> yarn test
       - run: yarn lint
