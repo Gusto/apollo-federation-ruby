@@ -67,6 +67,7 @@ jobs:
       - bundle-install
       - appraisal-install:
           appraisal: << parameters.appraisal >>
+      - run: bundle config list
       - run: bundle exec appraisal << parameters.appraisal >> bundle config list
       - run: bundle exec appraisal << parameters.appraisal >> rake
   integration-tests:
