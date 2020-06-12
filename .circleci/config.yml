@@ -45,9 +45,8 @@ commands:
       - run:
           name: Install appraisal dependencies
           command: |
-            bundle config list
             bundle exec appraisal << parameters.appraisal >> bundle install --jobs=4 --retry=3 --path=../vendor/bundle
-            bundle config unset path
+            bundle config --local set path "vendor/bundle"
       - save_cache:
           name: Save Appraisal package cache
           key: v2-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
