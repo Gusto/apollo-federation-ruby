@@ -78,6 +78,7 @@ jobs:
     environment:
       BUNDLE_APP_CONFIG: .bundle
     steps:
+      - checkout
       - bundle-install
       - appraisal-install:
           appraisal: << parameters.appraisal >>
