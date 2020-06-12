@@ -46,7 +46,6 @@ commands:
           name: Install appraisal dependencies
           command: |
             bundle exec appraisal << parameters.appraisal >> bundle install --jobs=4 --retry=3 --path=../vendor/bundle
-            bundle config set --local path "vendor/bundle"
       - save_cache:
           name: Save Appraisal package cache
           key: v2-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
@@ -60,8 +59,8 @@ jobs:
         type: string
     docker:
       - image: circleci/ruby:2.6-node
-    # environment:
-    #   BUNDLE_PATH: vendor/bundle
+    environment:
+      BUNDLE_APP_CONFIG: .bundle
     steps:
       - checkout
       - bundle-install
@@ -76,8 +75,8 @@ jobs:
         type: string
     docker:
       - image: circleci/ruby:2.6-node
-    # environment:
-    #   BUNDLE_PATH: vendor/bundle
+    environment:
+      BUNDLE_APP_CONFIG: .bundle
     steps:
       - bundle-install
       - appraisal-install:
@@ -100,15 +99,15 @@ workflows:
           matrix:
             parameters:
               appraisal: ["graphql-1.9", "graphql-1.10"]
-      # - integration-tests:
-      #     matrix:
-      #       parameters:
-      #         appraisal: ["graphql-1.9", "graphql-1.10"]
-      # - release:
-      #     filters:
-      #       branches:
-      #         only: master
-      #     requires:
-      #       - gusto/ruby-lint
-      #       - ruby-test
-      #       - integration-tests
+      - integration-tests:
+          matrix:
+            parameters:
+              appraisal: ["graphql-1.9", "graphql-1.10"]
+      - release:
+          filters:
+            branches:
+              only: master
+          requires:
+            - gusto/ruby-lint
+            - ruby-test
+            - integration-tests
