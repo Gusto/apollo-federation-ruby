@@ -3,6 +3,9 @@ require: rubocop-rspec
 AllCops:
   TargetRubyVersion: 2.3
   DisplayCopNames: true
+  Exclude:
+    - 'gemfiles/**/*'
+    - 'vendor/**/*'
 
 #
 # We prefer trailing commas so that the git diff is reduced when adding elements
