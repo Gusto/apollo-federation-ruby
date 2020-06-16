@@ -106,6 +106,7 @@ DEPENDENCIES
   actionpack
   apollo-federation!
   appraisal
+  graphql (= 1.10.10)
   pry-byebug
   rack
   rake
