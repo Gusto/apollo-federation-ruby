@@ -10,7 +10,7 @@ def set_version
 end
 
 def bundle_install
-  system('bundle install')
+  system('bundle exec appraisal install')
 end
 
 def build_gem
