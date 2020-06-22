@@ -8397,6 +8397,9 @@ saxes@^5.0.0:
   dependencies:
     xmlchars "^2.2.0"
 
+"semantic-release-rubygem@file:../semantic-release-rubygem":
+  version "1.0.0"
+
 semantic-release@^17.0.8:
   version "17.0.8"
   resolved "https://registry.yarnpkg.com/semantic-release/-/semantic-release-17.0.8.tgz#68b80461fdd8eb445228ae23fd9e85857a50ae3f"

@@ -33,6 +33,7 @@
     "graphql-tag": "^2.10.3",
     "jest": "^26.0.1",
     "nodemon": "^2.0.4",
-    "semantic-release": "^17.0.8"
+    "semantic-release": "^17.0.8",
+    "semantic-release-rubygem": "/Users/rylan.collins/workspace/semantic-release-rubygem/"
   }
 }
