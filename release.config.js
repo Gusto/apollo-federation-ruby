@@ -25,4 +25,5 @@ module.exports = {
     // ],
     // '@semantic-release/github',
   ],
+  branches: 'rc-semantic-release-rubygem'
 };
