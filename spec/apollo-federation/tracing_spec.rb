@@ -169,9 +169,14 @@ RSpec.describe ApolloFederation::Tracing do
           graphql_name 'Query'
 
           field :test, String, null: false
+          field :test_array, [String], null: false
 
           def test
             Lazy.new
+          end
+
+          def test_array
+            [Lazy.new]
           end
         end
 
@@ -206,6 +211,35 @@ RSpec.describe ApolloFederation::Tracing do
             }],
           },
         )
+      end
+
+      context 'when the value is an array of lazy values' do
+        let(:trace) do
+          result = schema.execute('{ testArray }', context: { tracing_enabled: true })
+          described_class.attach_trace_to_result(result)
+          ApolloFederation::Tracing::Trace.decode(Base64.decode64(result[:extensions][:ftv1]))
+        end
+
+        it 'works with lazy array values' do
+          expect(trace).to eq ApolloFederation::Tracing::Trace.new(
+            start_time: { seconds: 1_564_920_001, nanos: 0 },
+            end_time: { seconds: 1_564_920_002, nanos: 0 },
+            duration_ns: 3,
+            root: {
+              child: [{
+                response_name: 'testArray',
+                type: '[String!]!',
+                start_time: 1,
+                # This is the only discrepancy between a normal field and a lazy field.
+                # The fake clock incremented once at the end of the `execute_field` step,
+                # and again at the end of the `execute_field_lazy` step, so we record the
+                # end time as being two nanoseconds after the start time instead of one.
+                end_time: 2,
+                parent_type: 'Query',
+              }],
+            },
+          )
+        end
       end
     end
 
