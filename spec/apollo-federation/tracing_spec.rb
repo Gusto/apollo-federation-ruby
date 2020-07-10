@@ -54,6 +54,13 @@ RSpec.describe ApolloFederation::Tracing do
       end
     end
 
+    def trace(query)
+      result = schema.execute(query, context: { tracing_enabled: true },)
+      described_class.attach_trace_to_result(result)
+
+      ApolloFederation::Tracing::Trace.decode(Base64.decode64(result[:extensions][:ftv1]))
+    end
+
     describe 'building the trace tree' do
       let(:schema) do
         grandchild_obj = Class.new(GraphQL::Schema::Object) do
@@ -88,9 +95,14 @@ RSpec.describe ApolloFederation::Tracing do
           graphql_name 'Query'
 
           field :parent, parent_obj, null: false
+          field :strings, [String], null: false
 
           def parent
             { id: 'parent' }
+          end
+
+          def strings
+            ['hello', 'goodbye']
           end
         end
 
@@ -100,14 +112,8 @@ RSpec.describe ApolloFederation::Tracing do
       end
 
       it 'records timing for children' do
-        result = schema.execute(
-          '{ parent { id, child { id, grandchild { id } } } }',
-          context: { tracing_enabled: true },
-        )
-        described_class.attach_trace_to_result(result)
-
-        trace = ApolloFederation::Tracing::Trace.decode(Base64.decode64(result[:extensions][:ftv1]))
-        expect(trace).to eq(ApolloFederation::Tracing::Trace.new(
+        query = '{ parent { id, child { id, grandchild { id } } } }'
+        expect(trace(query)).to eq(ApolloFederation::Tracing::Trace.new(
                               start_time: { seconds: 1_564_920_001, nanos: 0 },
                               end_time: { seconds: 1_564_920_002, nanos: 0 },
                               duration_ns: 13,
@@ -155,28 +161,73 @@ RSpec.describe ApolloFederation::Tracing do
                               },
                             ))
       end
+
+      it 'works for scalar arrays' do
+        expect(trace('{ strings }')).to eq ApolloFederation::Tracing::Trace.new(
+          start_time: { seconds: 1_564_920_001, nanos: 0 },
+          end_time: { seconds: 1_564_920_002, nanos: 0 },
+          duration_ns: 3,
+          root: {
+            child: [{
+              response_name: 'strings',
+              type: '[String!]!',
+              start_time: 1,
+              end_time: 2,
+              parent_type: 'Query',
+            }],
+          },
+        )
+      end
     end
 
     class Lazy
+      def initialize(value = 'lazy_value')
+        # puts "Lazy.new(#{value})"
+        @value = value
+      end
+
       def lazy_method
-        'lazy_value'
+        # binding.pry
+        puts "lazy_method: #{@value}"
+        @value
       end
     end
 
     describe 'lazy values' do
       let(:schema) do
+        item_obj = Class.new(GraphQL::Schema::Object) do
+          graphql_name 'Item'
+
+          field :id, String, null: false
+
+          # def id
+          #   # binding.pry
+          #   Lazy.new(object[:id])
+          # end
+        end
+
         query_obj = Class.new(GraphQL::Schema::Object) do
           graphql_name 'Query'
 
           field :test, String, null: false
-          field :test_array, [String], null: false
+          field :array_of_lazy_scalars, [String], null: false
+          field :lazy_array_of_scalars, [String], null: false
+          field :array_of_objects, [item_obj], null: false
 
           def test
             Lazy.new
           end
 
-          def test_array
-            [Lazy.new]
+          def array_of_lazy_scalars
+            [Lazy.new('hi'), Lazy.new('bye')]
+          end
+
+          def lazy_array_of_scalars
+            Lazy.new(['hi', 'bye'])
+          end
+
+          def array_of_objects
+            [Lazy.new({ id: '123' }), Lazy.new({ id: '456' })]
           end
         end
 
@@ -186,14 +237,8 @@ RSpec.describe ApolloFederation::Tracing do
         end
       end
 
-      let(:trace) do
-        result = schema.execute('{ test }', context: { tracing_enabled: true })
-        described_class.attach_trace_to_result(result)
-        ApolloFederation::Tracing::Trace.decode(Base64.decode64(result[:extensions][:ftv1]))
-      end
-
       it 'works with lazy values' do
-        expect(trace).to eq ApolloFederation::Tracing::Trace.new(
+        expect(trace('{ test }')).to eq ApolloFederation::Tracing::Trace.new(
           start_time: { seconds: 1_564_920_001, nanos: 0 },
           end_time: { seconds: 1_564_920_002, nanos: 0 },
           duration_ns: 4,
@@ -213,33 +258,90 @@ RSpec.describe ApolloFederation::Tracing do
         )
       end
 
-      context 'when the value is an array of lazy values' do
-        let(:trace) do
-          result = schema.execute('{ testArray }', context: { tracing_enabled: true })
-          described_class.attach_trace_to_result(result)
-          ApolloFederation::Tracing::Trace.decode(Base64.decode64(result[:extensions][:ftv1]))
-        end
+      # FIXME: Ok, so here's the issue:
+      # Tracing is broken when a field resolves an array of lazy values (scalars or objects).
+      # The reason it isn't broken in ZP is that the version it has (1.0.3) resolves the _entities
+      # field in a way that makes it look like it isn't an array of lazy objects. So, the tracing is
+      # broken, but you should still try to figure out how the _entities resolver works differently
+      it 'works with array of lazy scalars' do
+        expect(trace('{ arrayOfLazyScalars }')).to eq ApolloFederation::Tracing::Trace.new(
+          start_time: { seconds: 1_564_920_001, nanos: 0 },
+          end_time: { seconds: 1_564_920_002, nanos: 0 },
+          # The old runtime and the interpreter handle arrays of lazy objects differently.
+          # The old runtime doesn't trigger the `execute_field_lazy` tracer event, so we have to
+          # use the (inaccurate) end times from the `execute_field` event.
+          duration_ns: schema.interpreter? ? 5 : 3,
+          root: {
+            child: [{
+              response_name: 'arrayOfLazyScalars',
+              type: '[String!]!',
+              start_time: 1,
+              end_time: schema.interpreter? ? 4 : 2,
+              parent_type: 'Query',
+            }],
+          },
+        )
+      end
 
-        it 'works with lazy array values' do
-          expect(trace).to eq ApolloFederation::Tracing::Trace.new(
-            start_time: { seconds: 1_564_920_001, nanos: 0 },
-            end_time: { seconds: 1_564_920_002, nanos: 0 },
-            duration_ns: 3,
-            root: {
-              child: [{
-                response_name: 'testArray',
-                type: '[String!]!',
-                start_time: 1,
-                # This is the only discrepancy between a normal field and a lazy field.
-                # The fake clock incremented once at the end of the `execute_field` step,
-                # and again at the end of the `execute_field_lazy` step, so we record the
-                # end time as being two nanoseconds after the start time instead of one.
-                end_time: 2,
-                parent_type: 'Query',
-              }],
-            },
-          )
-        end
+      it 'works with a lazy array of scalars' do
+        expect(trace('{ lazyArrayOfScalars }')).to eq ApolloFederation::Tracing::Trace.new(
+          start_time: { seconds: 1_564_920_001, nanos: 0 },
+          end_time: { seconds: 1_564_920_002, nanos: 0 },
+          duration_ns: 4,
+          root: {
+            child: [{
+              response_name: 'lazyArrayOfScalars',
+              type: '[String!]!',
+              start_time: 1,
+              # FIXME:
+              # This is the only discrepancy between a normal field and a lazy field.
+              # The fake clock incremented once at the end of the `execute_field` step,
+              # and again at the end of the `execute_field_lazy` step, so we record the
+              # end time as being two nanoseconds after the start time instead of one.
+              end_time: 3,
+              parent_type: 'Query',
+            }],
+          },
+        )
+      end
+
+      it 'works with array of lazy objects' do
+        expect(trace('{ arrayOfObjects { id } }')).to eq ApolloFederation::Tracing::Trace.new(
+          start_time: { seconds: 1_564_920_001, nanos: 0 },
+          end_time: { seconds: 1_564_920_002, nanos: 0 },
+          duration_ns: schema.interpreter? ? 9 : 7,
+          root: {
+            child: [{
+              response_name: 'arrayOfObjects',
+              type: '[Item!]!',
+              start_time: 1,
+              end_time: schema.interpreter? ? 6 : 2,
+              parent_type: 'Query',
+              child: [
+                {
+                  index: 0,
+                  child: [{
+                    response_name: 'id',
+                    type: 'String!',
+                    start_time: schema.interpreter? ? 4 : 3,
+                    end_time: schema.interpreter? ? 5 : 4,
+                    parent_type: 'Item',
+                  }]
+                },
+                {
+                  index: 1,
+                  child: [{
+                    response_name: 'id',
+                    type: 'String!',
+                    start_time: schema.interpreter? ? 7 : 5,
+                    end_time: schema.interpreter? ? 8 : 6,
+                    parent_type: 'Item',
+                  }]
+                },
+              ]
+            }],
+          },
+        )
       end
     end
 
@@ -273,14 +375,8 @@ RSpec.describe ApolloFederation::Tracing do
         end
       end
 
-      let(:trace) do
-        result = schema.execute('{ items { id, name } }', context: { tracing_enabled: true })
-        described_class.attach_trace_to_result(result)
-        ApolloFederation::Tracing::Trace.decode(Base64.decode64(result[:extensions][:ftv1]))
-      end
-
-      it 'records index instead of response_name for items in arrays' do
-        expect(trace).to eq(
+      it 'records index instead of response_name for objects in arrays' do
+        expect(trace('{ items { id, name } }')).to eq(
           ApolloFederation::Tracing::Trace.new(
             start_time: { seconds: 1_564_920_001, nanos: 0 },
             end_time: { seconds: 1_564_920_002, nanos: 0 },
