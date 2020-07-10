@@ -2,7 +2,6 @@
 
 require 'graphql'
 require 'apollo-federation/any'
-require 'apollo-federation/entity_type_resolution_extension'
 
 module ApolloFederation
   module EntitiesField
