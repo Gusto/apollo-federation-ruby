@@ -27,7 +27,8 @@ Add `use ApolloFederation::Tracing` to your schema.'
       return result unless result.context[:tracing_enabled]
 
       trace = result.context.namespace(KEY)
-      # TODO: If there are errors during query validation, that could also cause a missing start_time
+      # TODO: If there are errors during query validation, that could also cause a missing
+      # start_time
       raise NotInstalledError unless trace[:start_time]
 
       result['errors']&.each do |error|
