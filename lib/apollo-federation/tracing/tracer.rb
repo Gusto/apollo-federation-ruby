@@ -108,15 +108,11 @@ module ApolloFederation
 
         start_time_nanos = Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)
 
-        path = data.include?(:context) ? context.path : data.fetch(:path)
-
-        puts "start execute_field: #{path}"
         begin
           result = block.call
         rescue StandardError => e
           error = e
         end
-        puts "end execute_field: #{path}"
 
         end_time_nanos = Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)
 
@@ -155,24 +151,19 @@ module ApolloFederation
         context = data.fetch(:context, nil) || data.fetch(:query).context
         return block.call unless context && context[:tracing_enabled]
 
-        path = data.include?(:context) ? context.path : data.fetch(:path)
-        puts "start execute_field_lazy: #{path}"
         begin
           result = block.call
         rescue StandardError => e
           error = e
         end
-        puts "end execute_field_lazy: #{path}"
 
         end_time_nanos = Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)
 
         # legacy runtime
         if data.include?(:context)
-          context = data.fetch(:context)
           path = context.path
           field = context.field
         else # interpreter runtime
-          context = data.fetch(:query).context
           path = data.fetch(:path)
           field = data.fetch(:field)
         end

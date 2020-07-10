@@ -182,14 +182,10 @@ RSpec.describe ApolloFederation::Tracing do
 
     class Lazy
       def initialize(value = 'lazy_value')
-        # puts "Lazy.new(#{value})"
         @value = value
       end
 
-      def value
-        puts "lazy_method: #{@value}"
-        @value
-      end
+      attr_reader :value
     end
 
     describe 'lazy values' do
@@ -198,11 +194,6 @@ RSpec.describe ApolloFederation::Tracing do
           graphql_name 'Item'
 
           field :id, String, null: false
-
-          # def id
-          #   # binding.pry
-          #   Lazy.new(object[:id])
-          # end
         end
 
         query_obj = Class.new(GraphQL::Schema::Object) do
@@ -236,7 +227,7 @@ RSpec.describe ApolloFederation::Tracing do
           end
 
           def lazy_array_of_objects
-            Lazy.new([{ id: '123'}, {id: '456'}])
+            Lazy.new([{ id: '123' }, { id: '456' }])
           end
         end
 
@@ -267,11 +258,6 @@ RSpec.describe ApolloFederation::Tracing do
         )
       end
 
-      # FIXME: Ok, so here's the issue:
-      # Tracing is broken when a field resolves an array of lazy values (scalars or objects).
-      # The reason it isn't broken in ZP is that the version it has (1.0.3) resolves the _entities
-      # field in a way that makes it look like it isn't an array of lazy objects. So, the tracing is
-      # broken, but you should still try to figure out how the _entities resolver works differently
       it 'works with an array of lazy scalars' do
         expect(trace('{ arrayOfLazyScalars }')).to eq ApolloFederation::Tracing::Trace.new(
           start_time: { seconds: 1_564_920_001, nanos: 0 },
@@ -313,13 +299,13 @@ RSpec.describe ApolloFederation::Tracing do
         expect(trace('{ lazyArrayOfLazyScalars }')).to eq ApolloFederation::Tracing::Trace.new(
           start_time: { seconds: 1_564_920_001, nanos: 0 },
           end_time: { seconds: 1_564_920_002, nanos: 0 },
-          duration_ns: schema.interpreter? ? 6: 4,
+          duration_ns: schema.interpreter? ? 6 : 4,
           root: {
             child: [{
               response_name: 'lazyArrayOfLazyScalars',
               type: '[String!]!',
               start_time: 1,
-              end_time: schema.interpreter? ? 5: 3,
+              end_time: schema.interpreter? ? 5 : 3,
               parent_type: 'Query',
             }],
           },
@@ -421,7 +407,7 @@ RSpec.describe ApolloFederation::Tracing do
               response_name: 'arrayOfLazyScalars',
               type: '[String!]!',
               start_time: 3,
-              end_time: schema.interpreter? ? 10: 4,
+              end_time: schema.interpreter? ? 10 : 4,
               parent_type: 'Query',
             }, {
               response_name: 'lazyArrayOfScalars',
@@ -429,8 +415,7 @@ RSpec.describe ApolloFederation::Tracing do
               start_time: 5,
               end_time: 8,
               parent_type: 'Query',
-            }
-            ],
+            },],
           },
         )
       end
