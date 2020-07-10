@@ -55,7 +55,7 @@ RSpec.describe ApolloFederation::Tracing do
     end
 
     def trace(query)
-      result = schema.execute(query, context: { tracing_enabled: true },)
+      result = schema.execute(query, context: { tracing_enabled: true })
       described_class.attach_trace_to_result(result)
 
       ApolloFederation::Tracing::Trace.decode(Base64.decode64(result[:extensions][:ftv1]))
@@ -114,52 +114,52 @@ RSpec.describe ApolloFederation::Tracing do
       it 'records timing for children' do
         query = '{ parent { id, child { id, grandchild { id } } } }'
         expect(trace(query)).to eq(ApolloFederation::Tracing::Trace.new(
-                              start_time: { seconds: 1_564_920_001, nanos: 0 },
-                              end_time: { seconds: 1_564_920_002, nanos: 0 },
-                              duration_ns: 13,
-                              root: {
-                                child: [{
-                                  response_name: 'parent',
-                                  type: 'Parent!',
-                                  start_time: 1,
-                                  end_time: 2,
-                                  parent_type: 'Query',
-                                  child: [{
-                                    response_name: 'id',
-                                    type: 'String!',
-                                    start_time: 3,
-                                    end_time: 4,
-                                    parent_type: 'Parent',
-                                  }, {
-                                    response_name: 'child',
-                                    type: 'Child!',
-                                    start_time: 5,
-                                    end_time: 6,
-                                    parent_type: 'Parent',
-                                    child: [{
-                                      response_name: 'id',
-                                      type: 'String!',
-                                      start_time: 7,
-                                      end_time: 8,
-                                      parent_type: 'Child',
-                                    }, {
-                                      response_name: 'grandchild',
-                                      type: 'Grandchild!',
-                                      start_time: 9,
-                                      end_time: 10,
-                                      parent_type: 'Child',
-                                      child: [{
-                                        response_name: 'id',
-                                        type: 'String!',
-                                        start_time: 11,
-                                        end_time: 12,
-                                        parent_type: 'Grandchild',
-                                      }],
-                                    },],
-                                  },],
-                                }],
-                              },
-                            ))
+                                     start_time: { seconds: 1_564_920_001, nanos: 0 },
+                                     end_time: { seconds: 1_564_920_002, nanos: 0 },
+                                     duration_ns: 13,
+                                     root: {
+                                       child: [{
+                                         response_name: 'parent',
+                                         type: 'Parent!',
+                                         start_time: 1,
+                                         end_time: 2,
+                                         parent_type: 'Query',
+                                         child: [{
+                                           response_name: 'id',
+                                           type: 'String!',
+                                           start_time: 3,
+                                           end_time: 4,
+                                           parent_type: 'Parent',
+                                         }, {
+                                           response_name: 'child',
+                                           type: 'Child!',
+                                           start_time: 5,
+                                           end_time: 6,
+                                           parent_type: 'Parent',
+                                           child: [{
+                                             response_name: 'id',
+                                             type: 'String!',
+                                             start_time: 7,
+                                             end_time: 8,
+                                             parent_type: 'Child',
+                                           }, {
+                                             response_name: 'grandchild',
+                                             type: 'Grandchild!',
+                                             start_time: 9,
+                                             end_time: 10,
+                                             parent_type: 'Child',
+                                             child: [{
+                                               response_name: 'id',
+                                               type: 'String!',
+                                               start_time: 11,
+                                               end_time: 12,
+                                               parent_type: 'Grandchild',
+                                             }],
+                                           },],
+                                         },],
+                                       }],
+                                     },
+                                   ))
       end
 
       it 'works for scalar arrays' do
@@ -186,8 +186,7 @@ RSpec.describe ApolloFederation::Tracing do
         @value = value
       end
 
-      def lazy_method
-        # binding.pry
+      def value
         puts "lazy_method: #{@value}"
         @value
       end
@@ -227,13 +226,13 @@ RSpec.describe ApolloFederation::Tracing do
           end
 
           def array_of_objects
-            [Lazy.new({ id: '123' }), Lazy.new({ id: '456' })]
+            [Lazy.new(id: '123'), Lazy.new(id: '456')]
           end
         end
 
         Class.new(base_schema) do
           query query_obj
-          lazy_resolve(Lazy, :lazy_method)
+          lazy_resolve(Lazy, :value)
         end
       end
 
@@ -293,11 +292,6 @@ RSpec.describe ApolloFederation::Tracing do
               response_name: 'lazyArrayOfScalars',
               type: '[String!]!',
               start_time: 1,
-              # FIXME:
-              # This is the only discrepancy between a normal field and a lazy field.
-              # The fake clock incremented once at the end of the `execute_field` step,
-              # and again at the end of the `execute_field_lazy` step, so we record the
-              # end time as being two nanoseconds after the start time instead of one.
               end_time: 3,
               parent_type: 'Query',
             }],
@@ -326,7 +320,7 @@ RSpec.describe ApolloFederation::Tracing do
                     start_time: schema.interpreter? ? 4 : 3,
                     end_time: schema.interpreter? ? 5 : 4,
                     parent_type: 'Item',
-                  }]
+                  }],
                 },
                 {
                   index: 1,
@@ -336,9 +330,9 @@ RSpec.describe ApolloFederation::Tracing do
                     start_time: schema.interpreter? ? 7 : 5,
                     end_time: schema.interpreter? ? 8 : 6,
                     parent_type: 'Item',
-                  }]
+                  }],
                 },
-              ]
+              ],
             }],
           },
         )
