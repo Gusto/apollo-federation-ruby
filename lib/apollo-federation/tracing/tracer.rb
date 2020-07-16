@@ -159,17 +159,27 @@ module ApolloFederation
 
         end_time_nanos = Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)
 
-        # interpreter runtime
+        # legacy runtime
         if data.include?(:context)
-          context = data.fetch(:context)
           path = context.path
-        else # legacy runtime
-          context = data.fetch(:query).context
+          field = context.field
+        else # interpreter runtime
           path = data.fetch(:path)
+          field = data.fetch(:field)
         end
 
         trace = context.namespace(ApolloFederation::Tracing::KEY)
 
+        # When a field is resolved with an array of lazy values, the interpreter fires an
+        # `execute_field` for the resolution of the field and then a `execute_field_lazy` event for
+        # each lazy value in the array. Since the path here will contain an index (indicating which
+        # lazy value we're executing: e.g. ['arrayOfLazies', 0]), we won't have a node for the path.
+        # We only care about the end of the parent field (e.g. ['arrayOfLazies']), so we get the
+        # node for that path. What ends up happening is we update the end_time for the parent node
+        # for each of the lazy values. The last one that's executed becomes the final end time.
+        if field.type.list? && path.last.is_a?(Integer)
+          path = path[0...-1]
+        end
         node = trace[:node_map].node_for_path(path)
         node.end_time = end_time_nanos - trace[:start_time_nanos]
 
