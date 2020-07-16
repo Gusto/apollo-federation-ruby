@@ -34,6 +34,6 @@
     "jest": "^26.0.1",
     "nodemon": "^2.0.4",
     "semantic-release": "^17.0.8",
-    "semantic-release-rubygem": "/Users/rylan.collins/workspace/semantic-release-rubygem/"
+    "semantic-release-rubygem": "^1.0.3"
   }
 }
