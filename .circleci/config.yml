@@ -89,6 +89,7 @@ jobs:
     docker:
       - image: circleci/ruby:2.6-node
     steps:
+      - checkout
       - bundle-install
       - gusto/yarn-install
       - run: npx semantic-release
