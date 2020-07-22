@@ -98,19 +98,19 @@ workflows:
   version: 2
   main:
     jobs:
-      - gusto/ruby-lint
-      - ruby-test:
-          matrix:
-            parameters:
-              appraisal: ["graphql-1.9", "graphql-1.10"]
-      - integration-tests:
-          matrix:
-            parameters:
-              appraisal: ["graphql-1.9", "graphql-1.10"]
+      # - gusto/ruby-lint
+      # - ruby-test:
+      #     matrix:
+      #       parameters:
+      #         appraisal: ["graphql-1.9", "graphql-1.10"]
+      # - integration-tests:
+      #     matrix:
+      #       parameters:
+      #         appraisal: ["graphql-1.9", "graphql-1.10"]
       - release:
-          filters:
-            branches:
-              only: master
+          # filters:
+          #   branches:
+          #     only: master
           requires:
             - gusto/ruby-lint
             - ruby-test
