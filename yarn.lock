@@ -8413,9 +8413,9 @@ saxes@^5.0.0:
     xmlchars "^2.2.0"
 
 semantic-release-rubygem@^1.0.3:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/semantic-release-rubygem/-/semantic-release-rubygem-1.1.1.tgz#a912d59b039071f5d336efc90e9a12347091db7c"
-  integrity sha512-FD71eAxHhsHMdJu1eJws95FfMUP8NoNsmzTMGGAnHt6J/J6RTdVetS762pCHlMkcddf6MgfmiUQ+lHsCDTvXBg==
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/semantic-release-rubygem/-/semantic-release-rubygem-1.1.2.tgz#32eb197631166343039fdf7bc218c49de4701980"
+  integrity sha512-JSfydcmnap0n+Eu5GoIHKhI86dr42lqTYDHbQsmRK/TiIvZbWT2d+zBAqNxBsusmUuQ4ySDHIW3EvAENzCC18w==
   dependencies:
     "@semantic-release/error" "^2.2.0"
     execa "^4.0.2"
