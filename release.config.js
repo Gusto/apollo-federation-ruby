@@ -12,9 +12,12 @@ module.exports = {
     [
       '@semantic-release/git',
       {
-        // eslint-disable-next-line no-template-curly-in-string
-        message: 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}',
-        assets: ['CHANGELOG.md', '**/*.lock', 'lib/apollo-federation/version.rb'],
+        assets: [
+          'CHANGELOG.md',
+          'gemfiles/*.lock',
+          'Gemfile.lock',
+          'lib/apollo-federation/version.rb',
+        ],
       },
     ],
     '@semantic-release/github',
