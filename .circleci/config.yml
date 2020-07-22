@@ -111,7 +111,7 @@ workflows:
           # filters:
           #   branches:
           #     only: master
-          requires:
-            - gusto/ruby-lint
-            - ruby-test
-            - integration-tests
+          # requires:
+          #   - gusto/ruby-lint
+          #   - ruby-test
+          #   - integration-tests
