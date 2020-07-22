@@ -107,7 +107,7 @@ workflows:
       #     matrix:
       #       parameters:
       #         appraisal: ["graphql-1.9", "graphql-1.10"]
-      - release:
+      - release
           # filters:
           #   branches:
           #     only: master
