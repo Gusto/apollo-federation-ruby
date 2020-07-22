@@ -89,7 +89,9 @@ jobs:
     docker:
       - image: circleci/ruby:2.6-node
     steps:
-      - gusto/semantic-release-ruby
+      - bundle-install
+      - gusto/yarn-install
+      - run: npx semantic-release
 
 workflows:
   version: 2
