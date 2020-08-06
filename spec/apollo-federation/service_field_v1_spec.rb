@@ -455,6 +455,30 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
+    it 'returns SDL that inherits object directives' do
+      base_object_with_id = Class.new(base_object) do
+        key fields: 'id'
+
+        field :id, String, null: false
+      end
+
+      product = Class.new(base_object_with_id) do
+        graphql_name 'Product'
+      end
+
+      schema = Class.new(base_schema) do
+        orphan_types product
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          type Product @key(fields: "id") {
+            id: String!
+          }
+        GRAPHQL
+      )
+    end
+
     context 'with context in schema generation' do
       let(:schema) do
         product = Class.new(base_object) do

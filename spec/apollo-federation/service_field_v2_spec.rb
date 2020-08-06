@@ -1539,6 +1539,50 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
+    it 'returns SDL that inherits object directives' do
+      base_object_with_id = Class.new(base_object) do
+        key fields: 'id'
+
+        field :id, String, null: false
+      end
+
+      product = Class.new(base_object_with_id) do
+        graphql_name 'Product'
+      end
+
+      schema = Class.new(base_schema) do
+        federation version: '2.0'
+        orphan_types product
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
+
+          type Product @federation__key(fields: "id") {
+            id: String!
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns SDL that inherits schema directives' do
+      new_base_schema = Class.new(base_schema) do
+        federation version: '2.0', link: { as: 'fed2' }
+      end
+
+      schema = Class.new(new_base_schema)
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible", "@tag"])
+
+        GRAPHQL
+      )
+    end
+
     context 'with context in schema generation' do
       let(:schema) do
         product = Class.new(base_object) do

@@ -22,7 +22,7 @@ module ApolloFederation
       end
 
       def federation_version
-        @federation_version || '1.0'
+        @federation_version || (superclass.respond_to?(:federation_version) && superclass.federation_version) || '1.0'
       end
 
       def federation_2?
@@ -38,7 +38,11 @@ module ApolloFederation
       end
 
       def link_namespace
-        @link[:as]
+        if @link
+          @link[:as]
+        elsif superclass.respond_to?(:link_namespace)
+          superclass.link_namespace
+        end
       end
 
       def query(new_query_object = nil)
