@@ -5,12 +5,21 @@ require 'apollo-federation/service'
 
 module ApolloFederation
   module ServiceField
-    extend GraphQL::Schema::Member::HasFields
+    def self.included(base)
+      base.extend(ClassMethods)
+    end
 
-    field(:_service, Service, null: false)
+    module ClassMethods
+      extend GraphQL::Schema::Member::HasFields
+
+      def define_service_field
+        field(:_service, Service, null: false)
+      end
+    end
 
     def _service
-      { sdl: context.schema.class.federation_sdl(context: context) }
+      schema_class = context.schema.is_a?(GraphQL::Schema) ? context.schema.class : context.schema
+      { sdl: schema_class.federation_sdl(context: context) }
     end
   end
 end

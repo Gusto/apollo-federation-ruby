@@ -48,6 +48,8 @@ class Query < BaseObject
 end
 
 class AccountSchema < GraphQL::Schema
+  use GraphQL::Execution::Interpreter
+  use GraphQL::Analysis::AST
   include ApolloFederation::Schema
 
   query(Query)

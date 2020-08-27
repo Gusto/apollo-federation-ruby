@@ -59,11 +59,9 @@ beforeAll(async () => {
 
   const gateway = new ApolloGateway({ serviceList });
 
-  const { schema, executor } = await gateway.load();
-
   const server = new ApolloServer({
-    schema,
-    executor,
+    gateway,
+    subscriptions: false,
   });
 
   testClient = createTestClient(server);

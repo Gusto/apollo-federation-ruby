@@ -23,17 +23,17 @@ module ApolloFederation
         end
         federation_fields.each { |field| object_node = object_node.delete_child(field) }
       end
-      merge_directives(object_node, object_type.metadata[:federation_directives])
+      merge_directives(object_node, object_type)
     end
 
     def build_interface_type_node(interface_type)
       field_node = super
-      merge_directives(field_node, interface_type.metadata[:federation_directives])
+      merge_directives(field_node, interface_type)
     end
 
     def build_field_node(field_type)
       field_node = super
-      merge_directives(field_node, field_type.metadata[:federation_directives])
+      merge_directives(field_node, field_type)
     end
 
     def build_type_definition_nodes(types)
@@ -53,7 +53,15 @@ module ApolloFederation
       type == warden.root_type_for_operation('query')
     end
 
-    def merge_directives(node, directives)
+    def merge_directives(node, type)
+      if type.is_a?(ApolloFederation::HasDirectives)
+        directives = type.federation_directives
+      elsif type.is_a?(GraphQL::Define::InstanceDefinable)
+        directives = type.metadata[:federation_directives]
+      else
+        directives = []
+      end
+
       (directives || []).each do |directive|
         node = node.merge_directive(
           name: directive[:name],

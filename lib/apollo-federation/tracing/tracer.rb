@@ -103,7 +103,7 @@ module ApolloFederation
       # because we don't have the error `location` here.
       # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def self.execute_field(data, &block)
-        context = data.fetch(:context) || data.fetch(:query).context
+        context = data.fetch(:context, nil) || data.fetch(:query).context
         return block.call unless context && context[:tracing_enabled]
 
         start_time_nanos = Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)
@@ -116,16 +116,17 @@ module ApolloFederation
 
         end_time_nanos = Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)
 
-        # interpreter runtime
+        # legacy runtime
         if data.include?(:context)
           path = context.path
           field_name = context.field.graphql_name
           field_type = context.field.type.to_s
           parent_type = context.parent_type.graphql_name
-        else # legacy runtime
+        else # interpreter runtime
           path = data.fetch(:path)
-          field_name = data.fetch(:field).graphql_name
-          field_type = data.fetch(:field).type.unwrap.graphql_name
+          field = data.fetch(:field)
+          field_name = field.graphql_name
+          field_type = field.type.to_type_signature
           parent_type = data.fetch(:owner).graphql_name
         end
 
@@ -147,7 +148,7 @@ module ApolloFederation
       # Optional Step 3:
       # Overwrite the end times on the trace node if the resolver was lazy.
       def self.execute_field_lazy(data, &block)
-        context = data.fetch(:context) || data.fetch(:query).context
+        context = data.fetch(:context, nil) || data.fetch(:query).context
         return block.call unless context && context[:tracing_enabled]
 
         begin

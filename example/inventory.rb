@@ -42,6 +42,8 @@ class Product < BaseObject
 end
 
 class InventorySchema < GraphQL::Schema
+  use GraphQL::Execution::Interpreter
+  use GraphQL::Analysis::AST
   include ApolloFederation::Schema
 
   orphan_types Product

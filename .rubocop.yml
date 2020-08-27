@@ -3,6 +3,9 @@ require: rubocop-rspec
 AllCops:
   TargetRubyVersion: 2.3
   DisplayCopNames: true
+  Exclude:
+    - 'gemfiles/**/*'
+    - 'vendor/**/*'
 
 #
 # We prefer trailing commas so that the git diff is reduced when adding elements
@@ -51,12 +54,13 @@ Metrics/LineLength:
 Naming/FileName:
   Exclude:
     - 'lib/apollo-federation.rb'
+    - 'graphql-1.9.gemfile'
 
 RSpec/ExampleLength:
   Enabled: false
 RSpec/NestedGroups:
   Enabled: false
-Rails/FilePath:
+RSpec/FilePath:
   CustomTransform:
     ApolloFederation: apollo-federation
 
