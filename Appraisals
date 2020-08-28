@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 appraise 'graphql-1.9' do
-  gem 'graphql', '1.9.8'
+  gem 'graphql', '1.9.21'
 end
 
 appraise 'graphql-1.10' do
-  gem 'graphql', '1.10.10'
+  gem 'graphql', '1.10.14'
 end
 
 appraise 'graphql-1.11' do

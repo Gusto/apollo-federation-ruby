@@ -382,6 +382,32 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
+    it 'returns SDL that honors visibility checks' do
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+        extend_type
+        key fields: 'upc'
+        field :upc, String, null: false, external: true
+        field :secret, String, null: false, external: true do
+          def self.visible?(context)
+            super && context.fetch(:show_secrets, false)
+          end
+        end
+      end
+
+      schema = Class.new(base_schema) do
+        orphan_types product
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          type Product @extends @key(fields: "upc") {
+            upc: String! @external
+          }
+        GRAPHQL
+      )
+    end
+
     context 'with a filter' do
       let(:schema) do
         product = Class.new(base_object) do
