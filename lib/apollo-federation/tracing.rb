@@ -16,8 +16,9 @@ module ApolloFederation
     end
 
     # @deprecated There is no need to call this method. Traces are added to the result automatically
-    def attach_trace_to_result(result)
-      warn "[DEPRECATION] `attach_trace_to_result` is deprecated. There is no need to call it, as traces are added to the result automatically"
+    def attach_trace_to_result(_result)
+      warn '[DEPRECATION] `attach_trace_to_result` is deprecated. There is no need to call it, as '\
+        'traces are added to the result automatically'
     end
   end
 end

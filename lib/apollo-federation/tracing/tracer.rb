@@ -68,13 +68,13 @@ module ApolloFederation
       end
 
       def self.start_trace(query)
-        if query.context && query.context[:tracing_enabled]
-          query.context.namespace(ApolloFederation::Tracing::KEY).merge!(
-            start_time: Time.now.utc,
-            start_time_nanos: Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond),
-            node_map: NodeMap.new,
-          )
-        end
+        return unless query.context && query.context[:tracing_enabled]
+
+        query.context.namespace(ApolloFederation::Tracing::KEY).merge!(
+          start_time: Time.now.utc,
+          start_time_nanos: Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond),
+          node_map: NodeMap.new,
+        )
       end
 
       # Step 4:
@@ -213,7 +213,8 @@ module ApolloFederation
         )
 
         result[:extensions] ||= {}
-        result[:extensions][ApolloFederation::Tracing::KEY] = Base64.encode64(proto.class.encode(proto))
+        result[:extensions][ApolloFederation::Tracing::KEY] =
+          Base64.encode64(proto.class.encode(proto))
 
         if result.context[:debug_tracing]
           result[:extensions][ApolloFederation::Tracing::DEBUG_KEY] = proto.to_h
