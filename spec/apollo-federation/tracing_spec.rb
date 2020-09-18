@@ -518,10 +518,10 @@ RSpec.describe ApolloFederation::Tracing do
               root: {
                 child: [],
                 error: [{
-                  message: "Unexpected end of document",
+                  message: 'Unexpected end of document',
                   location: [],
                   json: {
-                    message: "Unexpected end of document",
+                    message: 'Unexpected end of document',
                     locations: [],
                   }.to_json,
                 }],
@@ -551,7 +551,7 @@ RSpec.describe ApolloFederation::Tracing do
                       code: 'undefinedField',
                       typeName: 'Query',
                       fieldName: 'nonExistant',
-                    }
+                    },
                   }.to_json,
                 }],
               },
