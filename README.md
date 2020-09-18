@@ -175,14 +175,6 @@ To support [federated tracing](https://www.apollographql.com/docs/apollo-server/
       # ...
     end
     ```
-3. Change your controller to attach the traces to the response:
-    ```ruby
-    def execute
-      # ...
-      result = YourSchema.execute(query, ...)
-      render json: ApolloFederation::Tracing.attach_trace_to_result(result)
-    end
-    ```
 
 ## Known Issues and Limitations
  - Only works with class-based schemas, the legacy `.define` API will not be supported

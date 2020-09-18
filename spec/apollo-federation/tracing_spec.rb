@@ -37,26 +37,22 @@ RSpec.describe ApolloFederation::Tracing do
 
       it 'does not add tracing extension by default' do
         result = schema.execute('{ test }')
-        described_class.attach_trace_to_result(result)
         expect(result[:extensions]).to be_nil
       end
 
       it 'adds the extensions.ftv1 when the context has tracing_enabled: true' do
         result = schema.execute('{ test }', context: { tracing_enabled: true })
-        described_class.attach_trace_to_result(result)
         expect(result[:extensions][:ftv1]).not_to be_nil
       end
 
       it 'adds debugging info when the context has debug_tracing: true' do
         result = schema.execute('{ test }', context: { tracing_enabled: true, debug_tracing: true })
-        described_class.attach_trace_to_result(result)
         expect(result[:extensions][:ftv1_debug]).not_to be_nil
       end
     end
 
     def trace(query)
       result = schema.execute(query, context: { tracing_enabled: true })
-      described_class.attach_trace_to_result(result)
 
       ApolloFederation::Tracing::Trace.decode(Base64.decode64(result[:extensions][:ftv1]))
     end
@@ -510,6 +506,58 @@ RSpec.describe ApolloFederation::Tracing do
             },
           ),
         )
+      end
+
+      context 'when there is a parsing error' do
+        it 'properly captures the error' do
+          expect(trace('{ items { id, name }')).to eq(
+            ApolloFederation::Tracing::Trace.new(
+              start_time: { seconds: 1_564_920_001, nanos: 0 },
+              end_time: { seconds: 1_564_920_002, nanos: 0 },
+              duration_ns: 1,
+              root: {
+                child: [],
+                error: [{
+                  message: "Unexpected end of document",
+                  location: [],
+                  json: {
+                    message: "Unexpected end of document",
+                    locations: [],
+                  }.to_json,
+                }],
+              },
+            ),
+          )
+        end
+      end
+
+      context 'when there is a validation error' do
+        it 'properly captures the error' do
+          expect(trace('{ nonExistant }')).to eq(
+            ApolloFederation::Tracing::Trace.new(
+              start_time: { seconds: 1_564_920_001, nanos: 0 },
+              end_time: { seconds: 1_564_920_002, nanos: 0 },
+              duration_ns: 1,
+              root: {
+                child: [],
+                error: [{
+                  message: "Field 'nonExistant' doesn't exist on type 'Query'",
+                  location: [{ line: 1, column: 3 }],
+                  json: {
+                    message: "Field 'nonExistant' doesn't exist on type 'Query'",
+                    locations: [{ line: 1, column: 3 }],
+                    path: ['query', 'nonExistant'],
+                    extensions: {
+                      code: 'undefinedField',
+                      typeName: 'Query',
+                      fieldName: 'nonExistant',
+                    }
+                  }.to_json,
+                }],
+              },
+            ),
+          )
+        end
       end
     end
   end

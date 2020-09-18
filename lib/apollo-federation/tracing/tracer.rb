@@ -35,15 +35,15 @@ module ApolloFederation
   module Tracing
     module Tracer
       # store string constants to avoid creating new strings for each call to .trace
-      EXECUTE_QUERY = 'execute_query'
+      EXECUTE_MULTIPLEX = 'execute_multiplex'
       EXECUTE_QUERY_LAZY = 'execute_query_lazy'
       EXECUTE_FIELD = 'execute_field'
       EXECUTE_FIELD_LAZY = 'execute_field_lazy'
 
       def self.trace(key, data, &block)
         case key
-        when EXECUTE_QUERY
-          execute_query(data, &block)
+        when EXECUTE_MULTIPLEX
+          execute_multiplex(data, &block)
         when EXECUTE_QUERY_LAZY
           execute_query_lazy(data, &block)
         when EXECUTE_FIELD
@@ -55,19 +55,26 @@ module ApolloFederation
         end
       end
 
-      # Step 1:
-      # Create a trace hash on the query context and record start times.
-      def self.execute_query(data, &block)
-        query = data.fetch(:query)
-        return block.call unless query.context && query.context[:tracing_enabled]
+      def self.execute_multiplex(data, &block)
+        # Step 1:
+        # Create a trace hash on each query's context and record start times.
+        data.fetch(:multiplex).queries.each { |query| start_trace(query) }
 
-        query.context.namespace(ApolloFederation::Tracing::KEY).merge!(
-          start_time: Time.now.utc,
-          start_time_nanos: Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond),
-          node_map: NodeMap.new,
-        )
+        results = block.call
 
-        block.call
+        # Step 5
+        # Attach the trace to the 'extensions' key of each result
+        results.map { |result| attach_trace_to_result(result) }
+      end
+
+      def self.start_trace(query)
+        if query.context && query.context[:tracing_enabled]
+          query.context.namespace(ApolloFederation::Tracing::KEY).merge!(
+            start_time: Time.now.utc,
+            start_time_nanos: Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond),
+            node_map: NodeMap.new,
+          )
+        end
       end
 
       # Step 4:
@@ -188,6 +195,36 @@ module ApolloFederation
         result
       end
       # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+      def self.attach_trace_to_result(result)
+        return result unless result.context[:tracing_enabled]
+
+        trace = result.context.namespace(ApolloFederation::Tracing::KEY)
+
+        result['errors']&.each do |error|
+          trace[:node_map].add_error(error)
+        end
+
+        proto = ApolloFederation::Tracing::Trace.new(
+          start_time: to_proto_timestamp(trace[:start_time]),
+          end_time: to_proto_timestamp(trace[:end_time]),
+          duration_ns: trace[:end_time_nanos] - trace[:start_time_nanos],
+          root: trace[:node_map].root,
+        )
+
+        result[:extensions] ||= {}
+        result[:extensions][ApolloFederation::Tracing::KEY] = Base64.encode64(proto.class.encode(proto))
+
+        if result.context[:debug_tracing]
+          result[:extensions][ApolloFederation::Tracing::DEBUG_KEY] = proto.to_h
+        end
+
+        result
+      end
+
+      def self.to_proto_timestamp(time)
+        Google::Protobuf::Timestamp.new(seconds: time.to_i, nanos: time.nsec)
+      end
     end
   end
 end
