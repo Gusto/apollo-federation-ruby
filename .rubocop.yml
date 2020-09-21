@@ -43,6 +43,8 @@ Metrics/BlockLength:
   Enabled: false
 Metrics/MethodLength:
   Enabled: false
+Metrics/ModuleLength:
+  Enabled: false
 Metrics/ParameterLists:
   Max: 5
   CountKeywordArgs: false
