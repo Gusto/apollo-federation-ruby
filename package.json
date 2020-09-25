@@ -20,18 +20,18 @@
     "graphql": "^14.6.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.10.1",
-    "@babel/preset-env": "^7.10.1",
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/exec": "^5.0.0",
     "@semantic-release/git": "^9.0.0",
     "apollo-server-core": "^2.18.1",
     "apollo-server-testing": "^2.18.1",
-    "babel-jest": "^26.0.1",
+    "babel-jest": "^26.3.0",
     "concurrently": "^5.3.0",
     "eslint-config-gusto": "^10.1.0",
     "graphql-tag": "^2.10.3",
-    "jest": "^26.0.1",
+    "jest": "^26.4.2",
     "nodemon": "^2.0.4",
     "semantic-release": "^17.0.8",
     "semantic-release-rubygem": "^1.0.3"
