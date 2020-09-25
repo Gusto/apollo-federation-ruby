@@ -1,3 +1,10 @@
+## [1.1.4-beta.1](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.3...v1.1.4-beta.1) (2020-09-21)
+
+
+### Bug Fixes
+
+* **tracing:** properly handle parsing and validation errors ([#101](https://github.com/Gusto/apollo-federation-ruby/issues/101)) ([6cf8202](https://github.com/Gusto/apollo-federation-ruby/commit/6cf820281dd85bd358c6bf4c176b9a73a9280d54))
+
 ## [1.1.3](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.2...v1.1.3) (2020-07-16)
 
 
