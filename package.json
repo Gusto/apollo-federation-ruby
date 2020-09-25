@@ -28,7 +28,7 @@
     "apollo-server-core": "^2.14.2",
     "apollo-server-testing": "^2.14.1",
     "babel-jest": "^26.0.1",
-    "concurrently": "4.1.0",
+    "concurrently": "^5.3.0",
     "eslint-config-gusto": "^10.1.0",
     "graphql-tag": "^2.10.3",
     "jest": "^26.0.1",
