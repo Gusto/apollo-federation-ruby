@@ -1,3 +1,10 @@
+## [1.1.5](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.4...v1.1.5) (2020-10-29)
+
+
+### Bug Fixes
+
+* pass context as a Hash to GraphQL::Schema.federation_sdl ([c13a94e](https://github.com/Gusto/apollo-federation-ruby/commit/c13a94e6487471b47f05907bd4f83c03fa7e6af7))
+
 ## [1.1.4](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.3...v1.1.4) (2020-09-25)
 
 
