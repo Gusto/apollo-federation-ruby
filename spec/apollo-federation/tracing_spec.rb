@@ -562,6 +562,34 @@ RSpec.describe ApolloFederation::Tracing do
     end
   end
 
+  RSpec.shared_examples 'properly recognizes "include tracing" headers' do
+    describe '"include traces" headers recognition' do
+      subject { described_class.should_add_traces(headers) }
+
+      context 'with a general request header' do
+        let(:headers) do
+          { 'apollo-federation-include-trace' => ApolloFederation::Tracing::KEY.to_s }
+        end
+
+        it { is_expected.to be true }
+      end
+
+      context 'with a Rails-transformed request header' do
+        let(:headers) do
+          { 'HTTP_APOLLO_FEDERATION_INCLUDE_TRACE' => ApolloFederation::Tracing::KEY.to_s }
+        end
+
+        it { is_expected.to be true }
+      end
+
+      context 'without any of the headers' do
+        let(:headers) { {} }
+
+        it { is_expected.to be false }
+      end
+    end
+  end
+
   context 'with the legacy runtime' do
     let(:base_schema) do
       Class.new(GraphQL::Schema) do
@@ -570,6 +598,7 @@ RSpec.describe ApolloFederation::Tracing do
     end
 
     it_behaves_like 'a basic tracer'
+    it_behaves_like 'properly recognizes "include tracing" headers'
   end
 
   context 'with the new interpreter' do
@@ -582,5 +611,6 @@ RSpec.describe ApolloFederation::Tracing do
     end
 
     it_behaves_like 'a basic tracer'
+    it_behaves_like 'properly recognizes "include tracing" headers'
   end
 end
