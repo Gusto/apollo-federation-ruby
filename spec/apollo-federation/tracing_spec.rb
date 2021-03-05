@@ -562,22 +562,26 @@ RSpec.describe ApolloFederation::Tracing do
     end
   end
 
-  context 'with the legacy runtime' do
-    let(:base_schema) do
-      Class.new(GraphQL::Schema) do
-        use ApolloFederation::Tracing
+  if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('1.12.0')
+    context 'with the legacy runtime' do
+      let(:base_schema) do
+        Class.new(GraphQL::Schema) do
+          use ApolloFederation::Tracing
+        end
       end
-    end
 
-    it_behaves_like 'a basic tracer'
+      it_behaves_like 'a basic tracer'
+    end
   end
 
-  context 'with the new interpreter' do
+  context 'with the interpreter runtime' do
     let(:base_schema) do
       Class.new(GraphQL::Schema) do
         use ApolloFederation::Tracing
-        use GraphQL::Execution::Interpreter
-        use GraphQL::Analysis::AST
+        if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('1.12.0')
+          use GraphQL::Execution::Interpreter
+          use GraphQL::Analysis::AST
+        end
       end
     end
 
