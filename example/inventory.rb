@@ -42,8 +42,10 @@ class Product < BaseObject
 end
 
 class InventorySchema < GraphQL::Schema
-  use GraphQL::Execution::Interpreter
-  use GraphQL::Analysis::AST
+  if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('1.12.0')
+    use GraphQL::Execution::Interpreter
+    use GraphQL::Analysis::AST
+  end
   include ApolloFederation::Schema
 
   orphan_types Product
