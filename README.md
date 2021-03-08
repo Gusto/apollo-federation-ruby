@@ -170,7 +170,7 @@ To support [federated tracing](https://www.apollographql.com/docs/apollo-server/
     def execute
       # ...
       context = {
-        tracing_enabled: ApolloFederation::Tracing.should_add_traces(headers)
+        tracing_enabled: ApolloFederation::Tracing.should_add_traces(request.headers)
       }
       # ...
     end
