@@ -28,7 +28,7 @@ USERS = [
 ].freeze
 
 class User < BaseObject
-  key fields: 'id'
+  key fields: :id
 
   field :id, ID, null: false
   field :name, String, null: true

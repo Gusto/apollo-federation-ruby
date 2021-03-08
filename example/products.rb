@@ -35,7 +35,7 @@ PRODUCTS = [
 ].freeze
 
 class Product < BaseObject
-  key fields: 'upc'
+  key fields: :upc
 
   field :upc, String, null: false
   field :name, String, null: true
