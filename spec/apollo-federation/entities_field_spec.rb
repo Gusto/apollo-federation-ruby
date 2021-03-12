@@ -211,6 +211,24 @@ RSpec.describe ApolloFederation::EntitiesField do
                 it { expect(errors).to be_nil }
               end
 
+              context 'when representations are inlined within the query' do
+                let(:query) do
+                  <<~GRAPHQL
+                    query EntitiesQuery {
+                      _entities(representations: [{ __typename: "#{typename}", id: "#{id}" }]) {
+                        ... on TypeWithKey {
+                          id
+                          otherField
+                        }
+                      }
+                    }
+                  GRAPHQL
+                end
+
+                it { is_expected.to match_array [{ 'id' => id.to_s, 'otherField' => nil }] }
+                it { expect(errors).to be_nil }
+              end
+
               context 'when the type defines a resolve_reference method' do
                 let(:type_with_key) do
                   Class.new(base_object) do
