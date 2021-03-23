@@ -45,6 +45,10 @@ module ApolloFederation
         klass.define_service_field
         klass
       end
+
+      def includes_directive?(directives, name)
+        directives&.any? { |directive| directive[:name] == name }
+      end
     end
 
     # TODO: Remove these once we drop support for graphql 1.9
@@ -57,7 +61,10 @@ module ApolloFederation
 
         possible_entities = orig_defn.types.values.select do |type|
           !type.introspection? && !type.default_scalar? && type.is_a?(GraphQL::ObjectType) &&
-            type.metadata[:federation_directives]&.any? { |directive| directive[:name] == 'key' }
+            (includes_directive?(type.metadata[:federation_directives], 'key') ||
+              type.fields.values.any? do |field|
+                includes_directive?(field.metadata[:federation_directives], 'requires')
+              end)
         end
         @query_object.define_entities_field(possible_entities)
 
@@ -97,7 +104,10 @@ module ApolloFederation
         types_schema.types.values.select do |type|
           # TODO: Interfaces can have a key...
           !type.introspection? && type.include?(ApolloFederation::Object) &&
-            type.federation_directives&.any? { |directive| directive[:name] == 'key' }
+            (includes_directive?(type.federation_directives, 'key') ||
+              type.fields.values.any? do |field|
+                includes_directive?(field.federation_directives, 'requires')
+              end)
         end
       end
     end

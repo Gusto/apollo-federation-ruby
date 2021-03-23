@@ -53,12 +53,23 @@ RSpec.describe ApolloFederation::EntitiesField do
         end
       end
 
+      let(:type_with_requires) do
+        Class.new(base_object) do
+          graphql_name 'TypeWithRequires'
+          extend_type
+          field :value, 'String', null: false, external: true
+          field :additional_field, 'String', null: true, requires: { fields: 'value' }
+        end
+      end
+
       context 'when a Query object is provided' do
         let(:query) do
           type_with_key_class = type_with_key
+          type_with_requires_class = type_with_requires
           Class.new(base_object) do
             graphql_name 'Query'
             field :type_with_key, type_with_key_class, null: true
+            field :type_with_requires, type_with_requires_class, null: true
           end
         end
 
@@ -86,6 +97,7 @@ RSpec.describe ApolloFederation::EntitiesField do
                 _entities(representations: [_Any!]!): [_Entity]!
                 _service: _Service!
                 typeWithKey: TypeWithKey
+                typeWithRequires: TypeWithRequires
               }
 
               type TypeWithKey {
@@ -93,9 +105,14 @@ RSpec.describe ApolloFederation::EntitiesField do
                 otherField: String
               }
 
+              type TypeWithRequires {
+                additionalField: String
+                value: String!
+              }
+
               scalar _Any
 
-              union _Entity = TypeWithKey
+              union _Entity = TypeWithKey | TypeWithRequires
 
               """
               The sdl representing the federated service capabilities. Includes federation
