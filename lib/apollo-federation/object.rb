@@ -8,6 +8,10 @@ module ApolloFederation
       klass.extend(ClassMethods)
     end
 
+    def self.new
+      ::Object.new
+    end
+
     module ClassMethods
       include HasDirectives
 
