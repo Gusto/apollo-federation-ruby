@@ -176,9 +176,34 @@ To support [federated tracing](https://www.apollographql.com/docs/apollo-server/
     end
     ```
 
+## Exporting the Federated SDL
+
+When using tools like [rover](https://www.apollographql.com/docs/rover/) for schema validation, etc., add a Rake task that prints the Federated SDL to a file: 
+
+```rb
+namespace :graphql do
+  namespace :federation do
+    task :dump do
+      File.open "schema.graphql", "w+" do |f|
+        f << MySchema.federation_sdl
+      end
+    end
+  end
+end
+```
+
+(This task mirrors the [`graphq:schema:dump` task](https://github.com/rmosolgo/graphql-ruby/blob/master/lib/graphql/rake_task.rb) included in graphql-ruby.)
+
+Example validation check with Rover and Apollo Studio:
+
+```sh
+bin/rake graphql:federation:dump
+rover subgraph check mygraph@current --name mysubgraph --schema schema.graphql
+```
+
 ## Known Issues and Limitations
  - Only works with class-based schemas, the legacy `.define` API will not be supported
- - Does not add directives to the output of `Schema.to_definition`. Since `graphql-ruby` doesn't natively support schema directives, the directives will only be visible to the [Apollo Gateway](https://www.apollographql.com/docs/apollo-server/api/apollo-gateway/) through the `Query._service` field (see the [Apollo Federation specification](https://www.apollographql.com/docs/apollo-server/federation/federation-spec/))
+ - Does not add directives to the output of `Schema.to_definition`. Since `graphql-ruby` doesn't natively support schema directives, the directives will only be visible to the [Apollo Gateway](https://www.apollographql.com/docs/apollo-server/api/apollo-gateway/) through the `Query._service` field (see the [Apollo Federation specification](https://www.apollographql.com/docs/apollo-server/federation/federation-spec/)) or via [`Schema#federation_sdl`](https://github.com/Gusto/apollo-federation-ruby/blob/1d3baf4f8efcd02e7bf5bc7e3fee5b4fb963cd25/lib/apollo-federation/schema.rb#L19) as explained above.
 
 ## Maintainers
  * [Rylan Collins](https://github.com/rylanc)
