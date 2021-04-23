@@ -85,12 +85,12 @@ Start the gateway:
 
 This will start up the gateway and serve it at http://localhost:5000.
 
-
 ## Usage
 
 The API is designed to mimic the API of [Apollo's federation library](https://www.apollographql.com/docs/apollo-server/federation/introduction/). It's best to read and understand the way federation works, in general, before attempting to use this library.
 
 ### Extending a type
+
 [Apollo documentation](https://www.apollographql.com/docs/apollo-server/federation/core-concepts/#extending-external-types)
 
 Call `extend_type` within your class definition:
@@ -102,6 +102,7 @@ end
 ```
 
 ### The `@key` directive
+
 [Apollo documentation](https://www.apollographql.com/docs/apollo-server/federation/core-concepts/#entities-and-keys)
 
 Call `key` within your class definition:
@@ -113,6 +114,7 @@ end
 ```
 
 ### The `@external` directive
+
 [Apollo documentation](https://www.apollographql.com/docs/apollo-server/federation/core-concepts/#referencing-external-types)
 
 Pass the `external: true` option to your field definition:
@@ -124,6 +126,7 @@ end
 ```
 
 ### The `@requires` directive
+
 [Apollo documentation](https://www.apollographql.com/docs/apollo-server/federation/advanced-features/#computed-fields)
 
 Pass the `requires:` option to your field definition:
@@ -137,6 +140,7 @@ end
 ```
 
 ### The `@provides` directive
+
 [Apollo documentation](https://www.apollographql.com/docs/apollo-server/federation/advanced-features/#using-denormalized-data)
 
 Pass the `provides:` option to your field definition:
@@ -148,6 +152,7 @@ end
 ```
 
 ### Reference resolvers
+
 [Apollo documentation](https://www.apollographql.com/docs/apollo-server/api/apollo-federation/#__resolvereference)
 
 Define a `resolve_reference` class method on your object. The method will be passed the reference from another service and the context for the query.
@@ -166,15 +171,36 @@ To support [federated tracing](https://www.apollographql.com/docs/apollo-server/
 
 1. Add `use ApolloFederation::Tracing` to your schema class.
 2. Change your controller to add `tracing_enabled: true` to the execution context based on the presence of the "include trace" header:
-    ```ruby
-    def execute
-      # ...
-      context = {
-        tracing_enabled: ApolloFederation::Tracing.should_add_traces(headers)
-      }
-      # ...
+   ```ruby
+   def execute
+     # ...
+     context = {
+       tracing_enabled: ApolloFederation::Tracing.should_add_traces(headers)
+     }
+     # ...
+   end
+   ```
+
+## Exporting the Federated SDL
+
+When using tools like [rover](https://www.apollographql.com/docs/rover/) for schema validation, etc., add a Rake task that prints the Federated SDL to a file:
+
+```rb
+namespace :graphql do
+  namespace :federation do
+    task :dump do
+      File.write("schema.graphql", MySchema.federation_sdl)
     end
-    ```
+  end
+end
+```
+
+Example validation check with Rover and Apollo Studio:
+
+```sh
+bin/rake graphql:federation:dump
+rover subgraph check mygraph@current --name mysubgraph --schema schema.graphql
+```
 
 ## Testing the federated schema
 This library does not include any testing helpers currently. A federated service receives subgraph queries from the Apollo Gateway via the `_entities` field and that can be tested in a request spec.
@@ -239,9 +265,11 @@ end
 See discussion at [#74](https://github.com/Gusto/apollo-federation-ruby/issues/74) and an [internal spec that resolves _entities](https://github.com/Gusto/apollo-federation-ruby/blob/1d3baf4f8efcd02e7bf5bc7e3fee5b4fb963cd25/spec/apollo-federation/entities_field_spec.rb#L164) for more details.
 
 ## Known Issues and Limitations
- - Only works with class-based schemas, the legacy `.define` API will not be supported
- - Does not add directives to the output of `Schema.to_definition`. Since `graphql-ruby` doesn't natively support schema directives, the directives will only be visible to the [Apollo Gateway](https://www.apollographql.com/docs/apollo-server/api/apollo-gateway/) through the `Query._service` field (see the [Apollo Federation specification](https://www.apollographql.com/docs/apollo-server/federation/federation-spec/))
+
+- Only works with class-based schemas, the legacy `.define` API will not be supported
+- Does not add directives to the output of `Schema.to_definition`. Since `graphql-ruby` doesn't natively support schema directives, the directives will only be visible to the [Apollo Gateway](https://www.apollographql.com/docs/apollo-server/api/apollo-gateway/) through the `Query._service` field (see the [Apollo Federation specification](https://www.apollographql.com/docs/apollo-server/federation/federation-spec/)) or via [`Schema#federation_sdl`](https://github.com/Gusto/apollo-federation-ruby/blob/1d3baf4f8efcd02e7bf5bc7e3fee5b4fb963cd25/lib/apollo-federation/schema.rb#L19) as explained above.
 
 ## Maintainers
- * [Rylan Collins](https://github.com/rylanc)
- * [Noa Elad](https://github.com/noaelad)
+
+- [Rylan Collins](https://github.com/rylanc)
+- [Noa Elad](https://github.com/noaelad)
