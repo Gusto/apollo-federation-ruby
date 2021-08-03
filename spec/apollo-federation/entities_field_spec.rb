@@ -7,7 +7,7 @@ require 'apollo-federation/field'
 require 'apollo-federation/object'
 
 RSpec.describe ApolloFederation::EntitiesField do
-  shared_examples 'entities field' do
+  shared_examples 'entities field' do |make_final_schema|
     let(:base_object) do
       base_field = Class.new(GraphQL::Schema::Field) do
         include ApolloFederation::Field
@@ -19,12 +19,13 @@ RSpec.describe ApolloFederation::EntitiesField do
       end
     end
 
-    context 'when a type with the key directive doesn\'t exist' do
-      it 'does not add the _entities field' do
-        schema = Class.new(base_schema) do
-        end
+    let(:fed_schema) { make_final_schema&.call(schema) || schema }
 
-        expect(schema.to_definition).to match_sdl(
+    context 'when a type with the key directive doesn\'t exist' do
+      let(:schema) { base_schema }
+
+      it 'does not add the _entities field' do
+        expect(fed_schema.to_definition).to match_sdl(
           <<~GRAPHQL,
             type Query {
               _service: _Service!
@@ -64,14 +65,15 @@ RSpec.describe ApolloFederation::EntitiesField do
 
         let(:schema) do
           query_class = query
-          Class.new(base_schema) do
+          base_schema.class_eval do
             query query_class
           end
+          base_schema
         end
 
         it 'sets the Query as the owner to the _entities field' do
           expect(
-            schema.graphql_definition
+            fed_schema.graphql_definition
               .types['Query']
               .fields['_entities']
               .metadata[:type_class]
@@ -80,7 +82,7 @@ RSpec.describe ApolloFederation::EntitiesField do
         end
 
         it 'adds an _entities field to the Query object' do
-          expect(schema.to_definition).to match_sdl(
+          expect(fed_schema.to_definition).to match_sdl(
             <<~GRAPHQL,
               type Query {
                 _entities(representations: [_Any!]!): [_Entity]!
@@ -122,14 +124,14 @@ RSpec.describe ApolloFederation::EntitiesField do
 
         let(:schema) do
           mutation_class = mutation
-          Class.new(base_schema) do
+          base_schema.class_eval do
             mutation mutation_class
           end
+          base_schema
         end
 
         it 'creates a Query object and adds an _entities field to it' do
-          s = schema
-          expect(s.to_definition).to match_sdl(
+          expect(fed_schema.to_definition).to match_sdl(
             <<~GRAPHQL,
               type Mutation {
                 typeWithKey: TypeWithKey
@@ -178,7 +180,7 @@ RSpec.describe ApolloFederation::EntitiesField do
           end
 
           let(:execute_query) do
-            schema.execute(query, variables: { representations: representations })
+            fed_schema.execute(query, variables: { representations: representations })
           end
           let(:errors) { execute_query['errors'] }
 
@@ -244,11 +246,12 @@ RSpec.describe ApolloFederation::EntitiesField do
                   let(:schema) do
                     lazy_entity_class = lazy_entity
                     type_with_key_class = type_with_key
-                    Class.new(base_schema) do
+                    base_schema.class_eval do
                       lazy_resolve(lazy_entity_class, :load_entity)
 
                       orphan_types type_with_key_class
                     end
+                    base_schema
                   end
 
                   let(:resolve_method) do
@@ -355,6 +358,25 @@ RSpec.describe ApolloFederation::EntitiesField do
           end
 
           include ApolloFederation::Schema
+        end
+      end
+    end
+  end
+
+  context 'when the federation schema is a subclass of the base schema' do
+    final_schema = lambda do |schema|
+      Class.new(schema) do
+        include ApolloFederation::Schema
+      end
+    end
+
+    it_behaves_like 'entities field', final_schema do
+      let(:base_schema) do
+        Class.new(GraphQL::Schema) do
+          if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('1.12.0')
+            use GraphQL::Execution::Interpreter
+            use GraphQL::Analysis::AST
+          end
         end
       end
     end

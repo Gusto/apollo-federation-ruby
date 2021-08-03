@@ -73,7 +73,7 @@ module ApolloFederation
           @orig_query_object = new_query_object
         else
           if !@federation_query_object
-            @federation_query_object = federation_query(@orig_query_object)
+            @federation_query_object = federation_query(@orig_query_object || super)
             @federation_query_object.define_entities_field(schema_entities)
 
             super(@federation_query_object)
