@@ -363,19 +363,21 @@ RSpec.describe ApolloFederation::EntitiesField do
     end
   end
 
-  context 'when the federation schema is a subclass of the base schema' do
-    final_schema = lambda do |schema|
-      Class.new(schema) do
-        include ApolloFederation::Schema
+  if Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('1.10.0')
+    context 'when the federation schema is a subclass of the base schema' do
+      final_schema = lambda do |schema|
+        Class.new(schema) do
+          include ApolloFederation::Schema
+        end
       end
-    end
 
-    it_behaves_like 'entities field', final_schema do
-      let(:base_schema) do
-        Class.new(GraphQL::Schema) do
-          if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('1.12.0')
-            use GraphQL::Execution::Interpreter
-            use GraphQL::Analysis::AST
+      it_behaves_like 'entities field', final_schema do
+        let(:base_schema) do
+          Class.new(GraphQL::Schema) do
+            if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('1.12.0')
+              use GraphQL::Execution::Interpreter
+              use GraphQL::Analysis::AST
+            end
           end
         end
       end
