@@ -7,3 +7,7 @@ node_modules/
 
 # built CircleCI configs
 .circleci/processed-config.yml
+
+.DS_Store
+
+./vscode

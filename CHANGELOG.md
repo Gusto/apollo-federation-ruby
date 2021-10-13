@@ -1,3 +1,31 @@
+## [1.1.5](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.4...v1.1.5) (2020-10-29)
+
+
+### Bug Fixes
+
+* pass context as a Hash to GraphQL::Schema.federation_sdl ([c13a94e](https://github.com/Gusto/apollo-federation-ruby/commit/c13a94e6487471b47f05907bd4f83c03fa7e6af7))
+
+## [1.1.4](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.3...v1.1.4) (2020-09-25)
+
+
+### Bug Fixes
+
+* **tracing:** properly handle parsing and validation errors ([#102](https://github.com/Gusto/apollo-federation-ruby/issues/102)) ([a1c2a41](https://github.com/Gusto/apollo-federation-ruby/commit/a1c2a41d3d01f06364d439cdcc273f4678fed7bd)), closes [#101](https://github.com/Gusto/apollo-federation-ruby/issues/101) [#101](https://github.com/Gusto/apollo-federation-ruby/issues/101)
+
+## [1.1.4-beta.1](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.3...v1.1.4-beta.1) (2020-09-21)
+
+
+### Bug Fixes
+
+* **tracing:** properly handle parsing and validation errors ([#101](https://github.com/Gusto/apollo-federation-ruby/issues/101)) ([6cf8202](https://github.com/Gusto/apollo-federation-ruby/commit/6cf820281dd85bd358c6bf4c176b9a73a9280d54))
+
+## [1.1.3](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.2...v1.1.3) (2020-07-16)
+
+
+### Bug Fixes
+
+* **tracing:** Properly handle tracing fields that resolve an array of lazy values ([#87](https://github.com/Gusto/apollo-federation-ruby/issues/87)) ([a9eed77](https://github.com/Gusto/apollo-federation-ruby/commit/a9eed77bbe5859456f93be00fbcafa02142ad5ed))
+
 ## [1.1.2](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.1...v1.1.2) (2020-06-09)
 
 

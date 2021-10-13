@@ -3,3 +3,5 @@
 source 'https://rubygems.org'
 
 gemspec
+
+gem 'graphql', '1.12.14'

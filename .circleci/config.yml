@@ -89,7 +89,10 @@ jobs:
     docker:
       - image: circleci/ruby:2.6-node
     steps:
-      - gusto/semantic-release-ruby
+      - checkout
+      - bundle-install
+      - gusto/yarn-install
+      - run: npx semantic-release
 
 workflows:
   version: 2
@@ -99,15 +102,12 @@ workflows:
       - ruby-test:
           matrix:
             parameters:
-              appraisal: ["graphql-1.9", "graphql-1.10"]
+              appraisal: ["graphql-1.9", "graphql-1.10", "graphql-1.11"]
       - integration-tests:
           matrix:
             parameters:
-              appraisal: ["graphql-1.9", "graphql-1.10"]
+              appraisal: ["graphql-1.9", "graphql-1.10", "graphql-1.11"]
       - release:
-          filters:
-            branches:
-              only: master
           requires:
             - gusto/ruby-lint
             - ruby-test

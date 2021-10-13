@@ -35,15 +35,15 @@ module ApolloFederation
   module Tracing
     module Tracer
       # store string constants to avoid creating new strings for each call to .trace
-      EXECUTE_QUERY = 'execute_query'
+      EXECUTE_MULTIPLEX = 'execute_multiplex'
       EXECUTE_QUERY_LAZY = 'execute_query_lazy'
       EXECUTE_FIELD = 'execute_field'
       EXECUTE_FIELD_LAZY = 'execute_field_lazy'
 
       def self.trace(key, data, &block)
         case key
-        when EXECUTE_QUERY
-          execute_query(data, &block)
+        when EXECUTE_MULTIPLEX
+          execute_multiplex(data, &block)
         when EXECUTE_QUERY_LAZY
           execute_query_lazy(data, &block)
         when EXECUTE_FIELD
@@ -55,19 +55,26 @@ module ApolloFederation
         end
       end
 
-      # Step 1:
-      # Create a trace hash on the query context and record start times.
-      def self.execute_query(data, &block)
-        query = data.fetch(:query)
-        return block.call unless query.context && query.context[:tracing_enabled]
+      def self.execute_multiplex(data, &block)
+        # Step 1:
+        # Create a trace hash on each query's context and record start times.
+        data.fetch(:multiplex).queries.each { |query| start_trace(query) }
+
+        results = block.call
+
+        # Step 5
+        # Attach the trace to the 'extensions' key of each result
+        results.map { |result| attach_trace_to_result(result) }
+      end
+
+      def self.start_trace(query)
+        return unless query.context && query.context[:tracing_enabled]
 
         query.context.namespace(ApolloFederation::Tracing::KEY).merge!(
           start_time: Time.now.utc,
           start_time_nanos: Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond),
           node_map: NodeMap.new,
         )
-
-        block.call
       end
 
       # Step 4:
@@ -159,17 +166,27 @@ module ApolloFederation
 
         end_time_nanos = Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)
 
-        # interpreter runtime
+        # legacy runtime
         if data.include?(:context)
-          context = data.fetch(:context)
           path = context.path
-        else # legacy runtime
-          context = data.fetch(:query).context
+          field = context.field
+        else # interpreter runtime
           path = data.fetch(:path)
+          field = data.fetch(:field)
         end
 
         trace = context.namespace(ApolloFederation::Tracing::KEY)
 
+        # When a field is resolved with an array of lazy values, the interpreter fires an
+        # `execute_field` for the resolution of the field and then a `execute_field_lazy` event for
+        # each lazy value in the array. Since the path here will contain an index (indicating which
+        # lazy value we're executing: e.g. ['arrayOfLazies', 0]), we won't have a node for the path.
+        # We only care about the end of the parent field (e.g. ['arrayOfLazies']), so we get the
+        # node for that path. What ends up happening is we update the end_time for the parent node
+        # for each of the lazy values. The last one that's executed becomes the final end time.
+        if field.type.list? && path.last.is_a?(Integer)
+          path = path[0...-1]
+        end
         node = trace[:node_map].node_for_path(path)
         node.end_time = end_time_nanos - trace[:start_time_nanos]
 
@@ -178,6 +195,37 @@ module ApolloFederation
         result
       end
       # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+      def self.attach_trace_to_result(result)
+        return result unless result.context[:tracing_enabled]
+
+        trace = result.context.namespace(ApolloFederation::Tracing::KEY)
+
+        result['errors']&.each do |error|
+          trace[:node_map].add_error(error)
+        end
+
+        proto = ApolloFederation::Tracing::Trace.new(
+          start_time: to_proto_timestamp(trace[:start_time]),
+          end_time: to_proto_timestamp(trace[:end_time]),
+          duration_ns: trace[:end_time_nanos] - trace[:start_time_nanos],
+          root: trace[:node_map].root,
+        )
+
+        result[:extensions] ||= {}
+        result[:extensions][ApolloFederation::Tracing::KEY] =
+          Base64.encode64(proto.class.encode(proto))
+
+        if result.context[:debug_tracing]
+          result[:extensions][ApolloFederation::Tracing::DEBUG_KEY] = proto.to_h
+        end
+
+        result
+      end
+
+      def self.to_proto_timestamp(time)
+        Google::Protobuf::Timestamp.new(seconds: time.to_i, nanos: time.nsec)
+      end
     end
   end
 end

@@ -38,6 +38,7 @@ RSpec.describe ApolloFederation::EntitiesField do
             type _Service {
               sdl: String
             }
+
           GRAPHQL
         )
       end
@@ -122,6 +123,7 @@ RSpec.describe ApolloFederation::EntitiesField do
               type _Service {
                 sdl: String
               }
+
             GRAPHQL
           )
         end
@@ -174,6 +176,7 @@ RSpec.describe ApolloFederation::EntitiesField do
               type _Service {
                 sdl: String
               }
+
             GRAPHQL
           )
         end

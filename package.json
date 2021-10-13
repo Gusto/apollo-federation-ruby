@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@apollo/gateway": "^0.16.2",
-    "apollo-server": "^2.14.1",
+    "apollo-server": "^2.14.2",
     "graphql": "^14.6.0"
   },
   "devDependencies": {
@@ -33,6 +33,7 @@
     "graphql-tag": "^2.10.3",
     "jest": "^26.0.1",
     "nodemon": "^2.0.4",
-    "semantic-release": "^17.0.8"
+    "semantic-release": "^17.0.8",
+    "semantic-release-rubygem": "^1.0.3"
   }
 }
