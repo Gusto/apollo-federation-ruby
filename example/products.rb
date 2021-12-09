@@ -48,7 +48,7 @@ class Product < BaseObject
 end
 
 class Query < BaseObject
-  field :top_products, [Product], null: false do
+  field :top_products, [Product], null: true do
     argument :first, Int, required: false, default_value: 5
   end
 
