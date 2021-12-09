@@ -5,3 +5,4 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'graphql', '1.10.10'
+gem 'pry'
