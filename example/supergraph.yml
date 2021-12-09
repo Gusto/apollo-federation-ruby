@@ -1,0 +1,9 @@
+subgraphs:
+#  accounts:
+#    routing_url: http://localhost:5001/graphql
+#  review:
+#    routing_url: http://localhost:5002/graphql
+  products:
+    routing_url: http://localhost:5003/graphql
+#  inventory:
+#    routing_url: http://localhost:5004/graphql
