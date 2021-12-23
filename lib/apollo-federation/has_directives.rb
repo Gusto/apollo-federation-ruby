@@ -9,10 +9,18 @@ module ApolloFederation
       @federation_directives << { name: name, arguments: arguments }
     end
 
-    def to_graphql
-      field_defn = super # Returns a GraphQL::Field
-      field_defn.metadata[:federation_directives] = @federation_directives
-      field_defn
+    if Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('1.13.1')
+      def to_graphql(silence_deprecation_warning: false)
+        field_defn = super # Returns a GraphQL::Field
+        field_defn.metadata[:federation_directives] = @federation_directives
+        field_defn
+      end
+    else
+      def to_graphql
+        field_defn = super # Returns a GraphQL::Field
+        field_defn.metadata[:federation_directives] = @federation_directives
+        field_defn
+      end
     end
   end
 end
