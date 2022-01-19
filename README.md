@@ -176,6 +176,68 @@ To support [federated tracing](https://www.apollographql.com/docs/apollo-server/
     end
     ```
 
+## Testing the federated schema
+This library does not include any testing helpers currently. A federated service receives subgraph queries from the Apollo Gateway via the `_entities` field and that can be tested in a request spec.
+
+With Apollo Gateway setup to hit your service locally or by using existing query logs, you can retrieve the generated `_entities` queries.
+
+For example, if you have a blog service that exposes posts by a given author, the query received by the service might look like this.
+
+```graphql
+query($representations: [_Any!]!) {
+  _entities(representations: $representations) {
+    ... on BlogPost {
+      id
+      title
+      body
+    }
+  }
+}
+```
+Where `$representations` is an array of entity references from the gateway.
+
+```JSON
+{
+  "representations": [
+    {
+      "__typename": "BlogPost",
+      "id": 1
+    },
+    {
+      "__typename": "BlogPost",
+      "id": 2
+    }
+  ]
+}
+```
+
+Using RSpec as an example, a request spec for this query.
+
+```ruby
+it "resolves the blog post entities" do
+  blog_post = BlogPost.create!(attributes)
+
+  query = <<~GRAPHQL
+    query($representations: [_Any!]!) {
+      _entities(representations: $representations) {
+        ... on BlogPost {
+          id
+          title
+          body
+        }
+      }
+    }
+  GRAPHQL
+
+  variables = { representations: [{ __typename: "BlogPost", id: blog_post.id }] }
+
+  result = Schema.execute(query, variables: variables)
+
+  expect(result.dig("data", "_entities", 0, "id")).to eq(blog_post.id)
+end
+```
+See discussion at [#74](https://github.com/Gusto/apollo-federation-ruby/issues/74) and an [internal spec that resolves _entities](https://github.com/Gusto/apollo-federation-ruby/blob/1d3baf4f8efcd02e7bf5bc7e3fee5b4fb963cd25/spec/apollo-federation/entities_field_spec.rb#L164) for more details.
+
 ## Known Issues and Limitations
  - Only works with class-based schemas, the legacy `.define` API will not be supported
  - Does not add directives to the output of `Schema.to_definition`. Since `graphql-ruby` doesn't natively support schema directives, the directives will only be visible to the [Apollo Gateway](https://www.apollographql.com/docs/apollo-server/api/apollo-gateway/) through the `Query._service` field (see the [Apollo Federation specification](https://www.apollographql.com/docs/apollo-server/federation/federation-spec/))
