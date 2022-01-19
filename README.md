@@ -179,7 +179,7 @@ To support [federated tracing](https://www.apollographql.com/docs/apollo-server/
 ## Testing the federated schema
 This library does not include any testing helpers currently. A federated service receives subgraph queries from the Apollo Gateway via the `_entities` field and that can be tested in a request spec.
 
-With apollo gateway setup to hit the service locally (or from query logs), you could retrieve `_entities` queries generated in the use of your application and test them.
+With Apollo Gateway setup to hit your service locally or by using existing query logs, you can retrieve the generated `_entities` queries.
 
 For example, if you have a blog service that exposes posts by a given author, the query received by the service might look like this.
 
