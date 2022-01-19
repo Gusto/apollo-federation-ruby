@@ -229,7 +229,7 @@ it "resolves the blog post entities" do
     }
   GRAPHQL
 
-  variables = { representations: [{__typename: "BlogPost", id: blog_post.id}] }
+  variables = { representations: [{ __typename: "BlogPost", id: blog_post.id }] }
 
   result = Schema.execute(query, variables: variables)
 
