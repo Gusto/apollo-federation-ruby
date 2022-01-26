@@ -23,10 +23,10 @@ commands:
           command: |
             bundle install --jobs=4 --retry=3 --path=vendor/bundle
       - save_cache:
-            name: Save Ruby Package Cache
-            key: v2-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-            paths:
-              - ./vendor/bundle
+          name: Save Ruby Package Cache
+          key: v2-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ./vendor/bundle
   appraisal-install:
     parameters:
       appraisal:
@@ -102,11 +102,11 @@ workflows:
       - ruby-test:
           matrix:
             parameters:
-              appraisal: ["graphql-1.9", "graphql-1.10", "graphql-1.11", "graphql-1.12"]
+              appraisal: ['graphql-1.10', 'graphql-1.11', 'graphql-1.12']
       - integration-tests:
           matrix:
             parameters:
-              appraisal: ["graphql-1.9", "graphql-1.10", "graphql-1.11", "graphql-1.12"]
+              appraisal: ['graphql-1.10', 'graphql-1.11', 'graphql-1.12']
       - release:
           requires:
             - gusto/ruby-lint
