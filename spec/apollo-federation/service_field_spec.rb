@@ -81,10 +81,8 @@ RSpec.describe ApolloFederation::ServiceField do
 
     it 'sets the Query as the owner to the _service field' do
       expect(
-        base_schema.graphql_definition
-              .types['Query']
+        base_schema.query
               .fields['_service']
-              .metadata[:type_class]
               .owner.graphql_name,
       ).to eq('Query')
     end

@@ -71,7 +71,7 @@ RSpec.describe ApolloFederation::EntitiesField do
 
         it 'sets the Query as the owner to the _entities field' do
           expect(
-            schema.graphql_definition
+            schema
               .types['Query']
               .fields['_entities']
               .metadata[:type_class]
