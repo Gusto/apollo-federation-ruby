@@ -4,7 +4,7 @@ require 'pry-byebug'
 
 RSpec::Matchers.define :match_sdl do |expected|
   match do |actual|
-    @actual.chomp == expected.chomp
+    actual.chomp == expected.chomp
   end
 
   diffable

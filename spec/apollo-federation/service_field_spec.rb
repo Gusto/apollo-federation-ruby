@@ -406,7 +406,7 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
-    context 'context in schema generation' do
+    context 'with context in schema generation' do
       let(:schema) do
         product = Class.new(base_object) do
           graphql_name 'Product'
