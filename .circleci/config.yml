@@ -58,7 +58,7 @@ jobs:
       appraisal:
         type: string
     docker:
-      - image: circleci/ruby:2.6-node
+      - image: circleci/ruby:2.7.5-node
     environment:
       BUNDLE_APP_CONFIG: .bundle
     steps:
@@ -74,7 +74,7 @@ jobs:
       appraisal:
         type: string
     docker:
-      - image: circleci/ruby:2.6-node
+      - image: circleci/ruby:2.7.5-node
     environment:
       BUNDLE_APP_CONFIG: .bundle
     steps:
@@ -87,7 +87,7 @@ jobs:
       - run: yarn lint
   release:
     docker:
-      - image: circleci/ruby:2.6-node
+      - image: circleci/ruby:2.7.5-node
     steps:
       - checkout
       - bundle-install
