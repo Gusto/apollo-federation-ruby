@@ -70,7 +70,6 @@ RSpec.describe ApolloFederation::EntitiesField do
         end
 
         it 'sets the Query as the owner to the _entities field' do
-
           expect(
             schema.query
               .fields['_entities']
