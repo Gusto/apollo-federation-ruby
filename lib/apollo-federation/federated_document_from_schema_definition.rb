@@ -54,18 +54,18 @@ module ApolloFederation
     end
 
     def merge_directives(node, type)
-      if type.is_a?(ApolloFederation::HasDirectives)
-        directives = type.federation_directives
-      else
-        directives = []
-      end
+      # if type.is_a?(ApolloFederation::HasDirectives)
+      #   directives = type.federation_directives
+      # else
+      #   directives = []
+      # end
 
-      (directives || []).each do |directive|
-        node = node.merge_directive(
-          name: directive[:name],
-          arguments: build_arguments_node(directive[:arguments]),
-        )
-      end
+      # (directives || []).each do |directive|
+      #   node = node.merge_directive(
+      #     name: directive[:name],
+      #     arguments: build_arguments_node(directive[:arguments]),
+      #   )
+      # end
       node
     end
 
