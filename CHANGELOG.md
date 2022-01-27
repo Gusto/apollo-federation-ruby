@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/Gusto/apollo-federation-ruby/compare/v2.0.0...v2.0.1) (2022-01-27)
+
+
+### Bug Fixes
+
+* Update to latest Ruby 2.6 image ([#167](https://github.com/Gusto/apollo-federation-ruby/issues/167)) ([f57d523](https://github.com/Gusto/apollo-federation-ruby/commit/f57d523c36274d5f729bc724ab0f86474f7c0f73))
+
 # [2.0.0](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.5...v2.0.0) (2022-01-27)
 
 

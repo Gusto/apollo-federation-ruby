@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    apollo-federation (2.0.0)
+    apollo-federation (2.0.1)
       google-protobuf (~> 3.19)
       graphql (>= 1.10.14)
 
