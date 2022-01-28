@@ -15,18 +15,18 @@ commands:
       - restore_cache:
           name: Restore Ruby Package Cache
           keys:
-            - v2-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-            - v2-gem-cache-{{ arch }}-{{ .Branch }}-
-            - v2-gem-cache-{{ arch }}-
+            - v3-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - v3-gem-cache-{{ arch }}-{{ .Branch }}-
+            - v3-gem-cache-{{ arch }}-
       - run:
           name: Install base Ruby dependencies
           command: |
             bundle install --jobs=4 --retry=3 --path=vendor/bundle
       - save_cache:
-            name: Save Ruby Package Cache
-            key: v2-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-            paths:
-              - ./vendor/bundle
+          name: Save Ruby Package Cache
+          key: v3-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ./vendor/bundle
   appraisal-install:
     parameters:
       appraisal:
@@ -39,16 +39,16 @@ commands:
       - restore_cache:
           name: Restore Appraisal package cache
           keys:
-            - v2-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
-            - v2-gem-cache-{{ arch }}-{{ .Branch }}-
-            - v2-gem-cache-{{ arch }}-
+            - v3-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
+            - v3-gem-cache-{{ arch }}-{{ .Branch }}-
+            - v3-gem-cache-{{ arch }}-
       - run:
           name: Install appraisal dependencies
           command: |
             bundle exec appraisal << parameters.appraisal >> bundle install --jobs=4 --retry=3 --path=../vendor/bundle
       - save_cache:
           name: Save Appraisal package cache
-          key: v2-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
+          key: v3-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
           paths:
             - ./vendor/bundle
 
@@ -58,7 +58,7 @@ jobs:
       appraisal:
         type: string
     docker:
-      - image: circleci/ruby:2.7.5-node
+      - image: cimg/ruby:2.6.9-node
     environment:
       BUNDLE_APP_CONFIG: .bundle
     steps:
@@ -74,7 +74,7 @@ jobs:
       appraisal:
         type: string
     docker:
-      - image: circleci/ruby:2.7.5-node
+      - image: cimg/ruby:2.6.9-node
     environment:
       BUNDLE_APP_CONFIG: .bundle
     steps:
@@ -87,7 +87,7 @@ jobs:
       - run: yarn lint
   release:
     docker:
-      - image: circleci/ruby:2.7.5-node
+      - image: cimg/ruby:2.6.9-node
     steps:
       - checkout
       - bundle-install

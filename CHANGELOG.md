@@ -1,3 +1,20 @@
+## [2.0.1](https://github.com/Gusto/apollo-federation-ruby/compare/v2.0.0...v2.0.1) (2022-01-27)
+
+
+### Bug Fixes
+
+* Update to latest Ruby 2.6 image ([#167](https://github.com/Gusto/apollo-federation-ruby/issues/167)) ([f57d523](https://github.com/Gusto/apollo-federation-ruby/commit/f57d523c36274d5f729bc724ab0f86474f7c0f73))
+
+# [2.0.0](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.5...v2.0.0) (2022-01-27)
+
+
+* Remove beta disclaimer (#165) ([29da3de](https://github.com/Gusto/apollo-federation-ruby/commit/29da3deb0163c38d5d08f084e5e8dc67d8454358)), closes [#165](https://github.com/Gusto/apollo-federation-ruby/issues/165)
+
+
+### BREAKING CHANGES
+
+* GraphQL 1.9.x support removed
+
 ## [1.1.5](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.4...v1.1.5) (2020-10-29)
 
 
