@@ -1,3 +1,10 @@
+## [2.0.2](https://github.com/Gusto/apollo-federation-ruby/compare/v2.0.1...v2.0.2) (2022-01-31)
+
+
+### Bug Fixes
+
+* Use `bundle install` to avoid `bundle check` that changes our lockfiles ([#170](https://github.com/Gusto/apollo-federation-ruby/issues/170)) ([5c89ff1](https://github.com/Gusto/apollo-federation-ruby/commit/5c89ff1545dd1e6668fcdcf5b6fa89188cbb3ab4))
+
 ## [2.0.1](https://github.com/Gusto/apollo-federation-ruby/compare/v2.0.0...v2.0.1) (2022-01-27)
 
 
