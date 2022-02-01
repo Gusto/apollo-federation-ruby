@@ -15,16 +15,16 @@ commands:
       - restore_cache:
           name: Restore Ruby Package Cache
           keys:
-            - v3-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-            - v3-gem-cache-{{ arch }}-{{ .Branch }}-
-            - v3-gem-cache-{{ arch }}-
+            - v4-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - v4-gem-cache-{{ arch }}-{{ .Branch }}-
+            - v4-gem-cache-{{ arch }}-
       - run:
           name: Install base Ruby dependencies
           command: |
             bundle install --jobs=4 --retry=3 --path=vendor/bundle
       - save_cache:
           name: Save Ruby Package Cache
-          key: v3-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: v4-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ./vendor/bundle
   appraisal-install:
@@ -39,16 +39,16 @@ commands:
       - restore_cache:
           name: Restore Appraisal package cache
           keys:
-            - v3-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
-            - v3-gem-cache-{{ arch }}-{{ .Branch }}-
-            - v3-gem-cache-{{ arch }}-
+            - v4-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
+            - v4-gem-cache-{{ arch }}-{{ .Branch }}-
+            - v4-gem-cache-{{ arch }}-
       - run:
           name: Install appraisal dependencies
           command: |
             bundle exec appraisal << parameters.appraisal >> bundle install --jobs=4 --retry=3 --path=../vendor/bundle
       - save_cache:
           name: Save Appraisal package cache
-          key: v3-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
+          key: v4-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
           paths:
             - ./vendor/bundle
 
