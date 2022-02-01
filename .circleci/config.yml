@@ -102,11 +102,11 @@ workflows:
       - ruby-test:
           matrix:
             parameters:
-              appraisal: ['graphql-1.10', 'graphql-1.11', 'graphql-1.12']
+              appraisal: ['graphql-1.10', 'graphql-1.11', 'graphql-1.12', 'graphql-1.13']
       - integration-tests:
           matrix:
             parameters:
-              appraisal: ['graphql-1.10', 'graphql-1.11', 'graphql-1.12']
+              appraisal: ['graphql-1.10', 'graphql-1.11', 'graphql-1.12', 'graphql-1.13']
       - release:
           requires:
             - gusto/ruby-lint
