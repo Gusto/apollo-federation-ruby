@@ -81,10 +81,8 @@ RSpec.describe ApolloFederation::ServiceField do
 
     it 'sets the Query as the owner to the _service field' do
       expect(
-        base_schema.graphql_definition
-              .types['Query']
+        base_schema.query
               .fields['_service']
-              .metadata[:type_class]
               .owner.graphql_name,
       ).to eq('Query')
     end
@@ -408,75 +406,64 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
-    context 'with a filter' do
+    context 'with context in schema generation' do
       let(:schema) do
         product = Class.new(base_object) do
           graphql_name 'Product'
 
           field :upc, String, null: false
+
+          def self.visible?(context)
+            context[:show_product_type] == true
+          end
         end
 
         query_obj = Class.new(base_object) do
           graphql_name 'Query'
 
+          field :hello, String, null: false
           field :product, product, null: true
+
+          def hello
+            'world. What were you expecting?'
+          end
         end
 
         Class.new(base_schema) do
           query query_obj
         end
       end
-      let(:filter) do
-        class PermissionWhitelist
-          def call(_schema_member, context)
-            context[:user_role] == :admin
-          end
-        end
 
-        PermissionWhitelist.new
-      end
-      let(:context) { { user_role: :admin } }
-      let(:executed_with_context) do
-        schema.execute('{ _service { sdl } }', only: filter, context: context)
-      end
-      let(:executed_without_context) { schema.execute('{ _service { sdl } }', only: filter) }
+      it 'uses the context in SDL generation' do
+        # Indirectly tests that the context is passed to the field
+        # to run hooks such as .visible? in schema generation
+        results = schema.execute('{ _service { sdl } }', context: { show_product_type: true })
 
-      it 'passes context to filters' do
-        expect(executed_with_context['data']['_service']['sdl']).to match_sdl(
+        expect(results.dig('data', '_service', 'sdl')).to match_sdl(
           <<~GRAPHQL,
             type Product {
               upc: String!
             }
 
             type Query {
+              hello: String!
               product: Product
             }
           GRAPHQL
         )
       end
 
-      it 'works without context' do
-        expect(executed_without_context['errors']).to(
-          match_array(
-            [
-              include('message' => "Field '_service' doesn't exist on type 'Query'"),
-            ],
-          ),
+      it 'generates the SDL when a context is not given' do
+        # Product should not be visible without settng show_product_type: true on the context.
+        results = schema.execute('{ _service { sdl } }')
+
+        expect(results.dig('data', '_service', 'sdl')).to match_sdl(
+          <<~GRAPHQL,
+            type Query {
+              hello: String!
+            }
+          GRAPHQL
         )
-      end
-
-      context 'when not authorized' do
-        let(:context) { { user_role: :foo } }
-
-        it 'returns an error message' do
-          expect(executed_with_context['errors']).to(
-            match_array(
-              [
-                include('message' => "Field '_service' doesn't exist on type 'Query'"),
-              ],
-            ),
-          )
-        end
       end
     end
   end
