@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/Gusto/apollo-federation-ruby/compare/v2.0.3...v2.1.0) (2022-02-02)
+
+
+### Features
+
+* snake case field references ([f5506ae](https://github.com/Gusto/apollo-federation-ruby/commit/f5506aecd10ea0c4a72744be07e0a9ad5cd45b16))
+
 ## [2.0.3](https://github.com/Gusto/apollo-federation-ruby/compare/v2.0.2...v2.0.3) (2022-02-02)
 
 
