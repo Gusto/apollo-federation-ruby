@@ -1,3 +1,10 @@
+## [2.0.3](https://github.com/Gusto/apollo-federation-ruby/compare/v2.0.2...v2.0.3) (2022-02-02)
+
+
+### Bug Fixes
+
+* Attempt to remove platform specific lock on google-protobuf ([#171](https://github.com/Gusto/apollo-federation-ruby/issues/171)) ([7898c28](https://github.com/Gusto/apollo-federation-ruby/commit/7898c2851aca06f08fa2559652375769bb98dfd8))
+
 ## [2.0.2](https://github.com/Gusto/apollo-federation-ruby/compare/v2.0.1...v2.0.2) (2022-01-31)
 
 
