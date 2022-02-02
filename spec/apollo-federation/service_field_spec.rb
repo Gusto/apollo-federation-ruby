@@ -215,7 +215,7 @@ RSpec.describe ApolloFederation::ServiceField do
       it 'returns valid SDL for @key directives' do
         product = Class.new(base_object) do
           graphql_name 'Product'
-          key fields: 'upc'
+          key fields: :upc
 
           field :upc, String, null: false
         end
@@ -248,7 +248,7 @@ RSpec.describe ApolloFederation::ServiceField do
       it 'returns valid SDL for @key directives' do
         product = Class.new(base_object) do
           graphql_name 'Product'
-          key fields: 'upc'
+          key fields: :upc
 
           field :upc, String, null: false
         end
@@ -270,8 +270,8 @@ RSpec.describe ApolloFederation::ServiceField do
     it 'returns valid SDL for multiple @key directives' do
       product = Class.new(base_object) do
         graphql_name 'Product'
-        key fields: 'upc'
-        key fields: 'name'
+        key fields: :upc
+        key fields: :name
 
         field :upc, String, null: false
         field :name, String, null: true
@@ -295,7 +295,7 @@ RSpec.describe ApolloFederation::ServiceField do
       product = Class.new(base_object) do
         graphql_name 'Product'
         extend_type
-        key fields: 'upc'
+        key fields: :upc
 
         field :upc, String, null: false, external: true
         field :price, Integer, null: true
@@ -319,7 +319,7 @@ RSpec.describe ApolloFederation::ServiceField do
       product = Class.new(base_object) do
         graphql_name 'Product'
         extend_type
-        key fields: 'upc'
+        key fields: :upc
 
         field :upc, String, null: false, external: true
         field :price, Integer, null: true
@@ -327,10 +327,10 @@ RSpec.describe ApolloFederation::ServiceField do
 
       review = Class.new(base_object) do
         graphql_name 'Review'
-        key fields: 'id'
+        key fields: :id
 
         field :id, 'ID', null: false
-        field :product, product, provides: { fields: 'upc' }, null: true
+        field :product, product, provides: { fields: :upc }, null: true
       end
 
       schema = Class.new(base_schema) do
@@ -356,12 +356,12 @@ RSpec.describe ApolloFederation::ServiceField do
       product = Class.new(base_object) do
         graphql_name 'Product'
         extend_type
-        key fields: 'upc'
+        key fields: :upc
 
         field :upc, String, null: false, external: true
         field :weight, Integer, null: true, external: true
         field :price, Integer, null: true, external: true
-        field :shipping_estimate, Integer, null: true, requires: { fields: 'price weight' }
+        field :shipping_estimate, Integer, null: true, requires: { fields: %i[price weight] }
       end
 
       schema = Class.new(base_schema) do
