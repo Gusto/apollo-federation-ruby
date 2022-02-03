@@ -105,9 +105,19 @@ Call `key` within your class definition:
 
 ```ruby
 class User < BaseObject
-  key fields: 'id'
+  key fields: :id
 end
 ```
+
+Compound keys are also supported:
+
+```ruby
+class User < BaseObject
+  key fields: [:id, { organization: :id }]
+end
+```
+
+See [field set syntax](#field-set-syntax) for more details on the format of the `fields` option.
 
 ### The `@external` directive
 
@@ -131,9 +141,11 @@ Pass the `requires:` option to your field definition:
 class Product < BaseObject
   field :price, Int, null: true, external: true
   field :weight, Int, null: true, external: true
-  field :shipping_estimate, Int, null: true, requires: { fields: "price weight"}
+  field :shipping_estimate, Int, null: true, requires: { fields: [:price, :weight] }
 end
 ```
+
+See [field set syntax](#field-set-syntax) for more details on the format of the `fields` option.
 
 ### The `@provides` directive
 
@@ -143,8 +155,24 @@ Pass the `provides:` option to your field definition:
 
 ```ruby
 class Review < BaseObject
-  field :author, 'User', null: true, provides: { fields: 'username' }
+  field :author, 'User', null: true, provides: { fields: :username }
 end
+```
+See [field set syntax](#field-set-syntax) for more details on the format of the `fields` option.
+
+### Field set syntax
+
+Field sets can be either strings encoded with the Apollo Field Set [syntax]((https://www.apollographql.com/docs/apollo-server/federation/federation-spec/#scalar-_fieldset)) or arrays, hashes and snake case symbols that follow the graphql-ruby conventions:
+
+```ruby
+# Equivalent to the "organizationId" field set
+:organization_id
+
+# Equivalent to the "price weight" field set
+[:price, :weight]
+
+# Equivalent to the "id organization { id }" field set
+[:id, { organization: :id }]
 ```
 
 ### Reference resolvers

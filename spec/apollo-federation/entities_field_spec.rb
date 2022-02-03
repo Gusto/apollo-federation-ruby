@@ -47,7 +47,7 @@ RSpec.describe ApolloFederation::EntitiesField do
       let(:type_with_key) do
         Class.new(base_object) do
           graphql_name 'TypeWithKey'
-          key fields: 'id'
+          key fields: :id
           field :id, 'ID', null: false
           field :other_field, 'String', null: true
         end
@@ -213,7 +213,7 @@ RSpec.describe ApolloFederation::EntitiesField do
                 let(:type_with_key) do
                   Class.new(base_object) do
                     graphql_name 'TypeWithKey'
-                    key fields: 'id'
+                    key fields: :id
                     field :id, 'ID', null: false
                     field :other_field, 'String', null: false
 
@@ -264,7 +264,7 @@ RSpec.describe ApolloFederation::EntitiesField do
 
                     Class.new(base_object) do
                       graphql_name 'TypeWithKey'
-                      key fields: 'id'
+                      key fields: :id
                       field :id, 'ID', null: false
                       field :other_field, 'String', null: false
 
