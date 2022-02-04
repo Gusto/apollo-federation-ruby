@@ -3,6 +3,7 @@
 require 'apollo-federation/field_set_serializer'
 require 'apollo-federation/has_directives'
 require 'apollo-federation/directives/key'
+require 'apollo-federation/directives/extends'
 
 module ApolloFederation
   module Object
@@ -14,6 +15,8 @@ module ApolloFederation
       include HasDirectives
 
       def extend_type
+        directive(ApolloFederation::Directives::Extends)
+
         add_directive(name: 'extends')
       end
 

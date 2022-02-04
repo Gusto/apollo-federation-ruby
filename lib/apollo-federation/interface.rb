@@ -19,6 +19,8 @@ module ApolloFederation
       end
 
       def key(fields:)
+        directive(ApolloFederation::Directives::Key, fields: fields)
+
         add_directive(
           name: 'key',
           arguments: [

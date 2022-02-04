@@ -4,8 +4,8 @@ require 'graphql'
 
 module ApolloFederation
   module Directives
-    class External < GraphQL::Schema::Directive
-      locations FIELD_DEFINITION
+    class Extends < GraphQL::Schema::Directive
+      locations OBJECT, INTERFACE
     end
   end
 end
