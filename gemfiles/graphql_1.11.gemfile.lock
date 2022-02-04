@@ -1,8 +1,8 @@
 PATH
   remote: ..
   specs:
-    apollo-federation (1.1.5)
-      google-protobuf (~> 3.13.0)
+    apollo-federation (2.1.0)
+      google-protobuf (~> 3.19)
       graphql (>= 1.10.14)
 
 GEM
@@ -42,7 +42,7 @@ GEM
     debase-ruby_core_source (0.10.9)
     diff-lcs (1.4.4)
     erubi (1.9.0)
-    google-protobuf (3.13.0)
+    google-protobuf (3.19.4)
     graphql (1.11.2)
     i18n (1.8.5)
       concurrent-ruby (~> 1.0)
@@ -124,4 +124,4 @@ DEPENDENCIES
   ruby-debug-ide
 
 BUNDLED WITH
-   2.3.4
+   2.3.6

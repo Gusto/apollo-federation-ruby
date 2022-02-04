@@ -13,5 +13,5 @@ appraise 'graphql-1.12' do
 end
 
 appraise 'graphql-1.13' do
-  gem 'graphql', '1.13.2'
+  gem 'graphql', '~> 1.13.6'
 end

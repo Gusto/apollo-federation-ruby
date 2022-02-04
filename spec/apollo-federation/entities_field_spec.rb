@@ -47,7 +47,7 @@ RSpec.describe ApolloFederation::EntitiesField do
       let(:type_with_key) do
         Class.new(base_object) do
           graphql_name 'TypeWithKey'
-          key fields: 'id'
+          key fields: :id
           field :id, 'ID', null: false
           field :other_field, 'String', null: true
         end
@@ -71,10 +71,8 @@ RSpec.describe ApolloFederation::EntitiesField do
 
         it 'sets the Query as the owner to the _entities field' do
           expect(
-            schema.graphql_definition
-              .types['Query']
+            schema.query
               .fields['_entities']
-              .metadata[:type_class]
               .owner.graphql_name,
           ).to eq('Query')
         end
@@ -215,7 +213,7 @@ RSpec.describe ApolloFederation::EntitiesField do
                 let(:type_with_key) do
                   Class.new(base_object) do
                     graphql_name 'TypeWithKey'
-                    key fields: 'id'
+                    key fields: :id
                     field :id, 'ID', null: false
                     field :other_field, 'String', null: false
 
@@ -266,7 +264,7 @@ RSpec.describe ApolloFederation::EntitiesField do
 
                     Class.new(base_object) do
                       graphql_name 'TypeWithKey'
-                      key fields: 'id'
+                      key fields: :id
                       field :id, 'ID', null: false
                       field :other_field, 'String', null: false
 

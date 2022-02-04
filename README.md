@@ -4,10 +4,6 @@
 
 This gem extends the [GraphQL Ruby](http://graphql-ruby.org/) gem to add support for creating an [Apollo Federation](https://www.apollographql.com/docs/apollo-server/federation/introduction/) schema.
 
-## DISCLAIMER
-
-This gem is still in a beta stage and may have some bugs or incompatibilities. See the [Known Issues and Limitations](#known-issues-and-limitations) below. If you run into any problems, please [file an issue](https://github.com/Gusto/apollo-federation-ruby/issues).
-
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -109,9 +105,19 @@ Call `key` within your class definition:
 
 ```ruby
 class User < BaseObject
-  key fields: 'id'
+  key fields: :id
 end
 ```
+
+Compound keys are also supported:
+
+```ruby
+class User < BaseObject
+  key fields: [:id, { organization: :id }]
+end
+```
+
+See [field set syntax](#field-set-syntax) for more details on the format of the `fields` option.
 
 ### The `@external` directive
 
@@ -135,9 +141,11 @@ Pass the `requires:` option to your field definition:
 class Product < BaseObject
   field :price, Int, null: true, external: true
   field :weight, Int, null: true, external: true
-  field :shipping_estimate, Int, null: true, requires: { fields: "price weight"}
+  field :shipping_estimate, Int, null: true, requires: { fields: [:price, :weight] }
 end
 ```
+
+See [field set syntax](#field-set-syntax) for more details on the format of the `fields` option.
 
 ### The `@provides` directive
 
@@ -147,8 +155,24 @@ Pass the `provides:` option to your field definition:
 
 ```ruby
 class Review < BaseObject
-  field :author, 'User', null: true, provides: { fields: 'username' }
+  field :author, 'User', null: true, provides: { fields: :username }
 end
+```
+See [field set syntax](#field-set-syntax) for more details on the format of the `fields` option.
+
+### Field set syntax
+
+Field sets can be either strings encoded with the Apollo Field Set [syntax]((https://www.apollographql.com/docs/apollo-server/federation/federation-spec/#scalar-_fieldset)) or arrays, hashes and snake case symbols that follow the graphql-ruby conventions:
+
+```ruby
+# Equivalent to the "organizationId" field set
+:organization_id
+
+# Equivalent to the "price weight" field set
+[:price, :weight]
+
+# Equivalent to the "id organization { id }" field set
+[:id, { organization: :id }]
 ```
 
 ### Reference resolvers
@@ -203,6 +227,7 @@ rover subgraph check mygraph@current --name mysubgraph --schema schema.graphql
 ```
 
 ## Testing the federated schema
+
 This library does not include any testing helpers currently. A federated service receives subgraph queries from the Apollo Gateway via the `_entities` field and that can be tested in a request spec.
 
 With Apollo Gateway setup to hit your service locally or by using existing query logs, you can retrieve the generated `_entities` queries.
@@ -220,6 +245,7 @@ query($representations: [_Any!]!) {
   }
 }
 ```
+
 Where `$representations` is an array of entity references from the gateway.
 
 ```JSON
@@ -262,7 +288,8 @@ it "resolves the blog post entities" do
   expect(result.dig("data", "_entities", 0, "id")).to eq(blog_post.id)
 end
 ```
-See discussion at [#74](https://github.com/Gusto/apollo-federation-ruby/issues/74) and an [internal spec that resolves _entities](https://github.com/Gusto/apollo-federation-ruby/blob/1d3baf4f8efcd02e7bf5bc7e3fee5b4fb963cd25/spec/apollo-federation/entities_field_spec.rb#L164) for more details.
+
+See discussion at [#74](https://github.com/Gusto/apollo-federation-ruby/issues/74) and an [internal spec that resolves \_entities](https://github.com/Gusto/apollo-federation-ruby/blob/1d3baf4f8efcd02e7bf5bc7e3fee5b4fb963cd25/spec/apollo-federation/entities_field_spec.rb#L164) for more details.
 
 ## Known Issues and Limitations
 

@@ -6,7 +6,7 @@ module.exports = {
     [
       'semantic-release-rubygem',
       {
-        updateGemfileLock: 'bundle exec appraisal install',
+        updateGemfileLock: 'bundle exec appraisal bundle install',
       },
     ],
     [
