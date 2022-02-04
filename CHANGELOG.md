@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/Gusto/apollo-federation-ruby/compare/v2.1.0...v2.2.0) (2022-02-04)
+
+
+### Features
+
+* Get Apollo Federation to work with GraphQL 1.13.x ([#160](https://github.com/Gusto/apollo-federation-ruby/issues/160)) ([800001b](https://github.com/Gusto/apollo-federation-ruby/commit/800001baa5a54ab377998c651e7049da254c451b)), closes [#147](https://github.com/Gusto/apollo-federation-ruby/issues/147)
+
 # [2.1.0](https://github.com/Gusto/apollo-federation-ruby/compare/v2.0.3...v2.1.0) (2022-02-02)
 
 
