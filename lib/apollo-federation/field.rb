@@ -21,24 +21,26 @@ module ApolloFederation
       end
 
       if requires
-        kwargs[:directives][ApolloFederation::Directives::Requires] = { fields: requires[:fields] }
+        serialized_fields = ApolloFederation::FieldSetSerializer.serialize(requires[:fields])
+        kwargs[:directives][ApolloFederation::Directives::Requires] = { fields: serialized_fields }
 
         add_directive(
           name: 'requires',
           arguments: [
             name: 'fields',
-            values: ApolloFederation::FieldSetSerializer.serialize(requires[:fields]),
+            values: ApolloFederation::FieldSetSerializer.serialize(serialized_fields),
           ],
         )
       end
       if provides
-        kwargs[:directives][ApolloFederation::Directives::Provides] = { fields: provides[:fields] }
+        serialized_fields = ApolloFederation::FieldSetSerializer.serialize(provides[:fields])
+        kwargs[:directives][ApolloFederation::Directives::Provides] = { fields: serialized_fields }
 
         add_directive(
           name: 'provides',
           arguments: [
             name: 'fields',
-            values: ApolloFederation::FieldSetSerializer.serialize(provides[:fields]),
+            values: ApolloFederation::FieldSetSerializer.serialize(serialized_fields),
           ],
         )
       end

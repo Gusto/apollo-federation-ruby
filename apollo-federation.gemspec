@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
 
   spec.files = `git ls-files bin lib *.md LICENSE`.split("\n")
 
-  spec.add_dependency 'graphql', '>= 1.10.14'
+  spec.add_dependency 'graphql', '>= 1.13.8'
 
   spec.add_runtime_dependency 'google-protobuf', '~> 3.19'
 

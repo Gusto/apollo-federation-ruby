@@ -21,13 +21,14 @@ module ApolloFederation
       end
 
       def key(fields:)
-        directive(ApolloFederation::Directives::Key, fields: fields)
+        serialized_fields = ApolloFederation::FieldSetSerializer.serialize(fields)
+        directive(ApolloFederation::Directives::Key, fields: serialized_fields)
 
         add_directive(
           name: 'key',
           arguments: [
             name: 'fields',
-            values: ApolloFederation::FieldSetSerializer.serialize(fields),
+            values: serialized_fields,
           ],
         )
       end
