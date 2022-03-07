@@ -106,6 +106,12 @@ RSpec.describe ApolloFederation::EntitiesField do
             GRAPHQL
           )
         end
+
+        describe 'Calling #to_graphql on the schema' do
+          it 'returns a legacy GraphQL definition' do
+            expect(schema.to_graphql).to be_a(base_schema)
+          end
+        end
       end
 
       context 'when a Query object is not provided' do
