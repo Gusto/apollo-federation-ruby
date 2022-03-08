@@ -293,8 +293,9 @@ See discussion at [#74](https://github.com/Gusto/apollo-federation-ruby/issues/7
 
 ## Known Issues and Limitations
 
-- Only works with class-based schemas, the legacy `.define` API will not be supported
-- Does not add directives to the output of `Schema.to_definition`. Since `graphql-ruby` doesn't natively support schema directives, the directives will only be visible to the [Apollo Gateway](https://www.apollographql.com/docs/apollo-server/api/apollo-gateway/) through the `Query._service` field (see the [Apollo Federation specification](https://www.apollographql.com/docs/apollo-server/federation/federation-spec/)) or via [`Schema#federation_sdl`](https://github.com/Gusto/apollo-federation-ruby/blob/1d3baf4f8efcd02e7bf5bc7e3fee5b4fb963cd25/lib/apollo-federation/schema.rb#L19) as explained above.
+- For GraphQL older than 1.12, the interpreter runtime has to be used.
+- Does not add directives to the output of `Schema.to_definition`. Since `graphql-ruby` doesn't natively support schema directives, the
+  directives will only be visible to the [Apollo Gateway](https://www.apollographql.com/docs/apollo-server/api/apollo-gateway/) through the `Query._service` field (see the [Apollo Federation specification](https://www.apollographql.com/docs/apollo-server/federation/federation-spec/)) or via [`Schema#federation_sdl`](https://github.com/Gusto/apollo-federation-ruby/blob/1d3baf4f8efcd02e7bf5bc7e3fee5b4fb963cd25/lib/apollo-federation/schema.rb#L19) as explained above.
 
 ## Maintainers
 

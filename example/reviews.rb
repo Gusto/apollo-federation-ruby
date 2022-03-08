@@ -96,6 +96,11 @@ class Product < BaseObject
 end
 
 class ReviewSchema < GraphQL::Schema
+  if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('1.12.0')
+    use GraphQL::Execution::Interpreter
+    use GraphQL::Analysis::AST
+  end
+
   include ApolloFederation::Schema
 
   orphan_types User, Review, Product
