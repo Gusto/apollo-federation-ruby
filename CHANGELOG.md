@@ -1,3 +1,10 @@
+## [2.2.1](https://github.com/Gusto/apollo-federation-ruby/compare/v2.2.0...v2.2.1) (2022-03-08)
+
+
+### Bug Fixes
+
+* Remove to_graphql and make the interpreter runtime a requirement for older GraphQL versions ([#177](https://github.com/Gusto/apollo-federation-ruby/issues/177)) ([bfc3082](https://github.com/Gusto/apollo-federation-ruby/commit/bfc308260c34eee04c3b7a5f0e8a0bffe1cb88c4))
+
 # [2.2.0](https://github.com/Gusto/apollo-federation-ruby/compare/v2.1.0...v2.2.0) (2022-02-04)
 
 
