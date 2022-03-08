@@ -106,12 +106,6 @@ RSpec.describe ApolloFederation::EntitiesField do
             GRAPHQL
           )
         end
-
-        describe 'Calling #to_graphql on the schema' do
-          it 'returns a legacy GraphQL definition' do
-            expect(schema.to_graphql).to be_a(base_schema)
-          end
-        end
       end
 
       context 'when a Query object is not provided' do
@@ -338,10 +332,13 @@ RSpec.describe ApolloFederation::EntitiesField do
   end
 
   if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('1.12.0')
-    context 'with the original runtime' do
+    context 'with older versions of GraphQL and the interpreter runtime' do
       it_behaves_like 'entities field' do
         let(:base_schema) do
           Class.new(GraphQL::Schema) do
+            use GraphQL::Execution::Interpreter
+            use GraphQL::Analysis::AST
+
             include ApolloFederation::Schema
           end
         end
@@ -349,15 +346,10 @@ RSpec.describe ApolloFederation::EntitiesField do
     end
   end
 
-  context 'with the interpreter runtime' do
+  if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('1.12.0')
     it_behaves_like 'entities field' do
       let(:base_schema) do
         Class.new(GraphQL::Schema) do
-          if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('1.12.0')
-            use GraphQL::Execution::Interpreter
-            use GraphQL::Analysis::AST
-          end
-
           include ApolloFederation::Schema
         end
       end
