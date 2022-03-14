@@ -3,6 +3,7 @@
 require 'apollo-federation/entities_field'
 require 'apollo-federation/service_field'
 require 'apollo-federation/entity'
+require 'apollo-federation/printer'
 require 'apollo-federation/federated_document_from_schema_definition.rb'
 
 module ApolloFederation
@@ -14,7 +15,7 @@ module ApolloFederation
     module CommonMethods
       def federation_sdl(context: nil)
         document_from_schema = FederatedDocumentFromSchemaDefinition.new(self, context: context)
-        GraphQL::Language::Printer.new.print(document_from_schema.document)
+        ApolloFederation::Printer.new.print(document_from_schema.document)
       end
 
       def query(new_query_object = nil)
