@@ -1,3 +1,10 @@
+## [2.2.2](https://github.com/Gusto/apollo-federation-ruby/compare/v2.2.1...v2.2.2) (2022-03-15)
+
+
+### Bug Fixes
+
+* add a ruby version file ([#185](https://github.com/Gusto/apollo-federation-ruby/issues/185)) ([b46346b](https://github.com/Gusto/apollo-federation-ruby/commit/b46346bbbccc51d77e67ce43f411a6ee72f1a1d5))
+
 ## [2.2.1](https://github.com/Gusto/apollo-federation-ruby/compare/v2.2.0...v2.2.1) (2022-03-08)
 
 
