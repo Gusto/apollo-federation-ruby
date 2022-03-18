@@ -7,6 +7,7 @@ module ApolloFederation
     class Key < GraphQL::Schema::Directive
       argument :fields, String, required: true
       locations OBJECT, INTERFACE
+      repeatable true
     end
   end
 end
