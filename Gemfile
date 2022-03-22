@@ -4,4 +4,4 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'graphql', '1.13.8'
+gem 'graphql', '2.0.4'
