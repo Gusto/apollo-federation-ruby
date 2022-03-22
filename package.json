@@ -19,7 +19,9 @@
     "apollo-server": "^2.14.2",
     "graphql": "^14.6.0"
   },
+
   "devDependencies": {
+    "yargs-parser": "^21.0.1",
     "@babel/core": "^7.10.1",
     "@babel/preset-env": "^7.10.1",
     "@semantic-release/changelog": "^5.0.1",
