@@ -1,3 +1,10 @@
+## [2.2.3](https://github.com/Gusto/apollo-federation-ruby/compare/v2.2.2...v2.2.3) (2022-03-22)
+
+
+### Bug Fixes
+
+* **deps:** Bump minimist ([#186](https://github.com/Gusto/apollo-federation-ruby/issues/186)) ([a79cfe5](https://github.com/Gusto/apollo-federation-ruby/commit/a79cfe5ebf0a555b01446ed24abb53b11923a9b7))
+
 ## [2.2.2](https://github.com/Gusto/apollo-federation-ruby/compare/v2.2.1...v2.2.2) (2022-03-15)
 
 
