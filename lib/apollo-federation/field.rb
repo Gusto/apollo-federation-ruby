@@ -16,7 +16,10 @@ module ApolloFederation
           name: 'requires',
           arguments: [
             name: 'fields',
-            values: ApolloFederation::FieldSetSerializer.serialize(requires[:fields]),
+            values: ApolloFederation::FieldSetSerializer.serialize(
+              requires[:fields],
+              camelize: requires.fetch(:camelize, true),
+            ),
           ],
         )
       end
@@ -25,7 +28,10 @@ module ApolloFederation
           name: 'provides',
           arguments: [
             name: 'fields',
-            values: ApolloFederation::FieldSetSerializer.serialize(provides[:fields]),
+            values: ApolloFederation::FieldSetSerializer.serialize(
+              provides[:fields],
+              camelize: provides.fetch(:camelize, true),
+            ),
           ],
         )
       end
