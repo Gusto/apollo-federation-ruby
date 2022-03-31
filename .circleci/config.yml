@@ -88,6 +88,8 @@ jobs:
   release:
     docker:
       - image: cimg/ruby:2.6.9-node
+    environment:
+      BUNDLE_APP_CONFIG: .bundle
     steps:
       - checkout
       - bundle-install
