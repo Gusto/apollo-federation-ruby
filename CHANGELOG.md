@@ -1,3 +1,12 @@
+## [2.2.4](https://github.com/Gusto/apollo-federation-ruby/compare/v2.2.3...v2.2.4) (2022-04-01)
+
+
+### Bug Fixes
+
+* add linux and darwin platforms to lockfile ([#188](https://github.com/Gusto/apollo-federation-ruby/issues/188)) ([fbbb856](https://github.com/Gusto/apollo-federation-ruby/commit/fbbb856b315400f21c189c26488efbf030792ae1))
+* bump circleci cache version ([#189](https://github.com/Gusto/apollo-federation-ruby/issues/189)) ([1b6c9d8](https://github.com/Gusto/apollo-federation-ruby/commit/1b6c9d8fc647c19a7eb4c95ab76b276aae9131c5))
+* set env variables for release step ([#191](https://github.com/Gusto/apollo-federation-ruby/issues/191)) ([db0d1e6](https://github.com/Gusto/apollo-federation-ruby/commit/db0d1e688b93bfa2114eb91248d2f507a50fca8a))
+
 ## [2.2.3](https://github.com/Gusto/apollo-federation-ruby/compare/v2.2.2...v2.2.3) (2022-03-22)
 
 
