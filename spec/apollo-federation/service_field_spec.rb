@@ -408,6 +408,7 @@ RSpec.describe ApolloFederation::ServiceField do
           extend_type
           key fields: :product_id, camelize: false
 
+          field :product_id, String, null: false, camelize: false
           field :options, [String], null: false, requires: { fields: 'my_id', camelize: false }
           field :other_options, [String], null: false, requires: { fields: 'my_id', camelize: true }
         end
@@ -421,6 +422,7 @@ RSpec.describe ApolloFederation::ServiceField do
             type Product @extends @key(fields: "product_id") {
               options: [String!]! @requires(fields: "my_id")
               otherOptions: [String!]! @requires(fields: "myId")
+              product_id: String!
             }
           GRAPHQL
         )
