@@ -1,3 +1,15 @@
+# [3.0.0](https://github.com/Gusto/apollo-federation-ruby/compare/v2.2.4...v3.0.0) (2022-04-05)
+
+
+### Bug Fixes
+
+* camelize string fields to match sym behavior ([8f0382b](https://github.com/Gusto/apollo-federation-ruby/commit/8f0382b346d2cde5be252138275d67373b36acd7))
+
+
+### BREAKING CHANGES
+
+* string fields will be camelized by default rather than passed as is.
+
 ## [2.2.4](https://github.com/Gusto/apollo-federation-ruby/compare/v2.2.3...v2.2.4) (2022-04-01)
 
 
