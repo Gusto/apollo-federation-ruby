@@ -18,12 +18,12 @@ module ApolloFederation
         add_directive(name: 'extends')
       end
 
-      def key(fields:)
+      def key(fields:, camelize: true)
         add_directive(
           name: 'key',
           arguments: [
             name: 'fields',
-            values: ApolloFederation::FieldSetSerializer.serialize(fields),
+            values: ApolloFederation::FieldSetSerializer.serialize(fields, camelize: camelize),
           ],
         )
       end

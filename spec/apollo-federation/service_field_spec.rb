@@ -380,6 +380,55 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
+    describe 'camelize option' do
+      it 'camelizes by default' do
+        product = Class.new(base_object) do
+          graphql_name 'Product'
+          key fields: :product_id
+
+          field :product_id, String, null: false
+        end
+
+        schema = Class.new(base_schema) do
+          orphan_types product
+        end
+
+        expect(execute_sdl(schema)).to match_sdl(
+          <<~GRAPHQL,
+            type Product @key(fields: "productId") {
+              productId: String!
+            }
+          GRAPHQL
+        )
+      end
+
+      it 'serializes according to camelize option otherwise' do
+        product = Class.new(base_object) do
+          graphql_name 'Product'
+          extend_type
+          key fields: :product_id, camelize: false
+
+          field :product_id, String, null: false, camelize: false
+          field :options, [String], null: false, requires: { fields: 'my_id', camelize: false }
+          field :other_options, [String], null: false, requires: { fields: 'my_id', camelize: true }
+        end
+
+        schema = Class.new(base_schema) do
+          orphan_types product
+        end
+
+        expect(execute_sdl(schema)).to match_sdl(
+          <<~GRAPHQL,
+            type Product @extends @key(fields: "product_id") {
+              options: [String!]! @requires(fields: "my_id")
+              otherOptions: [String!]! @requires(fields: "myId")
+              product_id: String!
+            }
+          GRAPHQL
+        )
+      end
+    end
+
     it 'returns SDL that honors visibility checks' do
       product = Class.new(base_object) do
         graphql_name 'Product'
