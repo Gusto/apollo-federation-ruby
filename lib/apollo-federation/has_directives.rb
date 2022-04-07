@@ -8,5 +8,9 @@ module ApolloFederation
       @federation_directives ||= []
       @federation_directives << { name: name, arguments: arguments }
     end
+
+    def federation_directive?(name)
+      Array(federation_directives).any? { |directive| directive[:name] == name }
+    end
   end
 end

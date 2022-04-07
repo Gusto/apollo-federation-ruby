@@ -42,11 +42,15 @@ module ApolloFederation
         types_schema.orphan_types(@orig_query_object)
 
         # Walk through all of the types and determine which ones are entities (any type with a
-        # "key" directive)
+        # "key" directive, or with a field with a "requires" directive)
         types_schema.types.values.select do |type|
           # TODO: Interfaces can have a key...
-          !type.introspection? && type.include?(ApolloFederation::Object) &&
-            type.federation_directives&.any? { |directive| directive[:name] == 'key' }
+          !type.introspection? && type.include?(ApolloFederation::Object) && (
+            type.federation_directive?('key') ||
+            type.fields.values.any? do |field|
+              field.federation_directive?('requires')
+            end
+          )
         end
       end
 
