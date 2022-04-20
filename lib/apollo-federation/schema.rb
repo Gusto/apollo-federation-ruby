@@ -60,7 +60,7 @@ module ApolloFederation
         @query_object = federation_query(query)
 
         possible_entities = orig_defn.types.values.select do |type|
-          !type.introspection? && !type.default_scalar? && type.is_a?(GraphQL::ObjectType) &&
+          !type.introspection? && !type.default_scalar? && type.is_a?(GraphQL::Schema::Object) &&
             (includes_directive?(type.metadata[:federation_directives], 'key') ||
               type.fields.values.any? do |field|
                 includes_directive?(field.metadata[:federation_directives], 'requires')
