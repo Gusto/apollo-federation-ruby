@@ -148,6 +148,39 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
+    it 'returns valid SDL for shareable types' do
+      position = Class.new(base_object) do
+        graphql_name 'Position'
+        shareable
+
+        field :x, Integer, null: false
+        field :y, Integer, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :position, position, null: true
+      end
+
+      schema = Class.new(base_schema) do
+        query query_obj
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          type Position @shareable {
+            x: Int!
+            y: Int!
+          }
+
+          type Query {
+            position: Position
+          }
+        GRAPHQL
+      )
+    end
+
     it 'returns valid SDL for interface types' do
       base_field = Class.new(GraphQL::Schema::Field) do
         include ApolloFederation::Field
@@ -310,6 +343,38 @@ RSpec.describe ApolloFederation::ServiceField do
           type Product @extends @key(fields: "upc") {
             price: Int
             upc: String! @external
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for @shareable directives' do
+      position = Class.new(base_object) do
+        graphql_name 'Position'
+
+        field :x, Integer, null: false, shareable: true
+        field :y, Integer, null: false, shareable: true
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :position, position, null: true
+      end
+
+      schema = Class.new(base_schema) do
+        query query_obj
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          type Position {
+            x: Int! @shareable
+            y: Int! @shareable
+          }
+
+          type Query {
+            position: Position
           }
         GRAPHQL
       )

@@ -7,7 +7,7 @@ module ApolloFederation
   module Field
     include HasDirectives
 
-    def initialize(*args, external: false, requires: nil, provides: nil, **kwargs, &block)
+    def initialize(*args, external: false, requires: nil, provides: nil, shareable: nil, **kwargs, &block)
       if external
         add_directive(name: 'external')
       end
@@ -34,6 +34,9 @@ module ApolloFederation
             ),
           ],
         )
+      end
+      if shareable
+        add_directive(name: 'shareable')
       end
 
       # Pass on the default args:
