@@ -8,7 +8,14 @@ module ApolloFederation
     include HasDirectives
 
     def initialize(
-      *args, external: false, requires: nil, provides: nil, shareable: nil, **kwargs, &block
+      *args,
+      external: false,
+      requires: nil,
+      provides: nil,
+      shareable: nil,
+      inaccessible: nil,
+      **kwargs,
+      &block
     )
       if external
         add_directive(name: 'external')
@@ -39,6 +46,9 @@ module ApolloFederation
       end
       if shareable
         add_directive(name: 'shareable')
+      end
+      if inaccessible
+        add_directive(name: 'inaccessible')
       end
 
       # Pass on the default args:

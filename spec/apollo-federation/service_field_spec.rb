@@ -181,6 +181,87 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
+    it 'returns valid SDL for inaccessible types' do
+      position = Class.new(base_object) do
+        graphql_name 'Position'
+        inaccessible
+
+        field :x, Integer, null: false
+        field :y, Integer, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :position, position, null: true
+      end
+
+      schema = Class.new(base_schema) do
+        query query_obj
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          type Position @inaccessible {
+            x: Int!
+            y: Int!
+          }
+
+          type Query {
+            position: Position
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for inaccessible interface types' do
+      base_field = Class.new(GraphQL::Schema::Field) do
+        include ApolloFederation::Field
+      end
+
+      base_interface = Module.new do
+        include GraphQL::Schema::Interface
+        include ApolloFederation::Interface
+
+        # graphql_name 'Interface'
+        field_class base_field
+      end
+
+      product = Module.new do
+        include base_interface
+
+        graphql_name 'Product'
+
+        inaccessible
+
+        field :upc, String, null: false
+      end
+
+      book = Class.new(base_object) do
+        implements product
+
+        graphql_name 'Book'
+
+        field :upc, String, null: false
+      end
+
+      schema = Class.new(base_schema) do
+        orphan_types book
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          type Book implements Product {
+            upc: String!
+          }
+
+          interface Product @inaccessible {
+            upc: String!
+          }
+        GRAPHQL
+      )
+    end
+
     it 'returns valid SDL for interface types' do
       base_field = Class.new(GraphQL::Schema::Field) do
         include ApolloFederation::Field
@@ -371,6 +452,38 @@ RSpec.describe ApolloFederation::ServiceField do
           type Position {
             x: Int! @shareable
             y: Int! @shareable
+          }
+
+          type Query {
+            position: Position
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for @inaccessible directives' do
+      position = Class.new(base_object) do
+        graphql_name 'Position'
+
+        field :x, Integer, null: false, inaccessible: true
+        field :y, Integer, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :position, position, null: true
+      end
+
+      schema = Class.new(base_schema) do
+        query query_obj
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          type Position {
+            x: Int! @inaccessible
+            y: Int!
           }
 
           type Query {
