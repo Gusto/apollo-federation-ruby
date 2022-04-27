@@ -160,6 +160,59 @@ end
 ```
 See [field set syntax](#field-set-syntax) for more details on the format of the `fields` option.
 
+### The `@shareable` directive (Apollo Federation v2)
+
+[Apollo documentation](https://www.apollographql.com/docs/federation/federated-types/federated-directives/#shareable)
+
+Call `shareable` within your class definition:
+
+```ruby
+class User < BaseObject
+  shareable
+end
+```
+
+Pass the `shareable: true` option to your field definition:
+
+```ruby
+class User < BaseObject
+  field :id, ID, null: false, shareable: true
+end
+```
+
+### The `@inaccessible` directive (Apollo Federation v2)
+
+[Apollo documentation](https://www.apollographql.com/docs/federation/federated-types/federated-directives/#inaccessible)
+
+Call `inaccessible` within your class definition:
+
+```ruby
+class User < BaseObject
+  inaccessible
+end
+```
+
+Pass the `inaccessible: true` option to your field definition:
+
+```ruby
+class User < BaseObject
+  field :id, ID, null: false, inaccessible: true
+end
+```
+
+### The `@override` directive (Apollo Federation v2)
+
+[Apollo documentation](https://www.apollographql.com/docs/federation/federated-types/federated-directives/#override)
+
+Pass the `override:` option to your field definition:
+
+```ruby
+class Product < BaseObject
+  field :id, ID, null: false
+  field :inStock, Boolean, null: false, override: { from: 'Products' }
+end
+```
+
 ### Field set syntax
 
 Field sets can be either strings encoded with the Apollo Field Set [syntax]((https://www.apollographql.com/docs/apollo-server/federation/federation-spec/#scalar-_fieldset)) or arrays, hashes and snake case symbols that follow the graphql-ruby conventions:
