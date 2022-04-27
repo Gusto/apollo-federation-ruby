@@ -11,8 +11,8 @@ module ApolloFederation
     VERSION_2_DIRECTIVES = %i[shareable inaccessible override].freeze
 
     def initialize(*args, **kwargs, &block)
-      add_v1_directives(kwargs)
-      add_v2_directives(kwargs)
+      add_v1_directives(**kwargs)
+      add_v2_directives(**kwargs)
 
       # Remove the custom kwargs
       kwargs = kwargs.delete_if do |k, _|
