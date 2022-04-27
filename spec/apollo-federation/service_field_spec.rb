@@ -493,6 +493,30 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
+    it 'returns valid SDL for @override directives' do
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+        extend_type
+        key fields: :id
+
+        field :id, 'ID', null: false
+        field :isStock, 'Boolean', null: false, override: { from: 'Products' }
+      end
+
+      schema = Class.new(base_schema) do
+        orphan_types product
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          type Product @extends @key(fields: "id") {
+            id: ID!
+            isStock: Boolean! @override(from: "Products")
+          }
+        GRAPHQL
+      )
+    end
+
     it 'returns valid SDL for @provides directives' do
       product = Class.new(base_object) do
         graphql_name 'Product'

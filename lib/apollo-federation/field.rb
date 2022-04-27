@@ -12,11 +12,13 @@ module ApolloFederation
       external: false,
       requires: nil,
       provides: nil,
-      shareable: nil,
-      inaccessible: nil,
+      shareable: false,
+      inaccessible: false,
+      override: nil,
       **kwargs,
       &block
     )
+      # Version 1 Directives
       if external
         add_directive(name: 'external')
       end
@@ -44,13 +46,23 @@ module ApolloFederation
           ],
         )
       end
+
+      # Version 2 Directives
       if shareable
         add_directive(name: 'shareable')
       end
       if inaccessible
         add_directive(name: 'inaccessible')
       end
-
+      if override
+        add_directive(
+          name: 'override',
+          arguments: [
+            name: 'from',
+            values: override[:from],
+          ],
+        )
+      end
       # Pass on the default args:
       super(*args, **kwargs, &block)
     end
