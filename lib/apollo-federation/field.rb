@@ -15,7 +15,9 @@ module ApolloFederation
       add_v2_directives(kwargs)
 
       # Remove the custom kwargs
-      kwargs = kwargs.except(*VERSION_1_DIRECTIVES + VERSION_2_DIRECTIVES)
+      kwargs = kwargs.delete_if do |k, _|
+        VERSION_1_DIRECTIVES.include?(k) || VERSION_2_DIRECTIVES.include?(k)
+      end
 
       # Pass on the default args:
       super(*args, **kwargs, &block)
