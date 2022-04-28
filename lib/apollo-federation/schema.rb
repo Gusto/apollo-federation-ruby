@@ -12,9 +12,19 @@ module ApolloFederation
     end
 
     module CommonMethods
+      FEDERATION_2_PREFIX = <<~SCHEMA.freeze
+        extend schema
+          @link(url: "https://specs.apollo.dev/federation/v2.0",
+          import: ["@key", "@extends", "@external", "@requires", "@provides", "@shareable", "@inaccessible", "@override"])
+
+      SCHEMA
+
       def federation_sdl(context: nil)
         document_from_schema = FederatedDocumentFromSchemaDefinition.new(self, context: context)
-        GraphQL::Language::Printer.new.print(document_from_schema.document)
+
+        output = GraphQL::Language::Printer.new.print(document_from_schema.document)
+        output.prepend(FEDERATION_2_PREFIX) if document_from_schema.federation_2?
+        output
       end
 
       def query(new_query_object = nil)

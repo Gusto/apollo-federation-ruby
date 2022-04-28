@@ -169,6 +169,10 @@ RSpec.describe ApolloFederation::ServiceField do
 
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.0",
+            import: ["@key", "@extends", "@external", "@requires", "@provides", "@shareable", "@inaccessible", "@override"])
+
           type Position @shareable {
             x: Int!
             y: Int!
@@ -202,6 +206,10 @@ RSpec.describe ApolloFederation::ServiceField do
 
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.0",
+            import: ["@key", "@extends", "@external", "@requires", "@provides", "@shareable", "@inaccessible", "@override"])
+
           type Position @inaccessible {
             x: Int!
             y: Int!
@@ -251,6 +259,10 @@ RSpec.describe ApolloFederation::ServiceField do
 
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.0",
+            import: ["@key", "@extends", "@external", "@requires", "@provides", "@shareable", "@inaccessible", "@override"])
+
           type Book implements Product {
             upc: String!
           }
@@ -449,6 +461,10 @@ RSpec.describe ApolloFederation::ServiceField do
 
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.0",
+            import: ["@key", "@extends", "@external", "@requires", "@provides", "@shareable", "@inaccessible", "@override"])
+
           type Position {
             x: Int! @shareable
             y: Int! @shareable
@@ -481,6 +497,10 @@ RSpec.describe ApolloFederation::ServiceField do
 
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.0",
+            import: ["@key", "@extends", "@external", "@requires", "@provides", "@shareable", "@inaccessible", "@override"])
+
           type Position {
             x: Int! @inaccessible
             y: Int!
@@ -509,6 +529,10 @@ RSpec.describe ApolloFederation::ServiceField do
 
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.0",
+            import: ["@key", "@extends", "@external", "@requires", "@provides", "@shareable", "@inaccessible", "@override"])
+
           type Product @extends @key(fields: "id") {
             id: ID!
             isStock: Boolean! @override(from: "Products")

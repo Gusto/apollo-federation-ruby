@@ -14,6 +14,11 @@ module ApolloFederation
       '_entities',
       '_service',
     ].freeze
+    FEDERATION_2_DIRECTIVES = [
+      'shareable',
+      'inaccessible',
+      'override',
+    ].freeze
 
     def build_object_type_node(object_type)
       object_node = super
@@ -47,7 +52,18 @@ module ApolloFederation
       super(non_federation_types)
     end
 
+    def federation_2?
+      directive_names = get_directives(document.definitions).map(&:name).uniq
+      (directive_names & FEDERATION_2_DIRECTIVES).count > 0
+    end
+
     private
+
+    def get_directives(nodes)
+      nodes.flat_map do |node|
+        node.is_a?(GraphQL::Language::Nodes::Directive) ? node : get_directives(node.children)
+      end
+    end
 
     def query_type?(type)
       type == warden.root_type_for_operation('query')
