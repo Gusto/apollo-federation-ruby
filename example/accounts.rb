@@ -28,7 +28,7 @@ USERS = [
 ].freeze
 
 class User < BaseObject
-  key fields: 'id'
+  key fields: :id
 
   field :id, ID, null: false
   field :name, String, null: true
@@ -48,8 +48,10 @@ class Query < BaseObject
 end
 
 class AccountSchema < GraphQL::Schema
-  use GraphQL::Execution::Interpreter
-  use GraphQL::Analysis::AST
+  if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('1.12.0')
+    use GraphQL::Execution::Interpreter
+    use GraphQL::Analysis::AST
+  end
   include ApolloFederation::Schema
 
   query(Query)

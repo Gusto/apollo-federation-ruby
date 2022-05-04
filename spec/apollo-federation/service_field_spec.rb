@@ -81,10 +81,8 @@ RSpec.describe ApolloFederation::ServiceField do
 
     it 'sets the Query as the owner to the _service field' do
       expect(
-        base_schema.graphql_definition
-              .types['Query']
+        base_schema.query
               .fields['_service']
-              .metadata[:type_class]
               .owner.graphql_name,
       ).to eq('Query')
     end
@@ -217,7 +215,7 @@ RSpec.describe ApolloFederation::ServiceField do
       it 'returns valid SDL for @key directives' do
         product = Class.new(base_object) do
           graphql_name 'Product'
-          key fields: 'upc'
+          key fields: :upc
 
           field :upc, String, null: false
         end
@@ -250,7 +248,7 @@ RSpec.describe ApolloFederation::ServiceField do
       it 'returns valid SDL for @key directives' do
         product = Class.new(base_object) do
           graphql_name 'Product'
-          key fields: 'upc'
+          key fields: :upc
 
           field :upc, String, null: false
         end
@@ -272,8 +270,8 @@ RSpec.describe ApolloFederation::ServiceField do
     it 'returns valid SDL for multiple @key directives' do
       product = Class.new(base_object) do
         graphql_name 'Product'
-        key fields: 'upc'
-        key fields: 'name'
+        key fields: :upc
+        key fields: :name
 
         field :upc, String, null: false
         field :name, String, null: true
@@ -297,7 +295,7 @@ RSpec.describe ApolloFederation::ServiceField do
       product = Class.new(base_object) do
         graphql_name 'Product'
         extend_type
-        key fields: 'upc'
+        key fields: :upc
 
         field :upc, String, null: false, external: true
         field :price, Integer, null: true
@@ -321,7 +319,7 @@ RSpec.describe ApolloFederation::ServiceField do
       product = Class.new(base_object) do
         graphql_name 'Product'
         extend_type
-        key fields: 'upc'
+        key fields: :upc
 
         field :upc, String, null: false, external: true
         field :price, Integer, null: true
@@ -329,10 +327,10 @@ RSpec.describe ApolloFederation::ServiceField do
 
       review = Class.new(base_object) do
         graphql_name 'Review'
-        key fields: 'id'
+        key fields: :id
 
         field :id, 'ID', null: false
-        field :product, product, provides: { fields: 'upc' }, null: true
+        field :product, product, provides: { fields: :upc }, null: true
       end
 
       schema = Class.new(base_schema) do
@@ -358,12 +356,12 @@ RSpec.describe ApolloFederation::ServiceField do
       product = Class.new(base_object) do
         graphql_name 'Product'
         extend_type
-        key fields: 'upc'
+        key fields: :upc
 
         field :upc, String, null: false, external: true
         field :weight, Integer, null: true, external: true
         field :price, Integer, null: true, external: true
-        field :shipping_estimate, Integer, null: true, requires: { fields: 'price weight' }
+        field :shipping_estimate, Integer, null: true, requires: { fields: %i[price weight] }
       end
 
       schema = Class.new(base_schema) do
@@ -382,96 +380,162 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
-    context 'with a filter' do
+    describe 'camelize option' do
+      it 'camelizes by default' do
+        product = Class.new(base_object) do
+          graphql_name 'Product'
+          key fields: :product_id
+
+          field :product_id, String, null: false
+        end
+
+        schema = Class.new(base_schema) do
+          orphan_types product
+        end
+
+        expect(execute_sdl(schema)).to match_sdl(
+          <<~GRAPHQL,
+            type Product @key(fields: "productId") {
+              productId: String!
+            }
+          GRAPHQL
+        )
+      end
+
+      it 'serializes according to camelize option otherwise' do
+        product = Class.new(base_object) do
+          graphql_name 'Product'
+          extend_type
+          key fields: :product_id, camelize: false
+
+          field :product_id, String, null: false, camelize: false
+          field :options, [String], null: false, requires: { fields: 'my_id', camelize: false }
+          field :other_options, [String], null: false, requires: { fields: 'my_id', camelize: true }
+        end
+
+        schema = Class.new(base_schema) do
+          orphan_types product
+        end
+
+        expect(execute_sdl(schema)).to match_sdl(
+          <<~GRAPHQL,
+            type Product @extends @key(fields: "product_id") {
+              options: [String!]! @requires(fields: "my_id")
+              otherOptions: [String!]! @requires(fields: "myId")
+              product_id: String!
+            }
+          GRAPHQL
+        )
+      end
+    end
+
+    it 'returns SDL that honors visibility checks' do
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+        extend_type
+        key fields: 'upc'
+        field :upc, String, null: false, external: true
+        field :secret, String, null: false, external: true do
+          def self.visible?(context)
+            super && context.fetch(:show_secrets, false)
+          end
+        end
+      end
+
+      schema = Class.new(base_schema) do
+        orphan_types product
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          type Product @extends @key(fields: "upc") {
+            upc: String! @external
+          }
+        GRAPHQL
+      )
+    end
+
+    context 'with context in schema generation' do
       let(:schema) do
         product = Class.new(base_object) do
           graphql_name 'Product'
 
           field :upc, String, null: false
+
+          def self.visible?(context)
+            context[:show_product_type] == true
+          end
         end
 
         query_obj = Class.new(base_object) do
           graphql_name 'Query'
 
+          field :hello, String, null: false
           field :product, product, null: true
+
+          def hello
+            'world. What were you expecting?'
+          end
         end
 
         Class.new(base_schema) do
           query query_obj
         end
       end
-      let(:filter) do
-        class PermissionWhitelist
-          def call(_schema_member, context)
-            context[:user_role] == :admin
-          end
-        end
 
-        PermissionWhitelist.new
-      end
-      let(:context) { { user_role: :admin } }
-      let(:executed_with_context) do
-        schema.execute('{ _service { sdl } }', only: filter, context: context)
-      end
-      let(:executed_without_context) { schema.execute('{ _service { sdl } }', only: filter) }
+      it 'uses the context in SDL generation' do
+        # Indirectly tests that the context is passed to the field
+        # to run hooks such as .visible? in schema generation
+        results = schema.execute('{ _service { sdl } }', context: { show_product_type: true })
 
-      it 'passes context to filters' do
-        expect(executed_with_context['data']['_service']['sdl']).to match_sdl(
+        expect(results.dig('data', '_service', 'sdl')).to match_sdl(
           <<~GRAPHQL,
             type Product {
               upc: String!
             }
 
             type Query {
+              hello: String!
               product: Product
             }
           GRAPHQL
         )
       end
 
-      it 'works without context' do
-        expect(executed_without_context['errors']).to(
-          match_array(
-            [
-              include('message' => "Field '_service' doesn't exist on type 'Query'"),
-            ],
-          ),
+      it 'generates the SDL when a context is not given' do
+        # Product should not be visible without settng show_product_type: true on the context.
+        results = schema.execute('{ _service { sdl } }')
+
+        expect(results.dig('data', '_service', 'sdl')).to match_sdl(
+          <<~GRAPHQL,
+            type Query {
+              hello: String!
+            }
+          GRAPHQL
         )
       end
+    end
+  end
 
-      context 'when not authorized' do
-        let(:context) { { user_role: :foo } }
+  if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('1.12.0')
+    context 'with older versions of GraphQL and the interpreter runtime' do
+      it_behaves_like 'service field' do
+        let(:base_schema) do
+          Class.new(GraphQL::Schema) do
+            use GraphQL::Execution::Interpreter
+            use GraphQL::Analysis::AST
 
-        it 'returns an error message' do
-          expect(executed_with_context['errors']).to(
-            match_array(
-              [
-                include('message' => "Field '_service' doesn't exist on type 'Query'"),
-              ],
-            ),
-          )
+            include ApolloFederation::Schema
+          end
         end
       end
     end
   end
 
-  context 'with the original runtime' do
+  if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('1.12.0')
     it_behaves_like 'service field' do
       let(:base_schema) do
         Class.new(GraphQL::Schema) do
-          include ApolloFederation::Schema
-        end
-      end
-    end
-  end
-
-  context 'with the interpreter runtime' do
-    it_behaves_like 'service field' do
-      let(:base_schema) do
-        Class.new(GraphQL::Schema) do
-          use GraphQL::Execution::Interpreter
-          use GraphQL::Analysis::AST
-
           include ApolloFederation::Schema
         end
       end

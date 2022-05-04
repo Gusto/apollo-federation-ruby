@@ -32,8 +32,10 @@
     "eslint-config-gusto": "^10.1.0",
     "graphql-tag": "^2.10.3",
     "jest": "^26.0.1",
+    "minimist": "^1.2.6",
     "nodemon": "^2.0.4",
-    "semantic-release": "^17.0.8",
-    "semantic-release-rubygem": "^1.0.3"
+    "semantic-release": "^17.2.3",
+    "semantic-release-rubygem": "^1.0.3",
+    "yargs-parser": "^21.0.1"
   }
 }
