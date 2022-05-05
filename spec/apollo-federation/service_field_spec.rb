@@ -165,6 +165,7 @@ RSpec.describe ApolloFederation::ServiceField do
 
       schema = Class.new(base_schema) do
         query query_obj
+        federation_2
       end
 
       expect(execute_sdl(schema)).to match_sdl(
@@ -202,6 +203,7 @@ RSpec.describe ApolloFederation::ServiceField do
 
       schema = Class.new(base_schema) do
         query query_obj
+        federation_2
       end
 
       expect(execute_sdl(schema)).to match_sdl(
@@ -255,6 +257,7 @@ RSpec.describe ApolloFederation::ServiceField do
 
       schema = Class.new(base_schema) do
         orphan_types book
+        federation_2
       end
 
       expect(execute_sdl(schema)).to match_sdl(
@@ -457,6 +460,7 @@ RSpec.describe ApolloFederation::ServiceField do
 
       schema = Class.new(base_schema) do
         query query_obj
+        federation_2
       end
 
       expect(execute_sdl(schema)).to match_sdl(
@@ -493,6 +497,7 @@ RSpec.describe ApolloFederation::ServiceField do
 
       schema = Class.new(base_schema) do
         query query_obj
+        federation_2
       end
 
       expect(execute_sdl(schema)).to match_sdl(
@@ -525,6 +530,7 @@ RSpec.describe ApolloFederation::ServiceField do
 
       schema = Class.new(base_schema) do
         orphan_types product
+        federation_2
       end
 
       expect(execute_sdl(schema)).to match_sdl(

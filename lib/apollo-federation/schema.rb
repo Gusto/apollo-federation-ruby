@@ -12,6 +12,8 @@ module ApolloFederation
     end
 
     module CommonMethods
+      attr_reader :federation_2_enabled
+
       FEDERATION_2_PREFIX = <<~SCHEMA.freeze
         extend schema
           @link(url: "https://specs.apollo.dev/federation/v2.0",
@@ -19,11 +21,15 @@ module ApolloFederation
 
       SCHEMA
 
+      def federation_2
+        @federation_2_enabled = true
+      end
+
       def federation_sdl(context: nil)
         document_from_schema = FederatedDocumentFromSchemaDefinition.new(self, context: context)
 
         output = GraphQL::Language::Printer.new.print(document_from_schema.document)
-        output.prepend(FEDERATION_2_PREFIX) if document_from_schema.federation_2?
+        output.prepend(FEDERATION_2_PREFIX) if @federation_2_enabled
         output
       end
 
