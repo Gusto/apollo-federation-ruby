@@ -12,9 +12,7 @@ module ApolloFederation
     end
 
     module CommonMethods
-      attr_reader :federation_version
-
-      FEDERATION_2_PREFIX = <<~SCHEMA.freeze
+      FEDERATION_2_PREFIX = <<~SCHEMA
         extend schema
           @link(url: "https://specs.apollo.dev/federation/v2.0",
           import: ["@key", "@extends", "@external", "@requires", "@provides", "@shareable", "@inaccessible", "@override"])
