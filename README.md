@@ -61,6 +61,15 @@ class MySchema < GraphQL::Schema
 end
 ```
 
+**Optional:** To opt in to Federation v2, specify the version in your schema:
+
+```ruby
+class MySchema < GraphQL::Schema
+  include ApolloFederation::Schema
+  federation version: 2.0
+end
+```
+
 ## Example
 
 The [`example`](./example/) folder contains a Ruby implementation of Apollo's [`federation-demo`](https://github.com/apollographql/federation-demo). To run it locally, install the Ruby dependencies:
