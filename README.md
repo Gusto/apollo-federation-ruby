@@ -195,14 +195,14 @@ To support [federated tracing](https://www.apollographql.com/docs/apollo-server/
 
 1. Add `use ApolloFederation::Tracing` to your schema class.
 2. Change your controller to add `tracing_enabled: true` to the execution context based on the presence of the "include trace" header:
-    ```ruby
-    def execute
-      # ...
-      context = {
-        tracing_enabled: ApolloFederation::Tracing.should_add_traces(request.headers)
-      }
-      # ...
-   ```
+```ruby
+def execute
+  # ...
+  context = {
+    tracing_enabled: ApolloFederation::Tracing.should_add_traces(request.headers)
+  }
+  # ...
+```
 
 ## Exporting the Federated SDL
 
