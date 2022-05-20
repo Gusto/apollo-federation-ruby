@@ -19,7 +19,7 @@ module ApolloFederation
 
     def _service
       schema_class = context.schema.is_a?(GraphQL::Schema) ? context.schema.class : context.schema
-      { sdl: schema_class.federation_sdl(context: context) }
+      { sdl: schema_class.federation_sdl(context: context.to_h) }
     end
   end
 end

@@ -35,7 +35,7 @@ PRODUCTS = [
 ].freeze
 
 class Product < BaseObject
-  key fields: 'upc'
+  key fields: :upc
 
   field :upc, String, null: false
   field :name, String, null: true
@@ -58,6 +58,11 @@ class Query < BaseObject
 end
 
 class ProductSchema < GraphQL::Schema
+  if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('1.12.0')
+    use GraphQL::Execution::Interpreter
+    use GraphQL::Analysis::AST
+  end
+
   include ApolloFederation::Schema
 
   query(Query)

@@ -53,11 +53,11 @@ USERNAMES = [
 ].freeze
 
 class Review < BaseObject
-  key fields: 'id'
+  key fields: :id
 
   field :id, ID, null: false
   field :body, String, null: true
-  field :author, 'User', null: true, provides: { fields: 'username' }
+  field :author, 'User', null: true, provides: { fields: :username }
   field :product, 'Product', null: true
 
   def author
@@ -66,7 +66,7 @@ class Review < BaseObject
 end
 
 class User < BaseObject
-  key fields: 'id'
+  key fields: :id
   extend_type
 
   field :id, ID, null: false, external: true
@@ -84,7 +84,7 @@ class User < BaseObject
 end
 
 class Product < BaseObject
-  key fields: 'upc'
+  key fields: :upc
   extend_type
 
   field :upc, String, null: false, external: true
@@ -96,6 +96,11 @@ class Product < BaseObject
 end
 
 class ReviewSchema < GraphQL::Schema
+  if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('1.12.0')
+    use GraphQL::Execution::Interpreter
+    use GraphQL::Analysis::AST
+  end
+
   include ApolloFederation::Schema
 
   orphan_types User, Review, Product

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'apollo-federation/field_set_serializer'
 require 'apollo-federation/has_directives'
 
 module ApolloFederation
@@ -17,12 +18,12 @@ module ApolloFederation
         add_directive(name: 'extends')
       end
 
-      def key(fields:)
+      def key(fields:, camelize: true)
         add_directive(
           name: 'key',
           arguments: [
             name: 'fields',
-            values: fields,
+            values: ApolloFederation::FieldSetSerializer.serialize(fields, camelize: camelize),
           ],
         )
       end

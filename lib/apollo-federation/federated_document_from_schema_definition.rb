@@ -56,8 +56,6 @@ module ApolloFederation
     def merge_directives(node, type)
       if type.is_a?(ApolloFederation::HasDirectives)
         directives = type.federation_directives
-      elsif type.is_a?(GraphQL::Define::InstanceDefinable)
-        directives = type.metadata[:federation_directives]
       else
         directives = []
       end

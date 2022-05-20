@@ -18,13 +18,13 @@ INVENTORY = [
 
 class Product < BaseObject
   extend_type
-  key fields: 'upc'
+  key fields: :upc
 
   field :upc, String, null: false, external: true
   field :weight, Int, null: true, external: true
   field :price, Int, null: true, external: true
   field :in_stock, Boolean, null: true
-  field :shipping_estimate, Int, null: true, requires: { fields: 'price weight' }
+  field :shipping_estimate, Int, null: true, requires: { fields: %i[price weight] }
 
   def self.resolve_reference(reference, _context)
     reference.merge(INVENTORY.find { |product| product[:upc] == reference[:upc] })
@@ -42,8 +42,10 @@ class Product < BaseObject
 end
 
 class InventorySchema < GraphQL::Schema
-  use GraphQL::Execution::Interpreter
-  use GraphQL::Analysis::AST
+  if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('1.12.0')
+    use GraphQL::Execution::Interpreter
+    use GraphQL::Analysis::AST
+  end
   include ApolloFederation::Schema
 
   orphan_types Product

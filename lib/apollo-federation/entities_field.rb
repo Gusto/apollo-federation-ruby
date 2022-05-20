@@ -38,7 +38,8 @@ module ApolloFederation
         end
 
         # TODO: What if the type is an interface?
-        type_class = type.is_a?(GraphQL::ObjectType) ? type.metadata[:type_class] : type
+        type_class = class_of_type(type)
+
         if type_class.respond_to?(:resolve_reference)
           result = type_class.resolve_reference(reference, context)
         else
@@ -53,6 +54,16 @@ module ApolloFederation
           context[resolved_value] = type
           resolved_value
         end
+      end
+    end
+
+    private
+
+    def class_of_type(type)
+      if defined?(GraphQL::ObjectType) && type.is_a?(GraphQL::ObjectType)
+        type.metadata[:type_class]
+      else
+        type
       end
     end
   end
