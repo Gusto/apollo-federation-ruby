@@ -55,12 +55,17 @@ module ApolloFederation
 
     def merge_directives(node, type)
       if type.is_a?(ApolloFederation::HasDirectives)
-        directives = type.federation_directives
+        directives = type.federation_directives || []
+        if schema.federation_2?
+          directives.map! do |directive|
+            directive.dup.update(name: "federation__#{directive[:name]}")
+          end
+        end
       else
         directives = []
       end
 
-      (directives || []).each do |directive|
+      directives.each do |directive|
         node = node.merge_directive(
           name: directive[:name],
           arguments: build_arguments_node(directive[:arguments]),
