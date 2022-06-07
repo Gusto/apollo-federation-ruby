@@ -19,19 +19,23 @@ module ApolloFederation
 
       SCHEMA
 
-      def federation(version: 1.0)
+      def federation(version: '1.0')
         @federation_version = version
       end
 
       def federation_version
-        @federation_version || 1.0
+        @federation_version || '1.0'
+      end
+
+      def federation_2?
+        Gem::Version.new(federation_version.to_s) >= Gem::Version.new('2.0.0')
       end
 
       def federation_sdl(context: nil)
         document_from_schema = FederatedDocumentFromSchemaDefinition.new(self, context: context)
 
         output = GraphQL::Language::Printer.new.print(document_from_schema.document)
-        output.prepend(FEDERATION_2_PREFIX) if federation_version >= 2
+        output.prepend(FEDERATION_2_PREFIX) if federation_2?
         output
       end
 

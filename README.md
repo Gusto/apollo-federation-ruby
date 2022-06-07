@@ -66,7 +66,7 @@ end
 ```ruby
 class MySchema < GraphQL::Schema
   include ApolloFederation::Schema
-  federation version: 2.0
+  federation version: '2.0'
 end
 ```
 
