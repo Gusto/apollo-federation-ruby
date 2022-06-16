@@ -43,7 +43,7 @@ RSpec.describe ApolloFederation::Schema do
       expect(schema.federation_2?).to be(false)
     end
 
-    it 'returns true when the version an integer equal to 2' do
+    it 'returns true when the version is an integer equal to 2' do
       schema = Class.new(GraphQL::Schema) do
         include ApolloFederation::Schema
         federation version: 2
@@ -52,7 +52,7 @@ RSpec.describe ApolloFederation::Schema do
       expect(schema.federation_2?).to be(true)
     end
 
-    it 'returns true when the version an float equal to 2.0' do
+    it 'returns true when the version is a float equal to 2.0' do
       schema = Class.new(GraphQL::Schema) do
         include ApolloFederation::Schema
         federation version: 2.0
