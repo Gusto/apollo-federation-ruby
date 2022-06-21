@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.0.0...v3.1.0) (2022-06-21)
+
+
+### Features
+
+* Support Federation v2 ([#196](https://github.com/Gusto/apollo-federation-ruby/issues/196)) ([238736c](https://github.com/Gusto/apollo-federation-ruby/commit/238736cdb6f12121ce2a295c7a28fba3990012b9)), closes [/www.apollographql.com/docs/federation/federation-2/moving-to-federation-2/#opt-in-to-federation-2](https://github.com//www.apollographql.com/docs/federation/federation-2/moving-to-federation-2//issues/opt-in-to-federation-2)
+
 # [3.0.0](https://github.com/Gusto/apollo-federation-ruby/compare/v2.2.4...v3.0.0) (2022-04-05)
 
 
