@@ -16,6 +16,14 @@ module ApolloFederation
         add_directive(name: 'extends')
       end
 
+      def shareable
+        add_directive(name: 'shareable')
+      end
+
+      def inaccessible
+        add_directive(name: 'inaccessible')
+      end
+
       def key(fields:, camelize: true)
         add_directive(
           name: 'key',

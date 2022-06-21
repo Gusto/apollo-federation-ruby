@@ -61,6 +61,15 @@ class MySchema < GraphQL::Schema
 end
 ```
 
+**Optional:** To opt in to Federation v2, specify the version in your schema:
+
+```ruby
+class MySchema < GraphQL::Schema
+  include ApolloFederation::Schema
+  federation version: '2.0'
+end
+```
+
 ## Example
 
 The [`example`](./example/) folder contains a Ruby implementation of Apollo's [`federation-demo`](https://github.com/apollographql/federation-demo). To run it locally, install the Ruby dependencies:
@@ -159,6 +168,59 @@ class Review < BaseObject
 end
 ```
 See [field set syntax](#field-set-syntax) for more details on the format of the `fields` option.
+
+### The `@shareable` directive (Apollo Federation v2)
+
+[Apollo documentation](https://www.apollographql.com/docs/federation/federated-types/federated-directives/#shareable)
+
+Call `shareable` within your class definition:
+
+```ruby
+class User < BaseObject
+  shareable
+end
+```
+
+Pass the `shareable: true` option to your field definition:
+
+```ruby
+class User < BaseObject
+  field :id, ID, null: false, shareable: true
+end
+```
+
+### The `@inaccessible` directive (Apollo Federation v2)
+
+[Apollo documentation](https://www.apollographql.com/docs/federation/federated-types/federated-directives/#inaccessible)
+
+Call `inaccessible` within your class definition:
+
+```ruby
+class User < BaseObject
+  inaccessible
+end
+```
+
+Pass the `inaccessible: true` option to your field definition:
+
+```ruby
+class User < BaseObject
+  field :id, ID, null: false, inaccessible: true
+end
+```
+
+### The `@override` directive (Apollo Federation v2)
+
+[Apollo documentation](https://www.apollographql.com/docs/federation/federated-types/federated-directives/#override)
+
+Pass the `override:` option to your field definition:
+
+```ruby
+class Product < BaseObject
+  field :id, ID, null: false
+  field :inStock, Boolean, null: false, override: { from: 'Products' }
+end
+```
 
 ### Field set syntax
 

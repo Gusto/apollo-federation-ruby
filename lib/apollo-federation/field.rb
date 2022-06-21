@@ -7,10 +7,29 @@ module ApolloFederation
   module Field
     include HasDirectives
 
-    def initialize(*args, external: false, requires: nil, provides: nil, **kwargs, &block)
+    VERSION_1_DIRECTIVES = %i[external requires provides].freeze
+    VERSION_2_DIRECTIVES = %i[shareable inaccessible override].freeze
+
+    def initialize(*args, **kwargs, &block)
+      add_v1_directives(**kwargs)
+      add_v2_directives(**kwargs)
+
+      # Remove the custom kwargs
+      kwargs = kwargs.delete_if do |k, _|
+        VERSION_1_DIRECTIVES.include?(k) || VERSION_2_DIRECTIVES.include?(k)
+      end
+
+      # Pass on the default args:
+      super(*args, **kwargs, &block)
+    end
+
+    private
+
+    def add_v1_directives(external: nil, requires: nil, provides: nil, **_kwargs)
       if external
         add_directive(name: 'external')
       end
+
       if requires
         add_directive(
           name: 'requires',
@@ -23,6 +42,7 @@ module ApolloFederation
           ],
         )
       end
+
       if provides
         add_directive(
           name: 'provides',
@@ -36,8 +56,29 @@ module ApolloFederation
         )
       end
 
-      # Pass on the default args:
-      super(*args, **kwargs, &block)
+      nil
+    end
+
+    def add_v2_directives(shareable: nil, inaccessible: nil, override: nil, **_kwargs)
+      if shareable
+        add_directive(name: 'shareable')
+      end
+
+      if inaccessible
+        add_directive(name: 'inaccessible')
+      end
+
+      if override
+        add_directive(
+          name: 'override',
+          arguments: [
+            name: 'from',
+            values: override[:from],
+          ],
+        )
+      end
+
+      nil
     end
   end
 end
