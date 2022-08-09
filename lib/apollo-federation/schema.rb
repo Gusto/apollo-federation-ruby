@@ -18,8 +18,9 @@ module ApolloFederation
 
       SCHEMA
 
-      def federation(version: '1.0')
+      def federation(version: '1.0', link: {})
         @federation_version = version
+        @link = { as: 'federation' }.merge(link)
       end
 
       def federation_version
@@ -38,6 +39,10 @@ module ApolloFederation
         output
       end
 
+      def link_namespace
+        @link[:as]
+      end
+
       def query(new_query_object = nil)
         if new_query_object
           @orig_query_object = new_query_object
@@ -54,6 +59,14 @@ module ApolloFederation
       end
 
       private
+
+      def federation_2_prefix
+        <<~SCHEMA
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.0", as: "#{link_namespace}")
+
+        SCHEMA
+      end
 
       def schema_entities
         # Create a temporary schema that inherits from this one to extract the types

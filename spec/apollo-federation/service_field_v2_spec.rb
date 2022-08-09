@@ -231,6 +231,180 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
+    context 'with a custom link namespace provided' do
+      it 'returns valid SDL for type extensions with custom namespace' do
+        product = Class.new(base_object) do
+          graphql_name 'Product'
+          extend_type
+
+          field :upc, String, null: false
+        end
+
+        query_obj = Class.new(base_object) do
+          graphql_name 'Query'
+
+          field :product, product, null: true
+        end
+
+        schema = Class.new(base_schema) do
+          query query_obj
+          federation version: '2.0', link: { as: 'fed2' }
+        end
+
+        expect(execute_sdl(schema)).to match_sdl(
+          <<~GRAPHQL,
+            extend schema
+              @link(url: "https://specs.apollo.dev/federation/v2.0")
+
+            type Product @fed2__extends {
+              upc: String!
+            }
+
+            type Query {
+              product: Product
+            }
+          GRAPHQL
+        )
+      end
+
+      it 'returns valid SDL for shareable types with custom namespace' do
+        position = Class.new(base_object) do
+          graphql_name 'Position'
+          shareable
+
+          field :x, Integer, null: false
+          field :y, Integer, null: false
+        end
+
+        query_obj = Class.new(base_object) do
+          graphql_name 'Query'
+
+          field :position, position, null: true
+        end
+
+        schema = Class.new(base_schema) do
+          query query_obj
+          federation version: '2.0', link: { as: 'fed2' }
+        end
+
+        expect(execute_sdl(schema)).to match_sdl(
+          <<~GRAPHQL,
+            extend schema
+              @link(url: "https://specs.apollo.dev/federation/v2.0")
+
+            type Position @fed2__shareable {
+              x: Int!
+              y: Int!
+            }
+
+            type Query {
+              position: Position
+            }
+          GRAPHQL
+        )
+      end
+
+      it 'returns valid SDL for inaccessible types with custom namespace' do
+        position = Class.new(base_object) do
+          graphql_name 'Position'
+          inaccessible
+
+          field :x, Integer, null: false
+          field :y, Integer, null: false
+        end
+
+        query_obj = Class.new(base_object) do
+          graphql_name 'Query'
+
+          field :position, position, null: true
+        end
+
+        schema = Class.new(base_schema) do
+          query query_obj
+          federation version: '2.0', link: { as: 'fed2' }
+        end
+
+        expect(execute_sdl(schema)).to match_sdl(
+          <<~GRAPHQL,
+            extend schema
+              @link(url: "https://specs.apollo.dev/federation/v2.0")
+
+            type Position @fed2__inaccessible {
+              x: Int!
+              y: Int!
+            }
+
+            type Query {
+              position: Position
+            }
+          GRAPHQL
+        )
+      end
+
+      it 'returns valid SDL for @key directives with custom namespace' do
+        product = Class.new(base_object) do
+          graphql_name 'Product'
+          key fields: :upc
+
+          field :upc, String, null: false
+        end
+
+        query_obj = Class.new(base_object) do
+          graphql_name 'Query'
+
+          field :product, product, null: true
+        end
+
+        schema = Class.new(base_schema) do
+          query query_obj
+          federation version: '2.0', link: { as: 'fed2' }
+        end
+
+        expect(execute_sdl(schema)).to match_sdl(
+          <<~GRAPHQL,
+            extend schema
+              @link(url: "https://specs.apollo.dev/federation/v2.0")
+
+            type Product @fed2__key(fields: "upc") {
+              upc: String!
+            }
+
+            type Query {
+              product: Product
+            }
+          GRAPHQL
+        )
+      end
+
+      it 'returns valid SDL for @external directives' do
+        product = Class.new(base_object) do
+          graphql_name 'Product'
+          extend_type
+          key fields: :upc
+
+          field :upc, String, null: false, external: true
+          field :price, Integer, null: true
+        end
+
+        schema = Class.new(base_schema) do
+          orphan_types product
+          federation version: '2.0', link: { as: 'fed2' }
+        end
+
+        expect(execute_sdl(schema)).to match_sdl(
+          <<~GRAPHQL,
+            extend schema
+              @link(url: "https://specs.apollo.dev/federation/v2.0")
+
+            type Product @fed2__extends @fed2__key(fields: "upc") {
+              price: Int
+              upc: String! @fed2__external
+            }
+          GRAPHQL
+        )
+      end
+    end
+
     it 'returns valid SDL for inaccessible interface types' do
       base_field = Class.new(GraphQL::Schema::Field) do
         include ApolloFederation::Field
