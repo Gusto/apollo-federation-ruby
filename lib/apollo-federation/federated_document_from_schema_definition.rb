@@ -62,11 +62,19 @@ module ApolloFederation
 
       directives.each do |directive|
         node = node.merge_directive(
-          name: schema.federation_2? ? "federation__#{directive[:name]}" : directive[:name],
+          name: directive_name(directive),
           arguments: build_arguments_node(directive[:arguments]),
         )
       end
       node
+    end
+
+    def directive_name(directive)
+      if schema.federation_2?
+        "#{schema.link_namespace}__#{directive[:name]}"
+      else
+        directive[:name]
+      end
     end
 
     def build_arguments_node(arguments)
