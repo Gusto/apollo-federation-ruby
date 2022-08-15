@@ -1,3 +1,10 @@
+# [3.2.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.1.0...v3.2.0) (2022-08-15)
+
+
+### Features
+
+* allow custom namespace for linked directives ([03fdfea](https://github.com/Gusto/apollo-federation-ruby/commit/03fdfeafaaea3c98ca4b7a734ce760ea08410530))
+
 # [3.1.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.0.0...v3.1.0) (2022-06-21)
 
 
