@@ -215,7 +215,9 @@ RSpec.describe ApolloFederation::EntitiesField do
               end
 
               context 'when the type defines a resolve_references method' do
-                let(:representations) { [{ __typename: typename, id: id_1 }, { __typename: typename, id: id_2 }] }
+                let(:representations) do
+                  [{ __typename: typename, id: id_1 }, { __typename: typename, id: id_2 }]
+                end
                 let(:id_1) { 123 }
                 let(:id_2) { 456 }
 
@@ -232,7 +234,12 @@ RSpec.describe ApolloFederation::EntitiesField do
                   end
                 end
 
-                it { is_expected.to match_array [{ 'id' => id_1.to_s, 'otherField' => 'data!' }, { 'id' => id_2.to_s, 'otherField' => 'data2!' }] }
+                it {
+                  expect(subject).to match_array [
+                    { 'id' => id_1.to_s, 'otherField' => 'data!' },
+                    { 'id' => id_2.to_s, 'otherField' => 'data2!' },
+                  ]
+                }
                 it { expect(errors).to be_nil }
               end
 
