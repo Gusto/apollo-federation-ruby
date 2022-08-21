@@ -9,3 +9,5 @@ node_modules/
 .circleci/processed-config.yml
 
 .DS_Store
+.idea
+vendor

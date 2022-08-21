@@ -66,6 +66,11 @@ RSpec.describe ApolloFederation::EntitiesField do
           query_class = query
           Class.new(base_schema) do
             query query_class
+
+            def self.resolve_type(_abstract_type, _obj, _ctx)
+              # to return the correct object type for `obj`
+              raise(GraphQL::RequiredImplementationMissingError)
+            end
           end
         end
 
@@ -206,6 +211,28 @@ RSpec.describe ApolloFederation::EntitiesField do
 
               context 'when the type does not define a resolve_reference method' do
                 it { is_expected.to match_array [{ 'id' => id.to_s, 'otherField' => nil }] }
+                it { expect(errors).to be_nil }
+              end
+
+              context 'when the type defines a resolve_references method' do
+                let(:representations) { [{ __typename: typename, id: id_1 }, { __typename: typename, id: id_2 }] }
+                let(:id_1) { 123 }
+                let(:id_2) { 456 }
+
+                let(:type_with_key) do
+                  Class.new(base_object) do
+                    graphql_name 'TypeWithKey'
+                    key fields: :id
+                    field :id, 'ID', null: false
+                    field :other_field, 'String', null: false
+
+                    def self.resolve_references(_references, _context)
+                      [{ id: 123, other_field: 'data!' }, { id: 456, other_field: 'data2!' }]
+                    end
+                  end
+                end
+
+                it { is_expected.to match_array [{ 'id' => id_1.to_s, 'otherField' => 'data!' }, { 'id' => id_2.to_s, 'otherField' => 'data2!' }] }
                 it { expect(errors).to be_nil }
               end
 
