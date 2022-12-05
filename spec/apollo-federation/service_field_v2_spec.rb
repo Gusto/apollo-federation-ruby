@@ -231,6 +231,43 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
+    it 'returns valid SDL for tagged types' do
+      position = Class.new(base_object) do
+        graphql_name 'Position'
+        tag name: 'private'
+
+        field :x, Integer, null: false
+        field :y, Integer, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :position, position, null: true
+      end
+
+      schema = Class.new(base_schema) do
+        query query_obj
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.0")
+
+          type Position @federation__tag(name: "private") {
+            x: Int!
+            y: Int!
+          }
+
+          type Query {
+            position: Position
+          }
+        GRAPHQL
+      )
+    end
+
     context 'with a custom link namespace provided' do
       it 'returns valid SDL for type extensions with custom namespace' do
         product = Class.new(base_object) do
@@ -330,6 +367,43 @@ RSpec.describe ApolloFederation::ServiceField do
               @link(url: "https://specs.apollo.dev/federation/v2.0")
 
             type Position @fed2__inaccessible {
+              x: Int!
+              y: Int!
+            }
+
+            type Query {
+              position: Position
+            }
+          GRAPHQL
+        )
+      end
+
+      it 'returns valid SDL for tagged types with custom namespace' do
+        position = Class.new(base_object) do
+          graphql_name 'Position'
+          tag name: 'private'
+
+          field :x, Integer, null: false
+          field :y, Integer, null: false
+        end
+
+        query_obj = Class.new(base_object) do
+          graphql_name 'Query'
+
+          field :position, position, null: true
+        end
+
+        schema = Class.new(base_schema) do
+          query query_obj
+          federation version: '2.0', link: { as: 'fed2' }
+        end
+
+        expect(execute_sdl(schema)).to match_sdl(
+          <<~GRAPHQL,
+            extend schema
+              @link(url: "https://specs.apollo.dev/federation/v2.0")
+
+            type Position @fed2__tag(name: "private") {
               x: Int!
               y: Int!
             }
@@ -451,6 +525,58 @@ RSpec.describe ApolloFederation::ServiceField do
           }
 
           interface Product @federation__inaccessible {
+            upc: String!
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for tagged interface types' do
+      base_field = Class.new(GraphQL::Schema::Field) do
+        include ApolloFederation::Field
+      end
+
+      base_interface = Module.new do
+        include GraphQL::Schema::Interface
+        include ApolloFederation::Interface
+
+        # graphql_name 'Interface'
+        field_class base_field
+      end
+
+      product = Module.new do
+        include base_interface
+
+        graphql_name 'Product'
+
+        tag name: 'private'
+
+        field :upc, String, null: false
+      end
+
+      book = Class.new(base_object) do
+        implements product
+
+        graphql_name 'Book'
+
+        field :upc, String, null: false
+      end
+
+      schema = Class.new(base_schema) do
+        orphan_types book
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.0")
+
+          type Book implements Product {
+            upc: String!
+          }
+
+          interface Product @federation__tag(name: "private") {
             upc: String!
           }
         GRAPHQL
@@ -706,6 +832,42 @@ RSpec.describe ApolloFederation::ServiceField do
 
           type Position {
             x: Int! @federation__inaccessible
+            y: Int!
+          }
+
+          type Query {
+            position: Position
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for @tag directives' do
+      position = Class.new(base_object) do
+        graphql_name 'Position'
+
+        field :x, Integer, null: false, tag: { name: 'private' }
+        field :y, Integer, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :position, position, null: true
+      end
+
+      schema = Class.new(base_schema) do
+        query query_obj
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.0")
+
+          type Position {
+            x: Int! @federation__tag(name: "private")
             y: Int!
           }
 

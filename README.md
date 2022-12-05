@@ -222,6 +222,26 @@ class Product < BaseObject
 end
 ```
 
+### The `@tag` directive (Apollo Federation v2)
+
+[Apollo documentation](https://www.apollographql.com/docs/federation/federated-types/federated-directives/#tag)
+
+Call `tag` within your class definition:
+
+```ruby
+class User < BaseObject
+  tag name: 'private'
+end
+```
+
+Pass the `tag:` option to your field definition:
+
+```ruby
+class User < BaseObject
+  field :id, ID, null: false, tag: { name: 'private' }
+end
+```
+
 ### Field set syntax
 
 Field sets can be either strings encoded with the Apollo Field Set [syntax]((https://www.apollographql.com/docs/apollo-server/federation/federation-spec/#scalar-_fieldset)) or arrays, hashes and snake case symbols that follow the graphql-ruby conventions:
