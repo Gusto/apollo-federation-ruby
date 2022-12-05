@@ -650,6 +650,44 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
+    it 'returns valid SDL for tagged union types' do
+      base_union = Class.new(GraphQL::Schema::Union) do
+        include ApolloFederation::Union
+      end
+
+      book = Class.new(base_object) do
+        graphql_name 'Book'
+
+        field :upc, String, null: false
+      end
+
+      product = Class.new(base_union) do
+        graphql_name 'Product'
+
+        tag name: 'private'
+
+        possible_types book
+      end
+
+      schema = Class.new(base_schema) do
+        orphan_types book, product
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.0")
+
+          type Book {
+            upc: String!
+          }
+
+          union Product @federation__tag(name: "private") = Book
+        GRAPHQL
+      )
+    end
+
     context 'when a Query object is provided' do
       it 'returns valid SDL for @key directives' do
         product = Class.new(base_object) do

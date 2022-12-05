@@ -27,8 +27,13 @@ module ApolloFederation
     end
 
     def build_interface_type_node(interface_type)
-      field_node = super
-      merge_directives(field_node, interface_type)
+      interface_node = super
+      merge_directives(interface_node, interface_type)
+    end
+
+    def build_union_type_node(union_type)
+      union_node = super
+      merge_directives(union_node, union_type)
     end
 
     def build_field_node(field_type)
