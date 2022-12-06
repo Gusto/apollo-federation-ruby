@@ -6,6 +6,9 @@ require 'apollo-federation/schema'
 require 'apollo-federation/field'
 require 'apollo-federation/object'
 require 'apollo-federation/interface'
+require 'apollo-federation/union'
+require 'apollo-federation/enum'
+require 'apollo-federation/enum_value'
 
 RSpec.describe ApolloFederation::ServiceField do
   shared_examples 'service field' do
@@ -688,6 +691,44 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
+    it 'returns valid SDL for tagged enum types' do
+      base_enum = Class.new(GraphQL::Schema::Enum) do
+        include ApolloFederation::Enum
+      end
+
+      product_type = Class.new(base_enum) do
+        graphql_name 'ProductType'
+        tag name: 'private'
+
+        value 'BOOK'
+        value 'PEN'
+      end
+
+      product =  Class.new(base_object) do
+        graphql_name 'Product'
+
+        field :type, product_type, null: false
+      end
+
+
+      schema = Class.new(base_schema) do
+        orphan_types product_type, product
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.0")
+
+          enum ProductType @federation__tag(name: "private") {
+            BOOK
+            PEN
+          }
+        GRAPHQL
+      )
+    end
+
     context 'when a Query object is provided' do
       it 'returns valid SDL for @key directives' do
         product = Class.new(base_object) do
@@ -911,6 +952,49 @@ RSpec.describe ApolloFederation::ServiceField do
 
           type Query {
             position: Position
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for @tag enum value directives' do
+      base_enum_value = Class.new(GraphQL::Schema::EnumValue) do
+        include ApolloFederation::EnumValue
+      end
+
+      base_enum = Class.new(GraphQL::Schema::Enum) do
+        include ApolloFederation::Enum
+
+        enum_value_class base_enum_value
+      end
+
+      product_type = Class.new(base_enum) do
+        graphql_name 'ProductType'
+
+        value 'BOOK'
+        value 'PEN', tag: { name: 'private' }
+      end
+
+      product =  Class.new(base_object) do
+        graphql_name 'Product'
+
+        field :type, product_type, null: false
+      end
+
+
+      schema = Class.new(base_schema) do
+        orphan_types product_type, product
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.0")
+
+          enum ProductType {
+            BOOK
+            PEN @federation__tag(name: "private")
           }
         GRAPHQL
       )
