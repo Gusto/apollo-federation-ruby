@@ -704,12 +704,11 @@ RSpec.describe ApolloFederation::ServiceField do
         value 'PEN'
       end
 
-      product =  Class.new(base_object) do
+      product = Class.new(base_object) do
         graphql_name 'Product'
 
         field :type, product_type, null: false
       end
-
 
       schema = Class.new(base_schema) do
         orphan_types product_type, product
@@ -975,12 +974,11 @@ RSpec.describe ApolloFederation::ServiceField do
         value 'PEN', tag: { name: 'private' }
       end
 
-      product =  Class.new(base_object) do
+      product = Class.new(base_object) do
         graphql_name 'Product'
 
         field :type, product_type, null: false
       end
-
 
       schema = Class.new(base_schema) do
         orphan_types product_type, product

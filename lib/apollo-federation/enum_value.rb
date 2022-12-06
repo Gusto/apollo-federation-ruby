@@ -23,15 +23,15 @@ module ApolloFederation
     private
 
     def add_v2_directives(tag: nil, **_kwargs)
-      if tag
-        add_directive(
-          name: 'tag',
-          arguments: [
-            name: 'name',
-            values: tag[:name],
-          ],
-        )
-      end
+      return unless tag
+
+      add_directive(
+        name: 'tag',
+        arguments: [
+          name: 'name',
+          values: tag[:name],
+        ],
+      )
     end
   end
 end
