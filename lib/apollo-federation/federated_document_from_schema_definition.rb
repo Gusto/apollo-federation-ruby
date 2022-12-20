@@ -46,6 +46,11 @@ module ApolloFederation
       merge_directives(enum_value_node, enum_value_type)
     end
 
+    def build_scalar_type_node(scalar_type)
+      scalar_node = super
+      merge_directives(scalar_node, scalar_type)
+    end
+
     def build_field_node(field_type)
       field_node = super
       merge_directives(field_node, field_type)

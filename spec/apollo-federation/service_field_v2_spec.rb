@@ -9,6 +9,7 @@ require 'apollo-federation/interface'
 require 'apollo-federation/union'
 require 'apollo-federation/enum'
 require 'apollo-federation/enum_value'
+require 'apollo-federation/scalar'
 
 RSpec.describe ApolloFederation::ServiceField do
   shared_examples 'service field' do
@@ -728,6 +729,52 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
+    it 'returns valid SDL for tagged scalar types' do
+      base_scalar = Class.new(GraphQL::Schema::Scalar) do
+        include ApolloFederation::Scalar
+      end
+
+      upc = Class.new(base_scalar) do
+        graphql_name 'UPC'
+
+        tag name: 'private'
+      end
+
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+
+        field :upc, upc, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :product, product, null: true
+      end
+
+      schema = Class.new(base_schema) do
+        query query_obj
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.0")
+
+          type Product {
+            upc: UPC!
+          }
+
+          type Query {
+            product: Product
+          }
+
+          scalar UPC @federation__tag(name: "private")
+        GRAPHQL
+      )
+    end
+
     context 'when a Query object is provided' do
       it 'returns valid SDL for @key directives' do
         product = Class.new(base_object) do
@@ -980,8 +1027,14 @@ RSpec.describe ApolloFederation::ServiceField do
         field :type, product_type, null: false
       end
 
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :product, product, null: true
+      end
+
       schema = Class.new(base_schema) do
-        orphan_types product_type, product
+        query query_obj
         federation version: '2.0'
       end
 
@@ -990,9 +1043,17 @@ RSpec.describe ApolloFederation::ServiceField do
           extend schema
             @link(url: "https://specs.apollo.dev/federation/v2.0")
 
+          type Product {
+            type: ProductType!
+          }
+
           enum ProductType {
             BOOK
             PEN @federation__tag(name: "private")
+          }
+
+          type Query {
+            product: Product
           }
         GRAPHQL
       )
