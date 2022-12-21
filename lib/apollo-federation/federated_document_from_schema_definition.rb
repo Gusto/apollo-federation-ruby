@@ -51,6 +51,11 @@ module ApolloFederation
       merge_directives(scalar_node, scalar_type)
     end
 
+    def build_input_object_node(input_object_type)
+      input_object_node = super
+      merge_directives(input_object_node, input_object_type)
+    end
+
     def build_field_node(field_type)
       field_node = super
       merge_directives(field_node, field_type)
