@@ -234,11 +234,11 @@ class User < BaseObject
 end
 ```
 
-Pass the `tag:` option to your field definition:
+Pass the `tags:` option to your field definition:
 
 ```ruby
 class User < BaseObject
-  field :id, ID, null: false, tag: { name: 'private' }
+  field :id, ID, null: false, tags: [{ name: 'private' }]
 end
 ```
 

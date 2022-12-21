@@ -6,7 +6,7 @@ module ApolloFederation
   module EnumValue
     include HasDirectives
 
-    VERSION_2_DIRECTIVES = %i[tag].freeze
+    VERSION_2_DIRECTIVES = %i[tags].freeze
 
     def initialize(*args, **kwargs, &block)
       add_v2_directives(**kwargs)
@@ -22,16 +22,16 @@ module ApolloFederation
 
     private
 
-    def add_v2_directives(tag: nil, **_kwargs)
-      return unless tag
-
-      add_directive(
-        name: 'tag',
-        arguments: [
-          name: 'name',
-          values: tag[:name],
-        ],
-      )
+    def add_v2_directives(tags: [], **_kwargs)
+      tags.each do |tag|
+        add_directive(
+          name: 'tag',
+          arguments: [
+            name: 'name',
+            values: tag[:name],
+          ],
+        )
+      end
     end
   end
 end

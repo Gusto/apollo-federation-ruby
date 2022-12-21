@@ -971,7 +971,7 @@ RSpec.describe ApolloFederation::ServiceField do
       position = Class.new(base_object) do
         graphql_name 'Position'
 
-        field :x, Integer, null: false, tag: { name: 'private' }
+        field :x, Integer, null: false, tags: [{ name: 'private' }]
         field :y, Integer, null: false
       end
 
@@ -1003,6 +1003,42 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
+    it 'returns valid SDL for multiple @tag directives' do
+      position = Class.new(base_object) do
+        graphql_name 'Position'
+
+        field :x, Integer, null: false, tags: [{ name: 'private' }, { name: 'protected' }]
+        field :y, Integer, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :position, position, null: true
+      end
+
+      schema = Class.new(base_schema) do
+        query query_obj
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.0")
+
+          type Position {
+            x: Int! @federation__tag(name: "private") @federation__tag(name: "protected")
+            y: Int!
+          }
+
+          type Query {
+            position: Position
+          }
+        GRAPHQL
+      )
+    end
+
     it 'returns valid SDL for @tag enum value directives' do
       base_enum_value = Class.new(GraphQL::Schema::EnumValue) do
         include ApolloFederation::EnumValue
@@ -1018,7 +1054,7 @@ RSpec.describe ApolloFederation::ServiceField do
         graphql_name 'ProductType'
 
         value 'BOOK'
-        value 'PEN', tag: { name: 'private' }
+        value 'PEN', tags: [{ name: 'private' }]
       end
 
       product = Class.new(base_object) do
@@ -1050,6 +1086,62 @@ RSpec.describe ApolloFederation::ServiceField do
           enum ProductType {
             BOOK
             PEN @federation__tag(name: "private")
+          }
+
+          type Query {
+            product: Product
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for multiple @tag enum value directives' do
+      base_enum_value = Class.new(GraphQL::Schema::EnumValue) do
+        include ApolloFederation::EnumValue
+      end
+
+      base_enum = Class.new(GraphQL::Schema::Enum) do
+        include ApolloFederation::Enum
+
+        enum_value_class base_enum_value
+      end
+
+      product_type = Class.new(base_enum) do
+        graphql_name 'ProductType'
+
+        value 'BOOK'
+        value 'PEN', tags: [{ name: 'private' }, { name: 'protected' }]
+      end
+
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+
+        field :type, product_type, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :product, product, null: true
+      end
+
+      schema = Class.new(base_schema) do
+        query query_obj
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.0")
+
+          type Product {
+            type: ProductType!
+          }
+
+          enum ProductType {
+            BOOK
+            PEN @federation__tag(name: "private") @federation__tag(name: "protected")
           }
 
           type Query {
