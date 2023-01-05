@@ -35,4 +35,3 @@ module ApolloFederation
     end
   end
 end
-
