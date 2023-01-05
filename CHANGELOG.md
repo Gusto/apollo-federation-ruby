@@ -1,3 +1,10 @@
+## [3.3.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.3.0...v3.3.1) (2023-01-05)
+
+
+### Bug Fixes
+
+* address SNYK-RUBY-GOOGLEPROTOBUF-3167775 ([#212](https://github.com/Gusto/apollo-federation-ruby/issues/212)) ([c36b51e](https://github.com/Gusto/apollo-federation-ruby/commit/c36b51e521a60e8186100405cf81bba1a37f5978))
+
 # [3.3.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.2.0...v3.3.0) (2022-08-24)
 
 
