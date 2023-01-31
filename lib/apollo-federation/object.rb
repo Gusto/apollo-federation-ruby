@@ -24,6 +24,10 @@ module ApolloFederation
         add_directive(name: 'inaccessible')
       end
 
+      def interface_object
+        add_directive(name: 'interfaceObject')
+      end
+
       def key(fields:, camelize: true)
         add_directive(
           name: 'key',
