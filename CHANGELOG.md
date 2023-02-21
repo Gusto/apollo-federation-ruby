@@ -1,3 +1,10 @@
+## [3.4.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.4.0...v3.4.1) (2023-02-21)
+
+
+### Bug Fixes
+
+* import [@inaccessible](https://github.com/inaccessible) directive in Fed v2.3 ([#220](https://github.com/Gusto/apollo-federation-ruby/issues/220)) ([5d4d86e](https://github.com/Gusto/apollo-federation-ruby/commit/5d4d86e8155efe83470c58012454c79c910219ff))
+
 # [3.4.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.3.1...v3.4.0) (2023-02-21)
 
 
