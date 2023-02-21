@@ -61,7 +61,7 @@ module ApolloFederation
 
         <<~SCHEMA
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3"#{federation_namespace})
+            @link(url: "https://specs.apollo.dev/federation/v2.3"#{federation_namespace}, import: ["@inaccessible"])
 
         SCHEMA
       end
