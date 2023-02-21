@@ -12,7 +12,7 @@ module ApolloFederation
     end
 
     module CommonMethods
-      DEFAULT_LINK_NAMESPACE = 'federation'.freeze
+      DEFAULT_LINK_NAMESPACE = 'federation'
 
       def federation(version: '1.0', link: {})
         @federation_version = version
