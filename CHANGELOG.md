@@ -1,3 +1,15 @@
+# [3.4.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.3.1...v3.4.0) (2023-02-21)
+
+
+### Bug Fixes
+
+* address some lint violations ([#219](https://github.com/Gusto/apollo-federation-ruby/issues/219)) ([dcd11e9](https://github.com/Gusto/apollo-federation-ruby/commit/dcd11e9384f168d125d2b60941d4bff161799824))
+
+
+### Features
+
+* add support for the [@interface](https://github.com/interface)Object directive ([#218](https://github.com/Gusto/apollo-federation-ruby/issues/218)) ([c7b987d](https://github.com/Gusto/apollo-federation-ruby/commit/c7b987de1d2b32a4a77ceb09718373ffa5a60abb))
+
 ## [3.3.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.3.0...v3.3.1) (2023-01-05)
 
 
