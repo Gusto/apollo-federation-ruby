@@ -31,7 +31,7 @@ module ApolloFederation
         document_from_schema = FederatedDocumentFromSchemaDefinition.new(self, context: context)
 
         output = GraphQL::Language::Printer.new.print(document_from_schema.document)
-        output.prepend(federation_2_prefix) if federation_2?
+        output.prepend(federation_preamble) if federation_2?
         output
       end
 
@@ -56,12 +56,12 @@ module ApolloFederation
 
       private
 
-      def federation_2_prefix
+      def federation_preamble
         federation_namespace = ", as: \"#{link_namespace}\"" if link_namespace != DEFAULT_LINK_NAMESPACE
 
         <<~SCHEMA
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3"#{federation_namespace}, import: ["@inaccessible"])
+            @link(url: "https://specs.apollo.dev/federation/v#{federation_version}"#{federation_namespace}, import: ["@inaccessible"])
 
         SCHEMA
       end
