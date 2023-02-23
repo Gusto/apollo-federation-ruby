@@ -49,7 +49,7 @@ Metrics/ParameterLists:
   Max: 5
   CountKeywordArgs: false
 Metrics/LineLength:
-  Max: 100
+  Max: 120
   Exclude:
     - lib/apollo-federation/tracing/proto/apollo_pb.rb
 

@@ -12,9 +12,11 @@ module ApolloFederation
     end
 
     module CommonMethods
+      DEFAULT_LINK_NAMESPACE = 'federation'
+
       def federation(version: '1.0', link: {})
         @federation_version = version
-        @link = { as: 'federation' }.merge(link)
+        @link = { as: DEFAULT_LINK_NAMESPACE }.merge(link)
       end
 
       def federation_version
@@ -55,9 +57,11 @@ module ApolloFederation
       private
 
       def federation_preamble
+        federation_namespace = ", as: \"#{link_namespace}\"" if link_namespace != DEFAULT_LINK_NAMESPACE
+
         <<~SCHEMA
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v#{federation_version}", as: "#{link_namespace}")
+            @link(url: "https://specs.apollo.dev/federation/v#{federation_version}"#{federation_namespace}, import: ["@inaccessible"])
 
         SCHEMA
       end
