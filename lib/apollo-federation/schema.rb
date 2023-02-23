@@ -12,12 +12,6 @@ module ApolloFederation
     end
 
     module CommonMethods
-      FEDERATION_2_PREFIX = <<~SCHEMA
-        extend schema
-          @link(url: "https://specs.apollo.dev/federation/v2.0")
-
-      SCHEMA
-
       def federation(version: '1.0', link: {})
         @federation_version = version
         @link = { as: 'federation' }.merge(link)
@@ -35,7 +29,7 @@ module ApolloFederation
         document_from_schema = FederatedDocumentFromSchemaDefinition.new(self, context: context)
 
         output = GraphQL::Language::Printer.new.print(document_from_schema.document)
-        output.prepend(FEDERATION_2_PREFIX) if federation_2?
+        output.prepend(federation_preamble) if federation_2?
         output
       end
 
@@ -60,10 +54,10 @@ module ApolloFederation
 
       private
 
-      def federation_2_prefix
+      def federation_preamble
         <<~SCHEMA
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.0", as: "#{link_namespace}")
+            @link(url: "https://specs.apollo.dev/federation/v#{federation_version}", as: "#{link_namespace}")
 
         SCHEMA
       end
