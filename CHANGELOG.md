@@ -1,3 +1,10 @@
+# [3.5.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.4.1...v3.5.0) (2023-03-08)
+
+
+### Features
+
+* add tag directive from federation v2 ([#210](https://github.com/Gusto/apollo-federation-ruby/issues/210)) ([8c6e112](https://github.com/Gusto/apollo-federation-ruby/commit/8c6e11251b7bc7d6888a7a2b6e0feeea70171cb0))
+
 ## [3.4.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.4.0...v3.4.1) (2023-02-21)
 
 
