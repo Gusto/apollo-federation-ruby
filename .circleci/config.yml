@@ -94,7 +94,7 @@ jobs:
       - checkout
       - bundle-install
       - gusto/yarn-install
-      - run: npx semantic-release
+      - run: .circleci/create_release.sh
 
 workflows:
   version: 2
