@@ -27,7 +27,7 @@ module ApolloFederation
       def interface_object
         add_directive(name: 'interfaceObject')
       end
-      
+
       def tag(name:)
         add_directive(name: 'tag', arguments: [name: 'name', values: name])
       end
