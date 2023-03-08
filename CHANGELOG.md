@@ -1,3 +1,10 @@
+## [3.5.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.5.0...v3.5.1) (2023-03-08)
+
+
+### Bug Fixes
+
+* semantic PR title workflow ([#225](https://github.com/Gusto/apollo-federation-ruby/issues/225)) ([ee6041f](https://github.com/Gusto/apollo-federation-ruby/commit/ee6041f169b5f21427b704f4c71ee6dd0ea5c8b2))
+
 # [3.5.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.4.1...v3.5.0) (2023-03-08)
 
 
