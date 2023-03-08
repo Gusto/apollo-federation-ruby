@@ -7,20 +7,18 @@ require 'apollo-federation/federated_document_from_schema_definition.rb'
 
 module ApolloFederation
   module Schema
+    IMPORTED_DIRECTIVES = ['inaccessible', 'tag'].freeze
+
     def self.included(klass)
       klass.extend(CommonMethods)
     end
 
     module CommonMethods
-      FEDERATION_2_PREFIX = <<~SCHEMA
-        extend schema
-          @link(url: "https://specs.apollo.dev/federation/v2.0")
-
-      SCHEMA
+      DEFAULT_LINK_NAMESPACE = 'federation'
 
       def federation(version: '1.0', link: {})
         @federation_version = version
-        @link = { as: 'federation' }.merge(link)
+        @link = { as: DEFAULT_LINK_NAMESPACE }.merge(link)
       end
 
       def federation_version
@@ -35,7 +33,7 @@ module ApolloFederation
         document_from_schema = FederatedDocumentFromSchemaDefinition.new(self, context: context)
 
         output = GraphQL::Language::Printer.new.print(document_from_schema.document)
-        output.prepend(FEDERATION_2_PREFIX) if federation_2?
+        output.prepend(federation_2_prefix) if federation_2?
         output
       end
 
@@ -61,9 +59,11 @@ module ApolloFederation
       private
 
       def federation_2_prefix
+        federation_namespace = ", as: \"#{link_namespace}\"" if link_namespace != DEFAULT_LINK_NAMESPACE
+
         <<~SCHEMA
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.0", as: "#{link_namespace}")
+            @link(url: "https://specs.apollo.dev/federation/v2.3"#{federation_namespace}, import: [#{(IMPORTED_DIRECTIVES.map { |directive| "\"@#{directive}\"" }).join(', ')}])
 
         SCHEMA
       end

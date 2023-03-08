@@ -27,8 +27,38 @@ module ApolloFederation
     end
 
     def build_interface_type_node(interface_type)
-      field_node = super
-      merge_directives(field_node, interface_type)
+      interface_node = super
+      merge_directives(interface_node, interface_type)
+    end
+
+    def build_union_type_node(union_type)
+      union_node = super
+      merge_directives(union_node, union_type)
+    end
+
+    def build_enum_type_node(enum_type)
+      enum_node = super
+      merge_directives(enum_node, enum_type)
+    end
+
+    def build_enum_value_node(enum_value_type)
+      enum_value_node = super
+      merge_directives(enum_value_node, enum_value_type)
+    end
+
+    def build_scalar_type_node(scalar_type)
+      scalar_node = super
+      merge_directives(scalar_node, scalar_type)
+    end
+
+    def build_input_object_node(input_object_type)
+      input_object_node = super
+      merge_directives(input_object_node, input_object_type)
+    end
+
+    def build_argument_node(argument_type)
+      argument_node = super
+      merge_directives(argument_node, argument_type)
     end
 
     def build_field_node(field_type)
@@ -70,7 +100,7 @@ module ApolloFederation
     end
 
     def directive_name(directive)
-      if schema.federation_2?
+      if schema.federation_2? && !Schema::IMPORTED_DIRECTIVES.include?(directive[:name])
         "#{schema.link_namespace}__#{directive[:name]}"
       else
         directive[:name]

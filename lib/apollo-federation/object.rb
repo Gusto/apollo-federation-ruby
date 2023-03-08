@@ -24,6 +24,14 @@ module ApolloFederation
         add_directive(name: 'inaccessible')
       end
 
+      def interface_object
+        add_directive(name: 'interfaceObject')
+      end
+
+      def tag(name:)
+        add_directive(name: 'tag', arguments: [name: 'name', values: name])
+      end
+
       def key(fields:, camelize: true)
         add_directive(
           name: 'key',

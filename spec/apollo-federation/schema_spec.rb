@@ -14,13 +14,22 @@ RSpec.describe ApolloFederation::Schema do
       expect(schema.federation_version).to eq('1.0')
     end
 
-    it 'returns the specified version when set' do
+    it 'returns the specified version when set to 2.0' do
       schema = Class.new(GraphQL::Schema) do
         include ApolloFederation::Schema
         federation version: '2.0'
       end
 
       expect(schema.federation_version).to eq('2.0')
+    end
+
+    it 'returns the specified version when set to 2.3' do
+      schema = Class.new(GraphQL::Schema) do
+        include ApolloFederation::Schema
+        federation version: '2.3'
+      end
+
+      expect(schema.federation_version).to eq('2.3')
     end
   end
 
@@ -61,10 +70,28 @@ RSpec.describe ApolloFederation::Schema do
       expect(schema.federation_2?).to be(true)
     end
 
+    it 'returns true when the version is a float greater than 2.0' do
+      schema = Class.new(GraphQL::Schema) do
+        include ApolloFederation::Schema
+        federation version: 2.3
+      end
+
+      expect(schema.federation_2?).to be(true)
+    end
+
     it 'returns true when the version is a string greater than 2.0' do
       schema = Class.new(GraphQL::Schema) do
         include ApolloFederation::Schema
         federation version: '2.0.1'
+      end
+
+      expect(schema.federation_2?).to be(true)
+    end
+
+    it 'returns true when the version is a string equal to 2.3' do
+      schema = Class.new(GraphQL::Schema) do
+        include ApolloFederation::Schema
+        federation version: '2.3'
       end
 
       expect(schema.federation_2?).to be(true)

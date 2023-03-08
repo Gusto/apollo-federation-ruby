@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    apollo-federation (3.3.1)
+    apollo-federation (3.5.0)
       google-protobuf (~> 3.21.7)
       graphql (>= 1.10.14)
 
@@ -125,4 +125,4 @@ DEPENDENCIES
   ruby-debug-ide
 
 BUNDLED WITH
-   2.4.2
+   2.4.8
