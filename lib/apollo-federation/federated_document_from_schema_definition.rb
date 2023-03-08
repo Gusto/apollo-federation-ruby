@@ -14,7 +14,6 @@ module ApolloFederation
       '_entities',
       '_service',
     ].freeze
-    INACCESSIBLE_DIRECTIVE = 'inaccessible'
 
     def build_object_type_node(object_type)
       object_node = super
@@ -101,7 +100,7 @@ module ApolloFederation
     end
 
     def directive_name(directive)
-      if schema.federation_2? && directive[:name] != INACCESSIBLE_DIRECTIVE
+      if schema.federation_2? && !Schema::IMPORTED_DIRECTIVES.include?(directive[:name])
         "#{schema.link_namespace}__#{directive[:name]}"
       else
         directive[:name]
