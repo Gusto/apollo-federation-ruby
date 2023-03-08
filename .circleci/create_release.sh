@@ -49,7 +49,7 @@ repo_id=$(jq .id <<< "$(curl -g -s \
 --header "Authorization: token $unscoped_token" \
 "https://api.github.com/repos/$repo")")
 
-## Finally geneate the token from the Installation ID that is scopped to juse the repo
+## Finally geneate the token from the Installation ID that is scopped to just the repo
 token=$(jq .token -r <<< "$(curl --location -g -s \
 --request POST "https://api.github.com/app/installations/${installation_id}/access_tokens" \
 --header 'Accept: application/vnd.github.v3+json' \
@@ -59,5 +59,5 @@ token=$(jq .token -r <<< "$(curl --location -g -s \
 ## Export the token from semantic-release
 export GH_TOKEN="$token"
 
-## Exec into semmantic release w/ GH_TOKEN set
+## Exec into semantic release w/ GH_TOKEN set
 exec npx semantic-release
