@@ -7,6 +7,8 @@ require 'apollo-federation/federated_document_from_schema_definition.rb'
 
 module ApolloFederation
   module Schema
+    IMPORTED_DIRECTIVES = ['inaccessible', 'tag'].freeze
+
     def self.included(klass)
       klass.extend(CommonMethods)
     end
@@ -61,7 +63,7 @@ module ApolloFederation
 
         <<~SCHEMA
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3"#{federation_namespace}, import: ["@inaccessible"])
+            @link(url: "https://specs.apollo.dev/federation/v2.3"#{federation_namespace}, import: [#{(IMPORTED_DIRECTIVES.map { |directive| "\"@#{directive}\"" }).join(', ')}])
 
         SCHEMA
       end

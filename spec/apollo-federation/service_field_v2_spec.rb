@@ -6,6 +6,12 @@ require 'apollo-federation/schema'
 require 'apollo-federation/field'
 require 'apollo-federation/object'
 require 'apollo-federation/interface'
+require 'apollo-federation/union'
+require 'apollo-federation/enum'
+require 'apollo-federation/enum_value'
+require 'apollo-federation/scalar'
+require 'apollo-federation/input_object'
+require 'apollo-federation/argument'
 
 RSpec.describe ApolloFederation::ServiceField do
   shared_examples 'service field' do
@@ -109,7 +115,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible"])
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
 
           type Product {
             upc: String!
@@ -144,7 +150,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible"])
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
 
           type Product @federation__extends {
             upc: String!
@@ -180,7 +186,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible"])
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
 
           type Position @federation__shareable {
             x: Int!
@@ -217,9 +223,46 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible"])
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
 
           type Position @inaccessible {
+            x: Int!
+            y: Int!
+          }
+
+          type Query {
+            position: Position
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for tagged types' do
+      position = Class.new(base_object) do
+        graphql_name 'Position'
+        tag name: 'private'
+
+        field :x, Integer, null: false
+        field :y, Integer, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :position, position, null: true
+      end
+
+      schema = Class.new(base_schema) do
+        query query_obj
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
+
+          type Position @tag(name: "private") {
             x: Int!
             y: Int!
           }
@@ -254,7 +297,7 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible"])
+              @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible", "@tag"])
 
             type Product @fed2__extends {
               upc: String!
@@ -290,7 +333,7 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible"])
+              @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible", "@tag"])
 
             type Position @fed2__shareable {
               x: Int!
@@ -327,9 +370,46 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible"])
+              @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible", "@tag"])
 
             type Position @inaccessible {
+              x: Int!
+              y: Int!
+            }
+
+            type Query {
+              position: Position
+            }
+          GRAPHQL
+        )
+      end
+
+      it 'returns valid SDL for tagged types with custom namespace' do
+        position = Class.new(base_object) do
+          graphql_name 'Position'
+          tag name: 'private'
+
+          field :x, Integer, null: false
+          field :y, Integer, null: false
+        end
+
+        query_obj = Class.new(base_object) do
+          graphql_name 'Query'
+
+          field :position, position, null: true
+        end
+
+        schema = Class.new(base_schema) do
+          query query_obj
+          federation version: '2.0', link: { as: 'fed2' }
+        end
+
+        expect(execute_sdl(schema)).to match_sdl(
+          <<~GRAPHQL,
+            extend schema
+              @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible", "@tag"])
+
+            type Position @tag(name: "private") {
               x: Int!
               y: Int!
             }
@@ -363,7 +443,7 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible"])
+              @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible", "@tag"])
 
             type Product @fed2__key(fields: "upc") {
               upc: String!
@@ -394,7 +474,7 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible"])
+              @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible", "@tag"])
 
             type Product @fed2__extends @fed2__key(fields: "upc") {
               price: Int
@@ -421,7 +501,7 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible"])
+              @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible", "@tag"])
 
             type Product @fed2__interfaceObject @fed2__key(fields: "id") {
               id: ID!
@@ -470,13 +550,65 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible"])
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
 
           type Book implements Product {
             upc: String!
           }
 
           interface Product @inaccessible {
+            upc: String!
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for tagged interface types' do
+      base_field = Class.new(GraphQL::Schema::Field) do
+        include ApolloFederation::Field
+      end
+
+      base_interface = Module.new do
+        include GraphQL::Schema::Interface
+        include ApolloFederation::Interface
+
+        # graphql_name 'Interface'
+        field_class base_field
+      end
+
+      product = Module.new do
+        include base_interface
+
+        graphql_name 'Product'
+
+        tag name: 'private'
+
+        field :upc, String, null: false
+      end
+
+      book = Class.new(base_object) do
+        implements product
+
+        graphql_name 'Book'
+
+        field :upc, String, null: false
+      end
+
+      schema = Class.new(base_schema) do
+        orphan_types book
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
+
+          type Book implements Product {
+            upc: String!
+          }
+
+          interface Product @tag(name: "private") {
             upc: String!
           }
         GRAPHQL
@@ -533,7 +665,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible"])
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
 
           type Book implements Product @federation__extends @federation__key(fields: "upc") {
             upc: String! @federation__external
@@ -545,6 +677,273 @@ RSpec.describe ApolloFederation::ServiceField do
 
           interface Product @federation__key(fields: "upc") {
             upc: String!
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for tagged union types' do
+      base_union = Class.new(GraphQL::Schema::Union) do
+        include ApolloFederation::Union
+      end
+
+      book = Class.new(base_object) do
+        graphql_name 'Book'
+
+        field :upc, String, null: false
+      end
+
+      product = Class.new(base_union) do
+        graphql_name 'Product'
+
+        tag name: 'private'
+
+        possible_types book
+      end
+
+      schema = Class.new(base_schema) do
+        orphan_types book, product
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
+
+          type Book {
+            upc: String!
+          }
+
+          union Product @tag(name: "private") = Book
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for tagged enum types' do
+      base_enum = Class.new(GraphQL::Schema::Enum) do
+        include ApolloFederation::Enum
+      end
+
+      product_type = Class.new(base_enum) do
+        graphql_name 'ProductType'
+        tag name: 'private'
+
+        value 'BOOK'
+        value 'PEN'
+      end
+
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+
+        field :type, product_type, null: false
+      end
+
+      schema = Class.new(base_schema) do
+        orphan_types product_type, product
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
+
+          enum ProductType @tag(name: "private") {
+            BOOK
+            PEN
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for tagged scalar types' do
+      base_scalar = Class.new(GraphQL::Schema::Scalar) do
+        include ApolloFederation::Scalar
+      end
+
+      upc = Class.new(base_scalar) do
+        graphql_name 'UPC'
+
+        tag name: 'private'
+      end
+
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+
+        field :upc, upc, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :product, product, null: true
+      end
+
+      schema = Class.new(base_schema) do
+        query query_obj
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
+
+          type Product {
+            upc: UPC!
+          }
+
+          type Query {
+            product: Product
+          }
+
+          scalar UPC @tag(name: "private")
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for tagged input object types' do
+      base_input_object = Class.new(GraphQL::Schema::InputObject) do
+        include ApolloFederation::InputObject
+      end
+
+      product_attributes = Class.new(base_input_object) do
+        graphql_name 'ProductAttributes'
+
+        tag name: 'private'
+
+        argument :upc, String, required: false
+      end
+
+      create_product = Class.new(GraphQL::Schema::Mutation) do
+        graphql_name 'CreateProduct'
+
+        argument :attributes, product_attributes, required: true
+      end
+
+      mutations = Class.new(base_object) do
+        graphql_name 'Mutation'
+
+        field :create_product, mutation: create_product
+      end
+
+      schema = Class.new(base_schema) do
+        mutation mutations
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
+
+          """
+          Autogenerated return type of CreateProduct
+          """
+          type CreateProductPayload {
+          }
+
+          type Mutation {
+            createProduct(attributes: ProductAttributes!): CreateProductPayload
+          }
+
+          input ProductAttributes @tag(name: "private") {
+            upc: String
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for tagged input field types' do
+      base_argument = Class.new(GraphQL::Schema::Argument) do
+        include ApolloFederation::Argument
+      end
+
+      product_attributes = Class.new(GraphQL::Schema::InputObject) do
+        graphql_name 'ProductAttributes'
+
+        argument_class base_argument
+
+        argument :upc, String, required: false, tags: [{ name: 'private' }]
+      end
+
+      create_product = Class.new(GraphQL::Schema::Mutation) do
+        graphql_name 'CreateProduct'
+
+        argument :attributes, product_attributes, required: true
+      end
+
+      mutations = Class.new(base_object) do
+        graphql_name 'Mutation'
+
+        field :create_product, mutation: create_product
+      end
+
+      schema = Class.new(base_schema) do
+        mutation mutations
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
+
+          """
+          Autogenerated return type of CreateProduct
+          """
+          type CreateProductPayload {
+          }
+
+          type Mutation {
+            createProduct(attributes: ProductAttributes!): CreateProductPayload
+          }
+
+          input ProductAttributes {
+            upc: String @tag(name: "private")
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for tagged argument types' do
+      base_argument = Class.new(GraphQL::Schema::Argument) do
+        include ApolloFederation::Argument
+      end
+
+      create_product = Class.new(GraphQL::Schema::Mutation) do
+        graphql_name 'CreateProduct'
+
+        argument_class base_argument
+
+        argument :upc, String, required: true, tags: [{ name: 'private' }]
+      end
+
+      mutations = Class.new(base_object) do
+        graphql_name 'Mutation'
+
+        field :create_product, mutation: create_product
+      end
+
+      schema = Class.new(base_schema) do
+        mutation mutations
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
+
+          """
+          Autogenerated return type of CreateProduct
+          """
+          type CreateProductPayload {
+          }
+
+          type Mutation {
+            createProduct(upc: String! @tag(name: "private")): CreateProductPayload
           }
         GRAPHQL
       )
@@ -573,7 +972,7 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible"])
+              @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
 
             type Product @federation__key(fields: "upc") {
               upc: String!
@@ -604,7 +1003,7 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible"])
+              @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
 
             type Product @federation__key(fields: "upc") {
               upc: String!
@@ -632,7 +1031,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible"])
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
 
           type Product @federation__key(fields: "upc") @federation__key(fields: "name") {
             name: String
@@ -660,7 +1059,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible"])
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
 
           type Product @federation__extends @federation__key(fields: "upc") {
             price: Int
@@ -687,7 +1086,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible"])
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
 
           type Product @federation__interfaceObject @federation__key(fields: "id") {
             id: ID!
@@ -718,7 +1117,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible"])
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
 
           type Position {
             x: Int! @federation__shareable
@@ -754,7 +1153,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible"])
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
 
           type Position {
             x: Int! @inaccessible
@@ -763,6 +1162,190 @@ RSpec.describe ApolloFederation::ServiceField do
 
           type Query {
             position: Position
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for @tag directives' do
+      position = Class.new(base_object) do
+        graphql_name 'Position'
+
+        field :x, Integer, null: false, tags: [{ name: 'private' }]
+        field :y, Integer, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :position, position, null: true
+      end
+
+      schema = Class.new(base_schema) do
+        query query_obj
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
+
+          type Position {
+            x: Int! @tag(name: "private")
+            y: Int!
+          }
+
+          type Query {
+            position: Position
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for multiple @tag directives' do
+      position = Class.new(base_object) do
+        graphql_name 'Position'
+
+        field :x, Integer, null: false, tags: [{ name: 'private' }, { name: 'protected' }]
+        field :y, Integer, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :position, position, null: true
+      end
+
+      schema = Class.new(base_schema) do
+        query query_obj
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
+
+          type Position {
+            x: Int! @tag(name: "private") @tag(name: "protected")
+            y: Int!
+          }
+
+          type Query {
+            position: Position
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for @tag enum value directives' do
+      base_enum_value = Class.new(GraphQL::Schema::EnumValue) do
+        include ApolloFederation::EnumValue
+      end
+
+      base_enum = Class.new(GraphQL::Schema::Enum) do
+        include ApolloFederation::Enum
+
+        enum_value_class base_enum_value
+      end
+
+      product_type = Class.new(base_enum) do
+        graphql_name 'ProductType'
+
+        value 'BOOK'
+        value 'PEN', tags: [{ name: 'private' }]
+      end
+
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+
+        field :type, product_type, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :product, product, null: true
+      end
+
+      schema = Class.new(base_schema) do
+        query query_obj
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
+
+          type Product {
+            type: ProductType!
+          }
+
+          enum ProductType {
+            BOOK
+            PEN @tag(name: "private")
+          }
+
+          type Query {
+            product: Product
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for multiple @tag enum value directives' do
+      base_enum_value = Class.new(GraphQL::Schema::EnumValue) do
+        include ApolloFederation::EnumValue
+      end
+
+      base_enum = Class.new(GraphQL::Schema::Enum) do
+        include ApolloFederation::Enum
+
+        enum_value_class base_enum_value
+      end
+
+      product_type = Class.new(base_enum) do
+        graphql_name 'ProductType'
+
+        value 'BOOK'
+        value 'PEN', tags: [{ name: 'private' }, { name: 'protected' }]
+      end
+
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+
+        field :type, product_type, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :product, product, null: true
+      end
+
+      schema = Class.new(base_schema) do
+        query query_obj
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
+
+          type Product {
+            type: ProductType!
+          }
+
+          enum ProductType {
+            BOOK
+            PEN @tag(name: "private") @tag(name: "protected")
+          }
+
+          type Query {
+            product: Product
           }
         GRAPHQL
       )
@@ -786,7 +1369,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible"])
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
 
           type Product @federation__extends @federation__key(fields: "id") {
             id: ID!
@@ -822,7 +1405,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible"])
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
 
           type Product @federation__extends @federation__key(fields: "upc") {
             price: Int
@@ -857,7 +1440,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible"])
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
 
           type Product @federation__extends @federation__key(fields: "upc") {
             price: Int @federation__external
@@ -886,7 +1469,7 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible"])
+              @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
 
             type Product @federation__key(fields: "productId") {
               productId: String!
@@ -914,7 +1497,7 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible"])
+              @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
 
             type Product @federation__extends @federation__key(fields: "product_id") {
               options: [String!]! @federation__requires(fields: "my_id")
@@ -947,7 +1530,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible"])
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
 
           type Product @federation__extends @federation__key(fields: "upc") {
             upc: String! @federation__external
