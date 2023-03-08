@@ -1,3 +1,10 @@
+## [3.5.2](https://github.com/Gusto/apollo-federation-ruby/compare/v3.5.1...v3.5.2) (2023-03-08)
+
+
+### Reverts
+
+* Revert "chore: use Github App for authentication (#216)" (#227) ([f503704](https://github.com/Gusto/apollo-federation-ruby/commit/f5037047da67d809c3ffcbcc20318cd3996fb2e1)), closes [#216](https://github.com/Gusto/apollo-federation-ruby/issues/216) [#227](https://github.com/Gusto/apollo-federation-ruby/issues/227)
+
 ## [3.5.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.5.0...v3.5.1) (2023-03-08)
 
 
