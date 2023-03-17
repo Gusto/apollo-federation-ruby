@@ -22,13 +22,21 @@ Or install it yourself as:
 
 ## Getting Started
 
+Include the `ApolloFederation::Argument` module in your base argument class:
+
+```ruby
+class BaseArgument < GraphQL::Schema::Argument
+  include ApolloFederation::Argument
+end
+```
+
 Include the `ApolloFederation::Field` module in your base field class:
 
 ```ruby
-require 'apollo-federation'
-
 class BaseField < GraphQL::Schema::Field
   include ApolloFederation::Field
+
+  argument_class BaseArgument
 end
 ```
 
@@ -50,6 +58,50 @@ module BaseInterface
   include ApolloFederation::Interface
 
   field_class BaseField
+end
+```
+
+Include the `ApolloFederation::Union` module in your base union class:
+
+```ruby
+class BaseUnion < GraphQL::Schema::Union
+  include ApolloFederation::Union
+end
+```
+
+Include the `ApolloFederation::EnumValue` module in your base enum value class:
+
+```ruby
+class BaseEnumValue < GraphQL::Schema::EnumValue
+  include ApolloFederation::EnumValue
+end
+```
+
+Include the `ApolloFederation::Enum` module in your base enum class:
+
+```ruby
+class BaseEnum < GraphQL::Schema::Enum
+  include ApolloFederation::Enum
+
+  enum_value_class BaseEnumValue
+end
+```
+
+Include the `ApolloFederation::InputObject` module in your base input object class:
+
+```ruby
+class BaseInputObject < GraphQL::Schema::InputObject
+  include ApolloFederation::InputObject
+
+  argument_class BaseArgument
+end
+```
+
+Include the `ApolloFederation::Scalar` module in your base scalar class:
+
+```ruby
+class BaseScalar < GraphQL::Schema::Scalar
+  include ApolloFederation::Scalar
 end
 ```
 
