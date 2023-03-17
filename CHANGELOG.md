@@ -1,3 +1,10 @@
+# [3.6.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.5.3...v3.6.0) (2023-03-17)
+
+
+### Features
+
+* attempt to fix missing CHANGELOG entries ([07170d3](https://github.com/Gusto/apollo-federation-ruby/commit/07170d39738bec59952b0b952431ee2aecbf8f89))
+
 ## [3.5.3](https://github.com/Gusto/apollo-federation-ruby/compare/v3.5.2...v3.5.3) (2023-03-17)
 
 
