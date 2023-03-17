@@ -22,7 +22,7 @@ module ApolloFederation
       end
 
       def federation_version
-        @federation_version || '1.0'
+        @federation_version || find_inherited_value(:federation_version, '1.0')
       end
 
       def federation_2?
@@ -38,7 +38,7 @@ module ApolloFederation
       end
 
       def link_namespace
-        @link[:as]
+        @link ? @link[:as] : find_inherited_value(:link_namespace)
       end
 
       def query(new_query_object = nil)
