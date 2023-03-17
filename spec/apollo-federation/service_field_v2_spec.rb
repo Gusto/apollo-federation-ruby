@@ -1543,7 +1543,7 @@ RSpec.describe ApolloFederation::ServiceField do
       base_object_with_id = Class.new(base_object) do
         key fields: 'id'
 
-        field :id, String, null: false
+        field :id, GraphQL::Types::ID, null: false
       end
 
       product = Class.new(base_object_with_id) do
@@ -1561,24 +1561,46 @@ RSpec.describe ApolloFederation::ServiceField do
             @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
 
           type Product @federation__key(fields: "id") {
-            id: String!
+            id: ID!
           }
         GRAPHQL
       )
     end
 
     it 'returns SDL that inherits schema directives' do
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+        extend_type
+
+        field :upc, String, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :product, product, null: true
+      end
+
       new_base_schema = Class.new(base_schema) do
         federation version: '2.0', link: { as: 'fed2' }
       end
 
-      schema = Class.new(new_base_schema)
+      schema = Class.new(new_base_schema) do
+        query query_obj
+      end
 
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
             @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible", "@tag"])
 
+          type Product @fed2__extends {
+            upc: String!
+          }
+
+          type Query {
+            product: Product
+          }
         GRAPHQL
       )
     end

@@ -459,7 +459,7 @@ RSpec.describe ApolloFederation::ServiceField do
       base_object_with_id = Class.new(base_object) do
         key fields: 'id'
 
-        field :id, String, null: false
+        field :id, GraphQL::Types::ID, null: false
       end
 
       product = Class.new(base_object_with_id) do
@@ -473,7 +473,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           type Product @key(fields: "id") {
-            id: String!
+            id: ID!
           }
         GRAPHQL
       )

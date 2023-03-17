@@ -7,8 +7,8 @@ module ApolloFederation
     end
 
     def federation_directives
-      if is_a?(Class) && superclass.respond_to?(:federation_directives)
-        own_federation_directives + superclass.federation_directives
+      if is_a?(Class)
+        own_federation_directives + find_inherited_value(:federation_directives, [])
       else
         own_federation_directives
       end
