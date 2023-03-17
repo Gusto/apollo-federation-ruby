@@ -1,3 +1,10 @@
+## [3.5.3](https://github.com/Gusto/apollo-federation-ruby/compare/v3.5.2...v3.5.3) (2023-03-17)
+
+
+### Bug Fixes
+
+* Inherit federation directives ([#94](https://github.com/Gusto/apollo-federation-ruby/issues/94)) ([822f92b](https://github.com/Gusto/apollo-federation-ruby/commit/822f92b229f3437c474721082033b74c8cc63553))
+
 ## [3.5.2](https://github.com/Gusto/apollo-federation-ruby/compare/v3.5.1...v3.5.2) (2023-03-08)
 
 
