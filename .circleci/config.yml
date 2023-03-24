@@ -53,6 +53,15 @@ commands:
             - ./vendor/bundle
 
 jobs:
+  ruby-lint:
+    docker:
+      - image: cimg/ruby:3.2-node
+    environment:
+      BUNDLE_APP_CONFIG: .bundle
+    steps:
+      - checkout
+      - bundle-install
+      - run: bundle exec rubocop
   ruby-test:
     parameters:
       appraisal:
@@ -104,7 +113,7 @@ workflows:
   version: 2
   main:
     jobs:
-      - gusto/ruby-lint
+      - ruby-lint
       - ruby-test:
           matrix:
             parameters:
@@ -131,6 +140,6 @@ workflows:
                 ruby: '3.2'
       - release:
           requires:
-            - gusto/ruby-lint
+            - ruby-lint
             - ruby-test
             - integration-tests
