@@ -105,7 +105,8 @@ jobs:
       BUNDLE_APP_CONFIG: .bundle
     steps:
       - checkout
-      - bundle-install
+      - bundle-install:
+        ruby: '3.2'
       - gusto/yarn-install
       - run: npx semantic-release
 
