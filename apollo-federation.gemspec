@@ -37,7 +37,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rack'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec'
-  spec.add_development_dependency 'rubocop', '~> 0.72.0'
+  spec.add_development_dependency 'rubocop', '~> 0.75.0'
   spec.add_development_dependency 'rubocop-rspec'
   spec.add_development_dependency 'ruby-debug-ide'
   spec.add_development_dependency 'webrick'

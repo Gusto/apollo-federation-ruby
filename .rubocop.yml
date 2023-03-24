@@ -4,6 +4,7 @@ AllCops:
   TargetRubyVersion: 2.3
   DisplayCopNames: true
   Exclude:
+    - 'node_modules/**/*'
     - 'gemfiles/**/*'
     - 'vendor/**/*'
 
