@@ -1,3 +1,17 @@
+## [3.6.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.0...v3.6.1) (2023-03-24)
+
+
+### Bug Fixes
+
+* run w/ multiple ruby versions in CI to ensure compatibility ([#232](https://github.com/Gusto/apollo-federation-ruby/issues/232)) ([978c941](https://github.com/Gusto/apollo-federation-ruby/commit/978c941a12b34a9f86b0eb179d82fdd3e70eaa3b))
+
+## [3.6.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.0...v3.6.1) (2023-03-24)
+
+
+### Bug Fixes
+
+* run w/ multiple ruby versions in CI to ensure compatibility ([#232](https://github.com/Gusto/apollo-federation-ruby/issues/232)) ([978c941](https://github.com/Gusto/apollo-federation-ruby/commit/978c941a12b34a9f86b0eb179d82fdd3e70eaa3b))
+
 # [3.6.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.5.3...v3.6.0) (2023-03-17)
 
 

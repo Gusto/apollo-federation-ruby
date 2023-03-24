@@ -11,7 +11,7 @@ GIT
 PATH
   remote: .
   specs:
-    apollo-federation (3.6.0)
+    apollo-federation (3.6.1)
       google-protobuf (~> 3.21.7)
       graphql (>= 1.10.14)
 
