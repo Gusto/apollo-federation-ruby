@@ -32,7 +32,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'actionpack'
   spec.add_development_dependency 'appraisal'
-  spec.add_development_dependency 'debase'
+  spec.add_development_dependency 'debase', '0.2.5.beta2'
   spec.add_development_dependency 'pry-byebug'
   spec.add_development_dependency 'rack'
   spec.add_development_dependency 'rake'
