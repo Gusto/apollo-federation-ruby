@@ -5,9 +5,6 @@ orbs:
 
 commands:
   bundle-install:
-    parameters:
-      ruby:
-        type: string
     steps:
       - run:
           name: Configure Bundler
@@ -18,9 +15,9 @@ commands:
       - restore_cache:
           name: Restore Ruby Package Cache
           keys:
-            - v6-gem-cache-<< parameters.ruby >>-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-            - v6-gem-cache-<< parameters.ruby >>-{{ arch }}-{{ .Branch }}-
-            - v6-gem-cache-<< parameters.ruby >>-{{ arch }}-
+            - v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - v6-gem-cache-{{ arch }}-{{ .Branch }}-
+            - v6-gem-cache-{{ arch }}-
       - run:
           name: Install base Ruby dependencies
           command: |
@@ -34,8 +31,6 @@ commands:
     parameters:
       appraisal:
         type: string
-      ruby:
-        type: string
     steps:
       - run:
           name: Copy lockfile
@@ -44,9 +39,9 @@ commands:
       - restore_cache:
           name: Restore Appraisal package cache
           keys:
-            - v6-gem-cache-<< parameters.ruby >>-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
-            - v6-gem-cache-<< parameters.ruby >>-{{ arch }}-{{ .Branch }}-
-            - v6-gem-cache-<< parameters.ruby >>-{{ arch }}-
+            - v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
+            - v6-gem-cache-{{ arch }}-{{ .Branch }}-
+            - v6-gem-cache-{{ arch }}-
       - run:
           name: Install appraisal dependencies
           command: |
@@ -70,11 +65,9 @@ jobs:
       BUNDLE_APP_CONFIG: .bundle
     steps:
       - checkout
-      - bundle-install:
-          ruby: << parameters.ruby >>
+      - bundle-install
       - appraisal-install:
           appraisal: << parameters.appraisal >>
-          ruby: << parameters.ruby >>
       - run: bundle config list
       - run: bundle exec appraisal << parameters.appraisal >> bundle config list
       - run: bundle exec appraisal << parameters.appraisal >> rake
@@ -90,11 +83,9 @@ jobs:
       BUNDLE_APP_CONFIG: .bundle
     steps:
       - checkout
-      - bundle-install:
-          ruby: << parameters.ruby >>
+      - bundle-install
       - appraisal-install:
           appraisal: << parameters.appraisal >>
-          ruby: << parameters.ruby >>
       - gusto/yarn-install
       - run: bundle exec appraisal << parameters.appraisal >> yarn test
       - run: yarn lint
@@ -105,8 +96,7 @@ jobs:
       BUNDLE_APP_CONFIG: .bundle
     steps:
       - checkout
-      - bundle-install:
-          ruby: '3.2'
+      - bundle-install
       - gusto/yarn-install
       - run: npx semantic-release
 
@@ -119,12 +109,12 @@ workflows:
           matrix:
             parameters:
               appraisal: ['graphql-1.10', 'graphql-1.11', 'graphql-1.12', 'graphql-1.13', 'graphql-2.0']
-              ruby: ['2.7', '3.0', '3.1', '3.2']
+              ruby: ['3.0', '3.1', '3.2']
       - integration-tests:
           matrix:
             parameters:
               appraisal: ['graphql-1.10', 'graphql-1.11', 'graphql-1.12', 'graphql-1.13', 'graphql-2.0']
-              ruby: ['2.7', '3.0', '3.1', '3.2']
+              ruby: ['3.0', '3.1', '3.2']
       - release:
           requires:
             - gusto/ruby-lint
