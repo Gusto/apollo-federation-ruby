@@ -22,6 +22,7 @@ class GraphQLServer
   def self.run(schema, options = {})
     test_mode = false
     handler_options = options.dup
+    # raise ::WEBrick::VERSION
     OptionParser.new do |opts|
       opts.on('--test', 'Run in test mode') do |test|
         test_mode = test
@@ -34,7 +35,7 @@ class GraphQLServer
       end
     end.parse!
 
-    Rack::Handler::WEBrick.run(GraphQLServer.new(schema), handler_options) do
+    Rack::Handler::WEBrick.run(GraphQLServer.new(schema), **handler_options) do
       if test_mode
         $stdout.puts '_READY_'
         $stdout.flush

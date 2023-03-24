@@ -50,10 +50,8 @@ GEM
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     method_source (1.0.0)
-    mini_portile2 (2.8.1)
     minitest (5.18.0)
-    nokogiri (1.14.2)
-      mini_portile2 (~> 2.8.0)
+    nokogiri (1.14.2-arm64-darwin)
       racc (~> 1.4)
     parallel (1.22.1)
     parser (3.2.1.1)
@@ -104,9 +102,10 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (1.6.1)
+    webrick (1.8.1)
 
 PLATFORMS
-  ruby
+  arm64-darwin-21
 
 DEPENDENCIES
   actionpack
@@ -121,6 +120,7 @@ DEPENDENCIES
   rubocop (~> 0.72.0)
   rubocop-rspec
   ruby-debug-ide
+  webrick
 
 BUNDLED WITH
    2.4.8

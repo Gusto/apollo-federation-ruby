@@ -42,6 +42,8 @@ GEM
     diff-lcs (1.5.0)
     erubi (1.12.0)
     google-protobuf (3.21.12)
+    google-protobuf (3.21.12-x86_64-darwin)
+    google-protobuf (3.21.12-x86_64-linux)
     graphql (2.0.19)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
@@ -106,6 +108,7 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (1.6.1)
+    webrick (1.8.1)
 
 PLATFORMS
   arm64-darwin-21
@@ -128,6 +131,7 @@ DEPENDENCIES
   rubocop (~> 0.72.0)
   rubocop-rspec
   ruby-debug-ide
+  webrick
 
 BUNDLED WITH
    2.4.8
