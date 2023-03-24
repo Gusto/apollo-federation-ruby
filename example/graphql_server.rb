@@ -34,7 +34,7 @@ class GraphQLServer
       end
     end.parse!
 
-    Rack::Handler::WEBrick.run(GraphQLServer.new(schema), handler_options) do
+    Rack::Handler::WEBrick.run(GraphQLServer.new(schema), **handler_options) do
       if test_mode
         $stdout.puts '_READY_'
         $stdout.flush

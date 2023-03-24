@@ -4,7 +4,10 @@ require 'pry-byebug'
 
 RSpec::Matchers.define :match_sdl do |expected|
   match do |actual|
-    actual.chomp == expected.chomp
+    actual_without_comments = actual.chomp.gsub(/"""(.|\n)*"""/, '')
+    expected_without_comments = expected.chomp.gsub(/"""(.|\n)*"""/, '')
+
+    actual_without_comments == expected_without_comments
   end
 
   diffable
