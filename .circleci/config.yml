@@ -31,8 +31,6 @@ commands:
     parameters:
       appraisal:
         type: string
-      ruby:
-        type: string
     steps:
       - run:
           name: Copy lockfile
