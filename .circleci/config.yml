@@ -106,7 +106,7 @@ jobs:
     steps:
       - checkout
       - bundle-install:
-        ruby: '3.2'
+          ruby: '3.2'
       - gusto/yarn-install
       - run: npx semantic-release
 
