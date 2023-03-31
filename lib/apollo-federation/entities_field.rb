@@ -27,9 +27,9 @@ module ApolloFederation
     end
 
     def _entities(representations:)
-      grouped_references = representations.group_by { |r| r[:__typename] }
+      chunked_references = representations.chunk { |r| r[:__typename] }
 
-      grouped_references.flat_map do |typename, references|
+      chunked_references.flat_map do |typename, references|
         # TODO: Use warden or schema?
         type = context.warden.get_type(typename)
         if type.nil? || type.kind != GraphQL::TypeKinds::OBJECT
