@@ -29,8 +29,7 @@ module ApolloFederation
     def _entities(representations:)
       grouped_references = representations.group_by { |r| r[:__typename] }
 
-      final_results = []
-      grouped_references.each do |typename, references|
+      grouped_references.flat_map do |typename, references|
         # TODO: Use warden or schema?
         type = context.warden.get_type(typename)
         if type.nil? || type.kind != GraphQL::TypeKinds::OBJECT
@@ -50,7 +49,7 @@ module ApolloFederation
           results = references
         end
 
-        results = results.map do |result|
+        results.map do |result|
           context.schema.after_lazy(result) do |resolved_value|
             # TODO: This isn't 100% correct: if (for some reason) 2 different resolve_reference
             # calls return the same object, it might not have the right type
@@ -60,9 +59,7 @@ module ApolloFederation
             resolved_value
           end
         end
-        final_results = final_results.concat(results)
       end
-      final_results
     end
 
     private
