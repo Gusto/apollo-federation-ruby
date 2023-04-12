@@ -1,3 +1,10 @@
+## [3.6.3](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.2...v3.6.3) (2023-04-12)
+
+
+### Bug Fixes
+
+* ensure correct ordering of `resolve_references` ([#239](https://github.com/Gusto/apollo-federation-ruby/issues/239)) ([f9948a7](https://github.com/Gusto/apollo-federation-ruby/commit/f9948a76c3e55e40cf2ae5e2bb8ca5575ca1a6a9))
+
 ## [3.6.2](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.1...v3.6.2) (2023-03-27)
 
 ## [3.6.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.0...v3.6.1) (2023-03-24)
