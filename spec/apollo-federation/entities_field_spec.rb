@@ -241,6 +241,93 @@ RSpec.describe ApolloFederation::EntitiesField do
                   ]
                 }
                 it { expect(errors).to be_nil }
+
+                context 'when there are multiple, interleaved __typenames being requested' do
+                  let(:another_type_with_key) do
+                    Class.new(base_object) do
+                      graphql_name 'AnotherTypeWithKey'
+                      key fields: :id
+                      field :id, 'ID', null: false
+                      field :other_field, 'String', null: true
+                      def self.resolve_references(references, _context)
+                        references.map do |reference|
+                          { id: reference[:id], other_field: ('a'.ord - 1 + reference[:id]).chr }
+                        end
+                      end
+                    end
+                  end
+                  let(:type_with_key) do
+                    Class.new(base_object) do
+                      graphql_name 'TypeWithKey'
+                      key fields: :id
+                      field :id, 'ID', null: false
+                      field :other_field, 'String', null: false
+                      def self.resolve_references(references, _context)
+                        references.map do |reference|
+                          { id: reference[:id], other_field: ('a'.ord - 1 + reference[:id]).chr }
+                        end
+                      end
+                    end
+                  end
+                  let(:mutation) do
+                    another_type_with_key_class = another_type_with_key
+                    type_with_key_class = type_with_key
+                    Class.new(base_object) do
+                      graphql_name 'Mutation'
+                      field :another_type_with_key, another_type_with_key_class, null: true
+                      field :type_with_key, type_with_key_class, null: true
+                    end
+                  end
+                  let(:another_typename) { another_type_with_key.graphql_name }
+                  let(:query) do
+                    <<~GRAPHQL
+                      query EntitiesQuery($representations: [_Any!]!) {
+                        _entities(representations: $representations) {
+                          __typename
+                          ... on AnotherTypeWithKey {
+                            id
+                            otherField
+                          }
+                          ... on TypeWithKey {
+                            id
+                            otherField
+                          }
+                        }
+                      }
+                    GRAPHQL
+                  end
+                  let(:representations) do
+                    [
+                      { __typename: typename, id: 1 },
+                      { __typename: typename, id: 2 },
+                      { __typename: another_typename, id: 3 },
+                      { __typename: another_typename, id: 4 },
+                      { __typename: typename, id: 5 },
+                      { __typename: typename, id: 6 },
+                      { __typename: typename, id: 7 },
+                      { __typename: another_typename, id: 8 },
+                      { __typename: another_typename, id: 9 },
+                      { __typename: typename, id: 10 },
+                    ]
+                  end
+
+                  it 'returns the list of entities in the same order as they were requested' do
+                    expect(subject).to eql(
+                      [
+                        { 'id' => '1', 'otherField' => 'a', '__typename' => 'TypeWithKey' },
+                        { 'id' => '2', 'otherField' => 'b', '__typename' => 'TypeWithKey' },
+                        { 'id' => '3', 'otherField' => 'c', '__typename' => 'AnotherTypeWithKey' },
+                        { 'id' => '4', 'otherField' => 'd', '__typename' => 'AnotherTypeWithKey' },
+                        { 'id' => '5', 'otherField' => 'e', '__typename' => 'TypeWithKey' },
+                        { 'id' => '6', 'otherField' => 'f', '__typename' => 'TypeWithKey' },
+                        { 'id' => '7', 'otherField' => 'g', '__typename' => 'TypeWithKey' },
+                        { 'id' => '8', 'otherField' => 'h', '__typename' => 'AnotherTypeWithKey' },
+                        { 'id' => '9', 'otherField' => 'i', '__typename' => 'AnotherTypeWithKey' },
+                        { 'id' => '10', 'otherField' => 'j', '__typename' => 'TypeWithKey' },
+                      ],
+                    )
+                  end
+                end
               end
 
               context 'when the type defines a resolve_reference method' do
