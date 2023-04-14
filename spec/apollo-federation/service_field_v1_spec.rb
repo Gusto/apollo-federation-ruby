@@ -479,6 +479,39 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
+    it 'returns SDL that inherits the query type' do
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+        extend_type
+
+        field :upc, String, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :product, product, null: true
+      end
+
+      new_base_schema = Class.new(base_schema) do
+        query query_obj
+      end
+
+      schema = Class.new(new_base_schema)
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          type Product @extends {
+            upc: String!
+          }
+
+          type Query {
+            product: Product
+          }
+        GRAPHQL
+      )
+    end
+
     context 'with context in schema generation' do
       let(:schema) do
         product = Class.new(base_object) do
