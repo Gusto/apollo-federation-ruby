@@ -333,7 +333,9 @@ To support [federated tracing](https://www.apollographql.com/docs/apollo-server/
    def execute
      # ...
      context = {
-       tracing_enabled: ApolloFederation::Tracing.should_add_traces(headers)
+       # Pass in the headers from your web framework. For Rails this will be request.headers
+       # but for other frameworks you can pass the Rack env.
+       tracing_enabled: ApolloFederation::Tracing.should_add_traces(request.headers)
      }
      # ...
    end

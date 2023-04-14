@@ -2,6 +2,7 @@
 
 module ApolloFederation
   module Tracing
+    HEADER_NAME = 'HTTP_APOLLO_FEDERATION_INCLUDE_TRACE'
     KEY = :ftv1
     DEBUG_KEY = "#{KEY}_debug".to_sym
 
@@ -12,7 +13,7 @@ module ApolloFederation
     end
 
     def should_add_traces(headers)
-      headers && headers['apollo-federation-include-trace'] == KEY.to_s
+      headers && headers[HEADER_NAME] == KEY.to_s
     end
 
     # @deprecated There is no need to call this method. Traces are added to the result automatically

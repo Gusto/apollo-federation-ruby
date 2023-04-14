@@ -1,6 +1,7 @@
-import { ApolloGateway } from '@apollo/gateway';
-import { ApolloServerBase as ApolloServer } from 'apollo-server-core';
-import { createTestClient } from 'apollo-server-testing';
+import { ApolloGateway, IntrospectAndCompose, RemoteGraphQLDataSource } from '@apollo/gateway';
+import { ApolloServer } from '@apollo/server';
+import { ApolloServerPluginUsageReporting } from '@apollo/server/plugin/usageReporting';
+
 import gql from 'graphql-tag';
 import { spawn } from 'child_process';
 
@@ -45,7 +46,7 @@ const startService = serviceName =>
     });
   });
 
-let testClient;
+let gatewayServer;
 let serviceProcesses = [];
 const serviceList = [
   { name: 'accounts', url: 'http://localhost:5001/graphql' },
@@ -57,14 +58,47 @@ const serviceList = [
 beforeAll(async () => {
   serviceProcesses = await Promise.all(serviceList.map(({ name }) => startService(name)));
 
-  const gateway = new ApolloGateway({ serviceList });
+  const gateway = new ApolloGateway({
+    supergraphSdl: new IntrospectAndCompose({
+      subgraphs: serviceList,
+    }),
+    buildService({ name, url }) {
+      return new RemoteGraphQLDataSource({
+        name,
+        url,
 
-  const server = new ApolloServer({
-    gateway,
-    subscriptions: false,
+        // We can't mock the calls to the Apollo reporting API since they're sent asynchronously
+        // after query execution completes so instead keep track of any subgraph traces in the
+        // context.
+        didReceiveResponse({ response, context }) {
+          if (context.subgraphTraces && response.extensions && response.extensions.ftv1) {
+            context.subgraphTraces.push(response.extensions.ftv1);
+          }
+          return response;
+        },
+      });
+    },
   });
 
-  testClient = createTestClient(server);
+  gatewayServer = new ApolloServer({
+    gateway,
+    apollo: {
+      key: 'My Key',
+      graphRef: 'My Graph',
+    },
+    plugins: [
+      ApolloServerPluginUsageReporting({
+        sendReportsImmediately: true,
+        fetcher: () => {
+          return {
+            status: 200,
+            headers: new Map(),
+          };
+        },
+        fieldLevelInstrumentation: () => true,
+      }),
+    ],
+  });
 });
 
 afterAll(() => {
@@ -100,7 +134,8 @@ it('works with a gateway', async () => {
     }
   `;
 
-  const result = await testClient.query({ query });
+  const response = await gatewayServer.executeOperation({ query });
+  const result = response.body.singleResult;
 
   expect(result.errors).toBeUndefined();
   expect(result.data).toEqual({
@@ -164,7 +199,8 @@ it('works with a @requires directive', async () => {
     }
   `;
 
-  const result = await testClient.query({ query });
+  const response = await gatewayServer.executeOperation({ query });
+  const result = response.body.singleResult;
 
   expect(result.errors).toBeUndefined();
   expect(result.data).toEqual({
@@ -200,7 +236,8 @@ it('works with a @provides directive', async () => {
     }
   `;
 
-  const result = await testClient.query({ query });
+  const response = await gatewayServer.executeOperation({ query });
+  const result = response.body.singleResult;
 
   expect(result.errors).toBeUndefined();
   expect(result.data).toEqual({
@@ -246,4 +283,24 @@ it('works with a @provides directive', async () => {
       },
     ],
   });
+});
+
+it('works with federated traces', async () => {
+  const query = gql`
+    {
+      me {
+        name
+        reviews {
+          body
+        }
+      }
+    }
+  `;
+
+  const contextValue = { subgraphTraces: [] };
+  const response = await gatewayServer.executeOperation({ query }, { contextValue });
+  const result = response.body.singleResult;
+
+  expect(result.errors).toBeUndefined();
+  expect(contextValue.subgraphTraces.length).toEqual(2);
 });
