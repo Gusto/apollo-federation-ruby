@@ -178,6 +178,14 @@ class User < BaseObject
 end
 ```
 
+As well as non-resolvable keys:
+
+```ruby
+class User < BaseObject
+  key fields: :id, resolvable: false
+end
+```
+
 See [field set syntax](#field-set-syntax) for more details on the format of the `fields` option.
 
 ### The `@external` directive
