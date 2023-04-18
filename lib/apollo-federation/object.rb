@@ -35,7 +35,7 @@ module ApolloFederation
       def key(fields:, camelize: true, resolvable: true)
         arguments = [
           name: 'fields',
-          values: ApolloFederation::FieldSetSerializer.serialize(fields, camelize: camelize)
+          values: ApolloFederation::FieldSetSerializer.serialize(fields, camelize: camelize),
         ]
         arguments.append(name: 'resolvable', values: resolvable) unless resolvable
         add_directive(
