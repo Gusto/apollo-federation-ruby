@@ -46,7 +46,7 @@ module ApolloFederation
           @orig_query_object = new_query_object
         else
           if !@federation_query_object
-            @federation_query_object = federation_query(@orig_query_object)
+            @federation_query_object = federation_query(original_query)
             @federation_query_object.define_entities_field(schema_entities)
 
             super(@federation_query_object)
@@ -57,6 +57,10 @@ module ApolloFederation
       end
 
       private
+
+      def original_query
+        @orig_query_object || find_inherited_value(:original_query)
+      end
 
       def federation_2_prefix
         federation_namespace = ", as: \"#{link_namespace}\"" if link_namespace != DEFAULT_LINK_NAMESPACE
