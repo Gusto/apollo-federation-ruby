@@ -1,3 +1,10 @@
+## [3.6.4](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.3...v3.6.4) (2023-04-19)
+
+
+### Bug Fixes
+
+* inherit Query type from schema superclass ([#241](https://github.com/Gusto/apollo-federation-ruby/issues/241)) ([0efb37e](https://github.com/Gusto/apollo-federation-ruby/commit/0efb37e2c2b14fc7ed99c695f35ed48d363d7695))
+
 ## [3.6.3](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.2...v3.6.3) (2023-04-12)
 
 
