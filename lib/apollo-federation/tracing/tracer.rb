@@ -88,7 +88,7 @@ module ApolloFederation
         if query
           record_trace_end_time(query)
         elsif multiplex
-          multiplex.queries.each {|query| record_trace_end_time(query)}
+          multiplex.queries.each { |q| record_trace_end_time(q) }
         end
 
         result
@@ -96,6 +96,7 @@ module ApolloFederation
 
       def self.record_trace_end_time(query)
         return unless query.context && query.context[:tracing_enabled]
+
         trace = query.context.namespace(ApolloFederation::Tracing::KEY)
 
         trace.merge!(
