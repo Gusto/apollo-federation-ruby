@@ -49,6 +49,35 @@ RSpec.describe ApolloFederation::Tracing do
         result = schema.execute('{ test }', context: { tracing_enabled: true, debug_tracing: true })
         expect(result[:extensions][:ftv1_debug]).not_to be_nil
       end
+
+      context 'with a multiplex query' do
+        it 'does not add tracing extension by default' do
+          result = schema.multiplex([
+            {query: '{ test }'},
+            {query: '{ test }'},
+            {query: '{ test }'}
+          ]).first
+          expect(result[:extensions]).to be_nil
+        end
+
+        it 'adds the extensions.ftv1 when the context has tracing_enabled: true' do
+          result = schema.multiplex([
+            {query: '{ test }', context: { tracing_enabled: true }},
+            {query: '{ test }', context: { tracing_enabled: true }},
+            {query: '{ test }', context: { tracing_enabled: true }}
+          ]).first
+          expect(result[:extensions][:ftv1]).not_to be_nil
+        end
+
+        it 'adds debugging info when the context has debug_tracing: true' do
+          result = schema.multiplex([
+            {query: '{ test }', context: { tracing_enabled: true, debug_tracing: true }},
+            {query: '{ test }', context: { tracing_enabled: true, debug_tracing: true }},
+            {query: '{ test }', context: { tracing_enabled: true, debug_tracing: true }}
+          ]).first
+          expect(result[:extensions][:ftv1_debug]).not_to be_nil
+        end
+      end
     end
 
     def trace(query)
