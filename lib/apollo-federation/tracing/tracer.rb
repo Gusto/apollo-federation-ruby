@@ -83,7 +83,19 @@ module ApolloFederation
         result = block.call
 
         query = data.fetch(:query)
-        return result unless query.context && query.context[:tracing_enabled]
+        multiplex = data.fetch(:multiplex)
+
+        if query
+          record_trace_end_time(query)
+        elsif multiplex
+          multiplex.queries.each { |q| record_trace_end_time(q) }
+        end
+
+        result
+      end
+
+      def self.record_trace_end_time(query)
+        return unless query.context && query.context[:tracing_enabled]
 
         trace = query.context.namespace(ApolloFederation::Tracing::KEY)
 
@@ -91,8 +103,6 @@ module ApolloFederation
           end_time: Time.now.utc,
           end_time_nanos: Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond),
         )
-
-        result
       end
 
       # Step 2:
