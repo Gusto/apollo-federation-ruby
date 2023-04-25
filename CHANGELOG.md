@@ -1,3 +1,10 @@
+## [3.6.5](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.4...v3.6.5) (2023-04-25)
+
+
+### Bug Fixes
+
+* **tracer:** add support for multiplex ([#243](https://github.com/Gusto/apollo-federation-ruby/issues/243)) ([c4f2eae](https://github.com/Gusto/apollo-federation-ruby/commit/c4f2eaed0b283c188f2fb932d5308dd3240bb2ec))
+
 ## [3.6.4](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.3...v3.6.4) (2023-04-19)
 
 
