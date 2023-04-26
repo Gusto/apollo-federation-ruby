@@ -1,3 +1,10 @@
+## [3.6.6](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.5...v3.6.6) (2023-04-26)
+
+
+### Bug Fixes
+
+* ApolloFederation::Tracing.should_add_traces() looks for correct headers ([#240](https://github.com/Gusto/apollo-federation-ruby/issues/240)) ([d609977](https://github.com/Gusto/apollo-federation-ruby/commit/d609977869721c168b33e50e3823cd97a7f81ae5))
+
 ## [3.6.5](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.4...v3.6.5) (2023-04-25)
 
 
