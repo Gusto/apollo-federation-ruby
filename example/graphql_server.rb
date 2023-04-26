@@ -65,6 +65,9 @@ class GraphQLServer
       query,
       operation_name: operation_name,
       variables: vars,
+      context: {
+        tracing_enabled: ApolloFederation::Tracing.should_add_traces(env),
+      },
     )
     ['200', { 'Content-Type' => 'application/json' }, [JSON.dump(result.to_h)]]
   end
