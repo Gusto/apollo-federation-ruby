@@ -40,13 +40,12 @@ module ApolloFederation
 
         # TODO: Use warden or schema?
         type = context.warden.get_type(typename)
-        if type.nil? || type.kind != GraphQL::TypeKinds::OBJECT
+        if type.nil? || (type.kind != GraphQL::TypeKinds::OBJECT && type.kind != GraphQL::TypeKinds::INTERFACE)
           # TODO: Raise a specific error class?
           raise "The _entities resolver tried to load an entity for type \"#{typename}\"," \
                 ' but no object type of that name was found in the schema'
         end
 
-        # TODO: What if the type is an interface?
         type_class = class_of_type(type)
 
         if type_class.underscore_reference_keys
@@ -89,7 +88,7 @@ module ApolloFederation
     private
 
     def class_of_type(type)
-      if defined?(GraphQL::ObjectType) && type.is_a?(GraphQL::ObjectType)
+      if (defined?(GraphQL::ObjectType) && type.is_a?(GraphQL::ObjectType)) || (defined?(GraphQL::InterfaceType) && type.is_a?(GraphQL::InterfaceType))
         type.metadata[:type_class]
       else
         type
