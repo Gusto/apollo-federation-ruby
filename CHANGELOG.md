@@ -1,3 +1,10 @@
+## [3.6.7](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.6...v3.6.7) (2023-05-18)
+
+
+### Bug Fixes
+
+* call `resolve_references` once per `__typename` ([#244](https://github.com/Gusto/apollo-federation-ruby/issues/244)) ([c21715d](https://github.com/Gusto/apollo-federation-ruby/commit/c21715d28b67764a078b4daefdfe490f50171817))
+
 ## [3.6.6](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.5...v3.6.6) (2023-04-26)
 
 
