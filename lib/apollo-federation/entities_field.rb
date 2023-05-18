@@ -27,9 +27,17 @@ module ApolloFederation
     end
 
     def _entities(representations:)
-      chunked_references = representations.chunk { |r| r[:__typename] }
+      final_result = Array.new(representations.size)
+      grouped_references_with_indices =
+        representations
+        .map
+        .with_index { |r, i| [r, i] }
+        .group_by { |(r, _i)| r[:__typename] }
 
-      chunked_references.flat_map do |typename, references|
+      grouped_references_with_indices.each do |typename, references_with_indices|
+        references = references_with_indices.map(&:first)
+        indices = references_with_indices.map(&:last)
+
         # TODO: Use warden or schema?
         type = context.warden.get_type(typename)
         if type.nil? || type.kind != GraphQL::TypeKinds::OBJECT
@@ -49,8 +57,10 @@ module ApolloFederation
           results = references
         end
 
-        results.map do |result|
-          context.schema.after_lazy(result) do |resolved_value|
+        results_with_indices = results.zip(indices)
+
+        results_with_indices.each do |result, i|
+          final_result[i] = context.schema.after_lazy(result) do |resolved_value|
             # TODO: This isn't 100% correct: if (for some reason) 2 different resolve_reference
             # calls return the same object, it might not have the right type
             # Right now, apollo-federation just adds a __typename property to the result,
@@ -60,6 +70,8 @@ module ApolloFederation
           end
         end
       end
+
+      final_result
     end
 
     private

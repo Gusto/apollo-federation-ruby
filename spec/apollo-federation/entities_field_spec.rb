@@ -327,6 +327,13 @@ RSpec.describe ApolloFederation::EntitiesField do
                       ],
                     )
                   end
+
+                  it 'calls resolve_references once per __typename' do
+                    allow(type_with_key).to receive(:resolve_references).and_call_original
+                    allow(another_type_with_key).to receive(:resolve_references).and_call_original
+                    subject
+                    expect([type_with_key, another_type_with_key]).to all have_received(:resolve_references).once
+                  end
                 end
               end
 
