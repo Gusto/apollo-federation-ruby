@@ -113,6 +113,29 @@ RSpec.describe ApolloFederation::EntitiesField do
         end
       end
 
+      context 'when a Query object is inherited' do
+        let(:query) do
+          type_with_key_class = type_with_key
+          Class.new(base_object) do
+            graphql_name 'Query'
+            field :type_with_key, type_with_key_class, null: true
+          end
+        end
+
+        let(:schema) do
+          query_class = query
+          parent_schema = Class.new(base_schema) do
+            query query_class
+          end
+          Class.new(parent_schema)
+        end
+
+        it 'generates an _Entity union with the correct members' do
+          entity_type = schema.query.fields.fetch('_entities').type.unwrap
+          expect(entity_type.type_memberships.map(&:object_type)).to eq([type_with_key])
+        end
+      end
+
       context 'when a Query object is not provided' do
         let(:mutation) do
           # creating a mutation with the TypeWithKey object so it gets included in the schema
