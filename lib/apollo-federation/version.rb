@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module ApolloFederation
-  VERSION = '3.6.7'
+  VERSION = '3.6.8'
 end

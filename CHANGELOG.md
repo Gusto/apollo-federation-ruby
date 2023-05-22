@@ -1,3 +1,10 @@
+## [3.6.8](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.7...v3.6.8) (2023-05-22)
+
+
+### Bug Fixes
+
+* include inherited types in generated _Entity union ([#247](https://github.com/Gusto/apollo-federation-ruby/issues/247)) ([c377785](https://github.com/Gusto/apollo-federation-ruby/commit/c377785466736114d17beda8b6e27c2e0a56eb75))
+
 ## [3.6.7](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.6...v3.6.7) (2023-05-18)
 
 
