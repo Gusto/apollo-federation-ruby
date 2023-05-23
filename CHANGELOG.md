@@ -1,3 +1,10 @@
+## [3.6.9](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.8...v3.6.9) (2023-05-23)
+
+
+### Bug Fixes
+
+* visibility checks should handle duplicate types and fields ([#245](https://github.com/Gusto/apollo-federation-ruby/issues/245)) ([6401feb](https://github.com/Gusto/apollo-federation-ruby/commit/6401febe65743eb1fae970b3cf865b7007fb27cf))
+
 ## [3.6.8](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.7...v3.6.8) (2023-05-22)
 
 
