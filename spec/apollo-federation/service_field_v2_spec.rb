@@ -2094,13 +2094,31 @@ RSpec.describe ApolloFederation::ServiceField do
           end
         end
 
-        it 'applies visibility checks during SDL generation' do
+        it 'applies visibility checks during SDL generation to expose schema members' do
           results = schema.execute('{ _service { sdl } }', context: { graph_type: :regular })
 
           expect(results.dig('data', '_service', 'sdl')).to match_sdl(
             <<~GRAPHQL,
               type Product @key(fields: "upc") {
                 regularField: String
+                upc: String!
+              }
+
+              type Query {
+                hello: String!
+                product: Product
+              }
+            GRAPHQL
+          )
+        end
+
+        it 'applies visibility checks during SDL generation to expose alternate schema members' do
+          results = schema.execute('{ _service { sdl } }', context: { graph_type: :admin })
+
+          expect(results.dig('data', '_service', 'sdl')).to match_sdl(
+            <<~GRAPHQL,
+              type Product @key(fields: "upc") {
+                adminField: String
                 upc: String!
               }
 
