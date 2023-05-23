@@ -81,9 +81,9 @@ module ApolloFederation
 
         # Walk through all of the types and determine which ones are entities (any type with a
         # "key" directive)
-        types_schema.types.values.select do |type|
+        types_schema.send(:non_introspection_types).values.flatten.select do |type|
           # TODO: Interfaces can have a key...
-          !type.introspection? && type.include?(ApolloFederation::Object) &&
+          type.include?(ApolloFederation::Object) &&
             type.federation_directives&.any? { |directive| directive[:name] == 'key' }
         end
       end

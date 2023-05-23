@@ -2043,6 +2043,94 @@ RSpec.describe ApolloFederation::ServiceField do
         )
       end
     end
+
+    if Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('1.13.0')
+      context 'with visibility checks on types and fields with duplicate names' do
+        let(:schema) do
+          regular_product = Class.new(base_object) do
+            graphql_name 'Product'
+            key fields: :upc
+
+            field :upc, String, null: false
+            field :regular_field, String, null: true
+
+            def self.visible?(context)
+              context[:graph_type] == :regular
+            end
+          end
+
+          admin_product = Class.new(base_object) do
+            graphql_name 'Product'
+            key fields: :upc
+
+            field :upc, String, null: false
+            field :admin_field, String, null: true
+
+            def self.visible?(context)
+              context[:graph_type] == :admin
+            end
+          end
+
+          query_obj = Class.new(base_object) do
+            graphql_name 'Query'
+
+            field :hello, String, null: false
+
+            field :product, regular_product, null: true do
+              def visible?(context)
+                context[:graph_type] == :regular
+              end
+            end
+
+            field :product, admin_product, null: true do
+              def visible?(context)
+                context[:graph_type] == :admin
+              end
+            end
+          end
+
+          Class.new(base_schema) do
+            query query_obj
+          end
+        end
+
+        it 'applies visibility checks during SDL generation to expose schema members' do
+          results = schema.execute('{ _service { sdl } }', context: { graph_type: :regular })
+
+          expect(results.dig('data', '_service', 'sdl')).to match_sdl(
+            <<~GRAPHQL,
+              type Product @key(fields: "upc") {
+                regularField: String
+                upc: String!
+              }
+
+              type Query {
+                hello: String!
+                product: Product
+              }
+            GRAPHQL
+          )
+        end
+
+        it 'applies visibility checks during SDL generation to expose alternate schema members' do
+          results = schema.execute('{ _service { sdl } }', context: { graph_type: :admin })
+
+          expect(results.dig('data', '_service', 'sdl')).to match_sdl(
+            <<~GRAPHQL,
+              type Product @key(fields: "upc") {
+                adminField: String
+                upc: String!
+              }
+
+              type Query {
+                hello: String!
+                product: Product
+              }
+            GRAPHQL
+          )
+        end
+      end
+    end
   end
 
   if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('1.12.0')
