@@ -322,6 +322,7 @@ class User < BaseObject
   end
 end
 ```
+By default, reference hash keys are camelcase but they can be underscored by setting `ApolloFederation::Any.underscore_keys = true`.
 
 ### Tracing
 
