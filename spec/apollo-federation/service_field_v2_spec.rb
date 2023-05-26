@@ -1326,6 +1326,56 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
+    it 'returns valid SDL for unresolvable @key directives' do
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+        key fields: :upc, resolvable: false
+
+        field :upc, String, null: false
+      end
+
+      schema = Class.new(base_schema) do
+        orphan_types product
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
+
+          type Product @federation__key(fields: "upc", resolvable: false) {
+            upc: String!
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for resolvable @key directives' do
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+        key fields: :upc, resolvable: true
+
+        field :upc, String, null: false
+      end
+
+      schema = Class.new(base_schema) do
+        orphan_types product
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
+
+          type Product @federation__key(fields: "upc") {
+            upc: String!
+          }
+        GRAPHQL
+      )
+    end
+
     it 'returns valid SDL for @external directives' do
       product = Class.new(base_object) do
         graphql_name 'Product'
