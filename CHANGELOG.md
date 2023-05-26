@@ -1,3 +1,10 @@
+# [3.7.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.9...v3.7.0) (2023-05-26)
+
+
+### Features
+
+* support [@key](https://github.com/key) directive resolvable argument ([#249](https://github.com/Gusto/apollo-federation-ruby/issues/249)) ([6df7030](https://github.com/Gusto/apollo-federation-ruby/commit/6df70305d3e6035946c9ac35d74387014b08b28a))
+
 ## [3.6.9](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.8...v3.6.9) (2023-05-23)
 
 
