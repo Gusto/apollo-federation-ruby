@@ -49,6 +49,14 @@ module ApolloFederation
         # TODO: What if the type is an interface?
         type_class = class_of_type(type)
 
+        if type_class.underscore_reference_keys
+          representations.each do |representation|
+            representation.transform_keys! do |key|
+              GraphQL::Schema::Member::BuildType.underscore(key.to_s).to_sym
+            end
+          end
+        end
+
         if type_class.respond_to?(:resolve_references)
           results = type_class.resolve_references(references, context)
         elsif type_class.respond_to?(:resolve_reference)

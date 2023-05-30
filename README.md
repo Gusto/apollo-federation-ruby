@@ -317,12 +317,37 @@ Define a `resolve_reference` class method on your object. The method will be pas
 
 ```ruby
 class User < BaseObject
+  key fields: :user_id
+  field :user_id, ID, null: false
+  
   def self.resolve_reference(reference, context)
-    USERS.find { |user| user[:id] == reference[:id] }
+    USERS.find { |user| user[:userId] == reference[:userId] }
   end
 end
 ```
-By default, reference hash keys are camelcase but they can be underscored by setting `ApolloFederation::Any.underscore_keys = true`.
+By default, reference hash keys are camelcase but they can be underscored by setting `underscore_reference_keys` on your entity class:
+
+```ruby
+class User < BaseObject
+  key fields: :user_id
+  field :user_id, ID, null: false
+  underscore_reference_keys true
+  
+  def self.resolve_reference(reference, context)
+    USERS.find { |user| user[:user_id] == reference[:user_id] }
+  end
+end
+```
+Alternatively you can change the default for your project by setting `underscore_reference_keys` on `BaseObject`:
+
+```ruby
+class BaseObject < GraphQL::Schema::Object
+  include ApolloFederation::Object
+
+  field_class BaseField
+  underscore_reference_keys true
+end
+```
 
 ### Tracing
 
