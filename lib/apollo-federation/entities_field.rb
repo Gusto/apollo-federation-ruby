@@ -34,7 +34,7 @@ module ApolloFederation
         .with_index { |r, i| [r, i] }
         .group_by { |(r, _i)| r[:__typename] }
 
-      grouped_references_with_indices.each do |typename, references_with_indices|
+      maybe_lazies = grouped_references_with_indices.map do |typename, references_with_indices|
         references = references_with_indices.map(&:first)
         indices = references_with_indices.map(&:last)
 
@@ -57,21 +57,25 @@ module ApolloFederation
           results = references
         end
 
-        results_with_indices = results.zip(indices)
-
-        results_with_indices.each do |result, i|
-          final_result[i] = context.schema.after_lazy(result) do |resolved_value|
-            # TODO: This isn't 100% correct: if (for some reason) 2 different resolve_reference
-            # calls return the same object, it might not have the right type
-            # Right now, apollo-federation just adds a __typename property to the result,
-            # but I don't really like the idea of modifying the resolved object
-            context[resolved_value] = type
-            resolved_value
+        context.schema.after_lazy(results) do |resolved_results|
+          resolved_results.zip(indices).each do |result, i|
+            final_result[i] = context.schema.after_lazy(result) do |resolved_value|
+              # TODO: This isn't 100% correct: if (for some reason) 2 different resolve_reference
+              # calls return the same object, it might not have the right type
+              # Right now, apollo-federation just adds a __typename property to the result,
+              # but I don't really like the idea of modifying the resolved object
+              context[resolved_value] = type
+              resolved_value
+            end
           end
         end
       end
 
-      final_result
+      # Make sure we've resolved the outer level of lazies so we can return an array with a possibly lazy
+      # entry for each requested entity
+      GraphQL::Execution::Lazy.all(maybe_lazies).then do
+        final_result
+      end
     end
 
     private

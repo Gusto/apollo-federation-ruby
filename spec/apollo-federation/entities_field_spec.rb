@@ -231,6 +231,26 @@ RSpec.describe ApolloFederation::EntitiesField do
 
             context 'when typename corresponds to a type that exists in the schema' do
               let(:typename) { type_with_key.graphql_name }
+              let(:lazy_resolver) do
+                Class.new do
+                  def initialize(&callable)
+                    @callable = callable
+                  end
+
+                  def resolve
+                    @callable.call
+                  end
+                end
+              end
+              let(:lazy_schema) do
+                lazy_resolver_class = lazy_resolver
+                type_with_key_class = type_with_key
+                Class.new(base_schema) do
+                  lazy_resolve(lazy_resolver_class, :resolve)
+
+                  orphan_types type_with_key_class
+                end
+              end
 
               context 'when the type does not define a resolve_reference method' do
                 it { is_expected.to match_array [{ 'id' => id.to_s, 'otherField' => nil }] }
@@ -264,6 +284,40 @@ RSpec.describe ApolloFederation::EntitiesField do
                   ]
                 }
                 it { expect(errors).to be_nil }
+
+                context 'when resolve_references returns a lazy object' do
+                  let(:schema) { lazy_schema }
+
+                  let(:resolve_method) do
+                    lazy_resolver_class = lazy_resolver
+
+                    lambda do |_references, _context|
+                      lazy_resolver_class.new do
+                        [{ id: 123, other_field: 'data!' }, { id: 456, other_field: 'data2!' }]
+                      end
+                    end
+                  end
+
+                  let(:type_with_key) do
+                    resolve_method_pointer = resolve_method
+                    Class.new(base_object) do
+                      graphql_name 'TypeWithKey'
+                      key fields: :id
+                      field :id, 'ID', null: false
+                      field :other_field, 'String', null: false
+
+                      define_singleton_method :resolve_references, &resolve_method_pointer
+                    end
+                  end
+
+                  it {
+                    expect(subject).to match_array [
+                      { 'id' => id_1.to_s, 'otherField' => 'data!' },
+                      { 'id' => id_2.to_s, 'otherField' => 'data2!' },
+                    ]
+                  }
+                  it { expect(errors).to be_nil }
+                end
 
                 context 'when there are multiple, interleaved __typenames being requested' do
                   let(:another_type_with_key) do
@@ -378,34 +432,14 @@ RSpec.describe ApolloFederation::EntitiesField do
                 it { expect(errors).to be_nil }
 
                 context 'when resolve_reference returns a lazy object' do
-                  let(:lazy_entity) do
-                    Class.new do
-                      def initialize(callable)
-                        @callable = callable
-                      end
-
-                      def load_entity
-                        @callable.call
-                      end
-                    end
-                  end
-
-                  let(:schema) do
-                    lazy_entity_class = lazy_entity
-                    type_with_key_class = type_with_key
-                    Class.new(base_schema) do
-                      lazy_resolve(lazy_entity_class, :load_entity)
-
-                      orphan_types type_with_key_class
-                    end
-                  end
+                  let(:schema) { lazy_schema }
 
                   let(:resolve_method) do
-                    lazy_entity_class = lazy_entity
+                    lazy_resolver_class = lazy_resolver
 
                     lambda do |reference, _context|
                       if reference[:id] == 123
-                        lazy_entity_class.new(-> { { id: 123, other_field: 'data!' } })
+                        lazy_resolver_class.new { { id: 123, other_field: 'data!' } }
                       end
                     end
                   end
@@ -443,14 +477,14 @@ RSpec.describe ApolloFederation::EntitiesField do
                     end
 
                     let(:resolve_method) do
-                      lazy_entity_class = lazy_entity
+                      lazy_resolver_class = lazy_resolver
 
                       lambda do |reference, _context|
                         case reference[:id]
                         when 123
-                          lazy_entity_class.new(-> { { id: 123, other_field: 'more data' } })
+                          lazy_resolver_class.new { { id: 123, other_field: 'more data' } }
                         when 321
-                          lazy_entity_class.new(-> { raise(GraphQL::ExecutionError, 'error') })
+                          lazy_resolver_class.new { raise(GraphQL::ExecutionError, 'error') }
                         end
                       end
                     end
