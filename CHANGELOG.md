@@ -1,3 +1,12 @@
+## [3.7.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.7.0...v3.7.1) (2023-06-01)
+
+
+### Bug Fixes
+
+* handle lazy `resolve_references` return values ([#250](https://github.com/Gusto/apollo-federation-ruby/issues/250)) ([e29b155](https://github.com/Gusto/apollo-federation-ruby/commit/e29b15550d48093c6ed5b73dabb8206a3e9463b0))
+* handle lazy `resolve_references` return values ([#250](https://github.com/Gusto/apollo-federation-ruby/issues/250)) ([1614440](https://github.com/Gusto/apollo-federation-ruby/commit/16144402d32de3d5016023b87fc2b949364761f5))
+* handle lazy resolve_references return values ([#250](https://github.com/Gusto/apollo-federation-ruby/issues/250)) ([fa72465](https://github.com/Gusto/apollo-federation-ruby/commit/fa72465bd5f1d38f3556b748b905f16f932829ac))
+
 # [3.7.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.9...v3.7.0) (2023-05-26)
 
 
