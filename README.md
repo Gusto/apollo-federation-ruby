@@ -325,7 +325,8 @@ class User < BaseObject
   end
 end
 ```
-By default, reference hash keys are camelcase but they can be underscored by setting `underscore_reference_keys` on your entity class:
+
+To maintain backwards compatibility, by default, reference hash keys are camelcase. They can be underscored by setting `underscore_reference_keys` on your entity class. In order to maintain consistency with GraphQL Ruby, we may change the keys to be underscored by default in a future major release.
 
 ```ruby
 class User < BaseObject

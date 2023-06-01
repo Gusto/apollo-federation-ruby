@@ -50,8 +50,8 @@ module ApolloFederation
         type_class = class_of_type(type)
 
         if type_class.underscore_reference_keys
-          representations.each do |representation|
-            representation.transform_keys! do |key|
+          references.map! do |reference|
+            reference.transform_keys do |key|
               GraphQL::Schema::Member::BuildType.underscore(key.to_s).to_sym
             end
           end
