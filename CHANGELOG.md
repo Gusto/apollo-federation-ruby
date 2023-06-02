@@ -1,3 +1,10 @@
+# [3.8.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.7.1...v3.8.0) (2023-06-02)
+
+
+### Features
+
+* optionally underscore _Any keys ([#248](https://github.com/Gusto/apollo-federation-ruby/issues/248)) ([f1688e7](https://github.com/Gusto/apollo-federation-ruby/commit/f1688e793ba08195a06ddad74d84f2858dcdfcdf))
+
 ## [3.7.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.7.0...v3.7.1) (2023-06-01)
 
 
