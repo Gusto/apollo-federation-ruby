@@ -509,6 +509,81 @@ RSpec.describe ApolloFederation::EntitiesField do
                   end
                 end
               end
+
+              context 'when reference keys have multiple words' do
+                let(:representations) { [{ __typename: typename, myId: id }] }
+                let(:query) do
+                  <<~GRAPHQL
+                    query EntitiesQuery($representations: [_Any!]!) {
+                      _entities(representations: $representations) {
+                        ... on TypeWithKey {
+                          myId
+                          otherField
+                        }
+                      }
+                    }
+                  GRAPHQL
+                end
+
+                context 'when the type does not underscore reference keys' do
+                  let(:type_with_key) do
+                    Class.new(base_object) do
+                      graphql_name 'TypeWithKey'
+                      key fields: :my_id
+                      field :my_id, 'ID', null: false
+                      field :other_field, 'String', null: false
+
+                      def self.resolve_reference(reference, _context)
+                        { my_id: 123, other_field: 'data!' } if reference[:myId] == 123
+                      end
+                    end
+                  end
+
+                  it { is_expected.to match_array [{ 'myId' => id.to_s, 'otherField' => 'data!' }] }
+                  it { expect(errors).to be_nil }
+                end
+
+                context 'when the type underscores reference keys' do
+                  let(:type_with_key) do
+                    Class.new(base_object) do
+                      graphql_name 'TypeWithKey'
+                      key fields: :my_id
+                      underscore_reference_keys true
+                      field :my_id, 'ID', null: false
+                      field :other_field, 'String', null: false
+
+                      def self.resolve_reference(reference, _context)
+                        { my_id: 123, other_field: 'data!' } if reference[:my_id] == 123
+                      end
+                    end
+                  end
+
+                  it { is_expected.to match_array [{ 'myId' => id.to_s, 'otherField' => 'data!' }] }
+                  it { expect(errors).to be_nil }
+                end
+
+                context 'when the type\'s superclass underscores reference keys' do
+                  let(:type_with_key) do
+                    parent = Class.new(base_object) do
+                      underscore_reference_keys true
+                    end
+
+                    Class.new(parent) do
+                      graphql_name 'TypeWithKey'
+                      key fields: :my_id
+                      field :my_id, 'ID', null: false
+                      field :other_field, 'String', null: false
+
+                      def self.resolve_reference(reference, _context)
+                        { my_id: 123, other_field: 'data!' } if reference[:my_id] == 123
+                      end
+                    end
+                  end
+
+                  it { is_expected.to match_array [{ 'myId' => id.to_s, 'otherField' => 'data!' }] }
+                  it { expect(errors).to be_nil }
+                end
+              end
             end
           end
         end
