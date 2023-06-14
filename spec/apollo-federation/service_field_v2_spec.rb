@@ -128,6 +128,59 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
+    it 'returns the federation SDL with compose directives for the schema' do
+      complexity_directive = Class.new(GraphQL::Schema::Directive) do
+        graphql_name 'complexity'
+        argument :fixed, Integer
+        description 'complexity of the field'
+        locations GraphQL::Schema::Directive::FIELD_DEFINITION
+      end
+
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+
+        field :upc, String, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :product, product, null: true, directives: { complexity_directive => { fixed: 1 } }
+      end
+
+      schema = Class.new(base_schema) do
+        query query_obj
+        federation version: '2.3',
+                   links: [{
+                     url: 'https://specs.example.com/federation/v2.3',
+                     import: [complexity_directive.graphql_name],
+                   }],
+                   compose_directives: [complexity_directive.graphql_name]
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag", "@composeDirective"])
+            @link(url: "https://specs.example.com/federation/v2.3", import: ["@complexity"])
+            @composeDirective(name: "@complexity")
+
+          """
+          complexity of the field
+          """
+          directive @complexity(fixed: Int!) on FIELD_DEFINITION
+
+          type Product {
+            upc: String!
+          }
+
+          type Query {
+            product: Product @complexity(fixed: 1)
+          }
+        GRAPHQL
+      )
+    end
+
     it 'returns valid SDL for type extensions' do
       product = Class.new(base_object) do
         graphql_name 'Product'
@@ -291,7 +344,7 @@ RSpec.describe ApolloFederation::ServiceField do
 
         schema = Class.new(base_schema) do
           query query_obj
-          federation version: '2.0', link: { as: 'fed2' }
+          federation version: '2.0', default_link_namespace: 'fed2'
         end
 
         expect(execute_sdl(schema)).to match_sdl(
@@ -327,7 +380,7 @@ RSpec.describe ApolloFederation::ServiceField do
 
         schema = Class.new(base_schema) do
           query query_obj
-          federation version: '2.0', link: { as: 'fed2' }
+          federation version: '2.0', default_link_namespace: 'fed2'
         end
 
         expect(execute_sdl(schema)).to match_sdl(
@@ -364,7 +417,7 @@ RSpec.describe ApolloFederation::ServiceField do
 
         schema = Class.new(base_schema) do
           query query_obj
-          federation version: '2.0', link: { as: 'fed2' }
+          federation version: '2.0', default_link_namespace: 'fed2'
         end
 
         expect(execute_sdl(schema)).to match_sdl(
@@ -401,7 +454,7 @@ RSpec.describe ApolloFederation::ServiceField do
 
         schema = Class.new(base_schema) do
           query query_obj
-          federation version: '2.0', link: { as: 'fed2' }
+          federation version: '2.0', default_link_namespace: 'fed2'
         end
 
         expect(execute_sdl(schema)).to match_sdl(
@@ -437,7 +490,7 @@ RSpec.describe ApolloFederation::ServiceField do
 
         schema = Class.new(base_schema) do
           query query_obj
-          federation version: '2.0', link: { as: 'fed2' }
+          federation version: '2.0', default_link_namespace: 'fed2'
         end
 
         expect(execute_sdl(schema)).to match_sdl(
@@ -468,7 +521,7 @@ RSpec.describe ApolloFederation::ServiceField do
 
         schema = Class.new(base_schema) do
           orphan_types product
-          federation version: '2.0', link: { as: 'fed2' }
+          federation version: '2.0', default_link_namespace: 'fed2'
         end
 
         expect(execute_sdl(schema)).to match_sdl(
@@ -495,13 +548,13 @@ RSpec.describe ApolloFederation::ServiceField do
 
         schema = Class.new(base_schema) do
           orphan_types product
-          federation version: '2.3', link: { as: 'fed2' }
+          federation version: '2.3', default_link_namespace: 'fed2'
         end
 
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible", "@tag"])
+              @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@inaccessible", "@tag", "@composeDirective"])
 
             type Product @fed2__interfaceObject @fed2__key(fields: "id") {
               id: ID!
@@ -1421,7 +1474,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag", "@composeDirective"])
 
           type Product @federation__interfaceObject @federation__key(fields: "id") {
             id: ID!
@@ -1973,7 +2026,7 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       new_base_schema = Class.new(base_schema) do
-        federation version: '2.0', link: { as: 'fed2' }
+        federation version: '2.0', default_link_namespace: 'fed2'
       end
 
       schema = Class.new(new_base_schema) do
@@ -2011,7 +2064,7 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       new_base_schema = Class.new(base_schema) do
-        federation version: '2.0', link: { as: 'fed2' }
+        federation version: '2.0', default_link_namespace: 'fed2'
         query query_obj
       end
 

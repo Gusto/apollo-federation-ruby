@@ -8,6 +8,7 @@ require 'apollo-federation/federated_document_from_schema_definition.rb'
 module ApolloFederation
   module Schema
     IMPORTED_DIRECTIVES = ['inaccessible', 'tag'].freeze
+    IMPORTED_DIRECTIVES_V2_1 = ['composeDirective'].freeze
 
     def self.included(klass)
       klass.extend(CommonMethods)
@@ -16,9 +17,16 @@ module ApolloFederation
     module CommonMethods
       DEFAULT_LINK_NAMESPACE = 'federation'
 
-      def federation(version: '1.0', link: {})
+      def federation(version: '1.0', default_link_namespace: nil, links: [], compose_directives: [])
         @federation_version = version
-        @link = { as: DEFAULT_LINK_NAMESPACE }.merge(link)
+        @default_link_namespace = default_link_namespace
+        @links = links
+
+        if !federation_2_1? && compose_directives.any?
+          raise ArgumentError, 'composeDirective is available in Federation 2.1 and later'
+        end
+
+        @compose_directives = compose_directives
       end
 
       def federation_version
@@ -29,6 +37,10 @@ module ApolloFederation
         Gem::Version.new(federation_version.to_s) >= Gem::Version.new('2.0.0')
       end
 
+      def federation_2_1?
+        Gem::Version.new(federation_version.to_s) >= Gem::Version.new('2.1.0')
+      end
+
       def federation_sdl(context: nil)
         document_from_schema = FederatedDocumentFromSchemaDefinition.new(self, context: context)
 
@@ -37,8 +49,8 @@ module ApolloFederation
         output
       end
 
-      def link_namespace
-        @link ? @link[:as] : find_inherited_value(:link_namespace)
+      def default_link_namespace
+        @default_link_namespace || find_inherited_value(:default_link_namespace, DEFAULT_LINK_NAMESPACE)
       end
 
       def query(new_query_object = nil)
@@ -62,14 +74,40 @@ module ApolloFederation
         @orig_query_object || find_inherited_value(:original_query)
       end
 
+      def compose_directives
+        @compose_directives || find_inherited_value(:compose_directives, [])
+      end
+
+      def links
+        @links || find_inherited_value(:links, [])
+      end
+
+      def all_links
+        imported_directives = IMPORTED_DIRECTIVES
+        imported_directives += IMPORTED_DIRECTIVES_V2_1 if federation_2_1?
+        default_link = {
+          url: 'https://specs.apollo.dev/federation/v2.3',
+          import: imported_directives,
+        }
+        default_link[:as] = default_link_namespace if default_link_namespace != DEFAULT_LINK_NAMESPACE
+        [default_link, *links]
+      end
+
       def federation_2_prefix
-        federation_namespace = ", as: \"#{link_namespace}\"" if link_namespace != DEFAULT_LINK_NAMESPACE
+        schema = "extend schema\n"
 
-        <<~SCHEMA
-          extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3"#{federation_namespace}, import: [#{(IMPORTED_DIRECTIVES.map { |directive| "\"@#{directive}\"" }).join(', ')}])
+        all_links.each do |link|
+          schema += "  @link(url: \"#{link[:url]}\""
+          schema += ", as: \"#{link[:as]}\"" if link[:as]
+          schema += ", import: [#{link[:import].map { |d| "\"@#{d}\"" }.join(', ')}]" if link[:import]
+          schema += ")\n"
+        end
 
-        SCHEMA
+        compose_directives.each do |directive|
+          schema += "  @composeDirective(name: \"@#{directive}\")\n"
+        end
+
+        schema + "\n"
       end
 
       def schema_entities
