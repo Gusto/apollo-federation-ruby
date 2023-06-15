@@ -94,20 +94,24 @@ module ApolloFederation
       end
 
       def federation_2_prefix
-        schema = "extend schema\n"
+        schema = ["extend schema"]
 
         all_links.each do |link|
-          schema += "  @link(url: \"#{link[:url]}\""
-          schema += ", as: \"#{link[:as]}\"" if link[:as]
-          schema += ", import: [#{link[:import].map { |d| "\"@#{d}\"" }.join(', ')}]" if link[:import]
-          schema += ")\n"
+          link_str = "  @link(url: \"#{link[:url]}\""
+          link_str += ", as: \"#{link[:as]}\"" if link[:as]
+          link_str += ", import: [#{link[:import].map { |d| "\"@#{d}\"" }.join(', ')}]" if link[:import]
+          link_str += ")"
+          schema << link_str
         end
 
         compose_directives.each do |directive|
-          schema += "  @composeDirective(name: \"@#{directive}\")\n"
+          schema << "  @composeDirective(name: \"@#{directive}\")"
         end
 
-        schema + "\n"
+        schema << ''
+        schema << ''
+
+        schema.join("\n")
       end
 
       def schema_entities
