@@ -170,7 +170,7 @@ RSpec.describe ApolloFederation::ServiceField do
     it 'returns the federation SDL with compose directives for the schema' do
       complexity_directive = Class.new(GraphQL::Schema::Directive) do
         graphql_name 'complexity'
-        argument :fixed, Integer
+        argument :fixed, Integer, required: true
         description 'complexity of the field'
         locations GraphQL::Schema::Directive::FIELD_DEFINITION
       end
