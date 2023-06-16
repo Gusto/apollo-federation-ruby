@@ -94,13 +94,13 @@ module ApolloFederation
       end
 
       def federation_2_prefix
-        schema = ["extend schema"]
+        schema = ['extend schema']
 
         all_links.each do |link|
           link_str = "  @link(url: \"#{link[:url]}\""
           link_str += ", as: \"#{link[:as]}\"" if link[:as]
           link_str += ", import: [#{link[:import].map { |d| "\"@#{d}\"" }.join(', ')}]" if link[:import]
-          link_str += ")"
+          link_str += ')'
           schema << link_str
         end
 

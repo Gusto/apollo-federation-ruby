@@ -128,6 +128,45 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
+    it 'returns the federation SDL with multiple links for the schema' do
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+
+        field :upc, String, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :product, product, null: true
+      end
+
+      schema = Class.new(base_schema) do
+        query query_obj
+        federation version: '2.3',
+                   links: [{
+                     url: 'https://specs.example.com/federation/v2.3',
+                     import: ['test'],
+                   }]
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag", "@composeDirective"])
+            @link(url: "https://specs.example.com/federation/v2.3", import: ["@test"])
+
+          type Product {
+            upc: String!
+          }
+
+          type Query {
+            product: Product
+          }
+        GRAPHQL
+      )
+    end
+
     it 'returns the federation SDL with compose directives for the schema' do
       complexity_directive = Class.new(GraphQL::Schema::Directive) do
         graphql_name 'complexity'
