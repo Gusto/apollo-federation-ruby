@@ -148,6 +148,11 @@
 
 * add support for the [@interface](https://github.com/interface)Object directive ([#218](https://github.com/Gusto/apollo-federation-ruby/issues/218)) ([c7b987d](https://github.com/Gusto/apollo-federation-ruby/commit/c7b987de1d2b32a4a77ceb09718373ffa5a60abb))
 
+
+### NOTES
+
+* Schemas which are opted into federation 2.0 will now extend the federation v2.3 spec. This is not compatible with graphs which are configured to be built using federation version 2.0 or 2.1. If using Apollo GraphOS, follow the guide for [updating your graph safely](https://www.apollographql.com/docs/graphos/graphs/updating/) before upgrading to this version.
+
 ## [3.3.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.3.0...v3.3.1) (2023-01-05)
 
 
