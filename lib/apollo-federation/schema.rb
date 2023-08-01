@@ -86,7 +86,7 @@ module ApolloFederation
         schema = ['extend schema']
 
         all_links.each do |link|
-          link_str = "  @link("
+          link_str = '  @link('
           link_str += "url: \"#{link[:url]}\""
           link_str += ", as: \"#{link[:as]}\"" if link[:as]
           if link[:import]
