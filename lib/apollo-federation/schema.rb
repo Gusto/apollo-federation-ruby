@@ -7,8 +7,7 @@ require 'apollo-federation/federated_document_from_schema_definition.rb'
 
 module ApolloFederation
   module Schema
-    IMPORTED_DIRECTIVES = ['inaccessible', 'tag'].freeze
-    IMPORTED_DIRECTIVES_V2_1 = ['composeDirective'].freeze
+    IMPORTED_DIRECTIVES = ['inaccessible', 'tag', 'composeDirective'].freeze
 
     def self.included(klass)
       klass.extend(CommonMethods)
@@ -21,11 +20,6 @@ module ApolloFederation
         @federation_version = version
         @default_link_namespace = default_link_namespace
         @links = links
-
-        if !federation_2_1? && compose_directives.any?
-          raise ArgumentError, 'composeDirective is available in Federation 2.1 and later'
-        end
-
         @compose_directives = compose_directives
       end
 
@@ -35,10 +29,6 @@ module ApolloFederation
 
       def federation_2?
         Gem::Version.new(federation_version.to_s) >= Gem::Version.new('2.0.0')
-      end
-
-      def federation_2_1?
-        Gem::Version.new(federation_version.to_s) >= Gem::Version.new('2.1.0')
       end
 
       def federation_sdl(context: nil)
@@ -84,7 +74,6 @@ module ApolloFederation
 
       def all_links
         imported_directives = IMPORTED_DIRECTIVES
-        imported_directives += IMPORTED_DIRECTIVES_V2_1 if federation_2_1?
         default_link = {
           url: 'https://specs.apollo.dev/federation/v2.3',
           import: imported_directives,
