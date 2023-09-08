@@ -36,6 +36,39 @@ RSpec.describe ApolloFederation::EntitiesField do
     end
 
     context 'when an interface with the key directive exists' do
+      context "when some of the types implementing the inteface don't have the key directive" do
+        let(:offending_class) do
+        end
+        let(:query) do
+          user_class = SpecTypes::User
+          Class.new(SpecTypes::BaseObject) do
+            graphql_name 'Query'
+            field :user, user_class, null: true
+          end
+        end
+
+        it 'raises an error' do
+          query_class = query
+
+          offending_class = Class.new(SpecTypes::BaseObject) do
+            graphql_name 'Manager'
+            implements SpecTypes::User
+
+            field :id, 'ID', null: false
+          end
+
+          schema = Class.new(base_schema) do
+            query query_class
+            orphan_types SpecTypes::AdminType, offending_class
+          end
+
+          expect { schema.to_definition }.to raise_error(
+            'Interface User is not valid. Types `Manager` do not have a @key directive. ' \
+            'All types that implement an interface with a @key directive must also have a @key directive.',
+          )
+        end
+      end
+
       context 'when a Query object is provided' do
         let(:query) do
           user_class = SpecTypes::User

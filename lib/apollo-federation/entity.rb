@@ -16,7 +16,7 @@ module ApolloFederation
     # is an union. Therefore, we have to extend this validation to allow interfaces as possible types.
     def self.assert_valid_union_member(type_defn)
       if type_defn.is_a?(Module) &&
-          type_defn.included_modules.include?(ApolloFederation::Interface)
+         type_defn.included_modules.include?(ApolloFederation::Interface)
         # It's an interface entity, defined as a module
       else
         super(type_defn)
