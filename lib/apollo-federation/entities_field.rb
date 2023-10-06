@@ -71,7 +71,11 @@ module ApolloFederation
               # calls return the same object, it might not have the right type
               # Right now, apollo-federation just adds a __typename property to the result,
               # but I don't really like the idea of modifying the resolved object
-              context[resolved_value] = type
+              if type.kind == GraphQL::TypeKinds::INTERFACE
+                context[resolved_value] = context.schema.resolve_type(type, resolved_value, context)
+              else
+                context[resolved_value] = type
+              end
               resolved_value
             end
           end
