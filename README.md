@@ -470,5 +470,8 @@ See discussion at [#74](https://github.com/Gusto/apollo-federation-ruby/issues/7
 
 ## Maintainers
 
-- [Rylan Collins](https://github.com/rylanc)
-- [Noa Elad](https://github.com/noaelad)
+Gusto GraphQL Team:
+- [Sara Laupp](https://github.com/slauppy)
+- [Seth Copeland](https://github.com/sethc2)
+- [Simon Coffin](https://github.com/simoncoffin)
+- [Sofia Carrillo](https://github.com/sofie-c)
