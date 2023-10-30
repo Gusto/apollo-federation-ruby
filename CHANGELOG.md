@@ -1,3 +1,5 @@
+## [3.8.4](https://github.com/Gusto/apollo-federation-ruby/compare/v3.8.3...v3.8.4) (2023-10-30)
+
 ## [3.8.3](https://github.com/Gusto/apollo-federation-ruby/compare/v3.8.2...v3.8.3) (2023-07-20)
 
 ## [3.8.2](https://github.com/Gusto/apollo-federation-ruby/compare/v3.8.1...v3.8.2) (2023-07-11)
