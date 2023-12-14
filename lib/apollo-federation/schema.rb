@@ -42,18 +42,15 @@ module ApolloFederation
       end
 
       def query(new_query_object = nil)
-        if new_query_object
-          @orig_query_object = new_query_object
-        else
-          if !@federation_query_object
-            @federation_query_object = federation_query(original_query)
-            @federation_query_object.define_entities_field(schema_entities)
+        return super if new_query_object.nil? && @query_object
 
-            super(@federation_query_object)
-          end
+        @orig_query_object = new_query_object
+        federation_query_object = federation_query(original_query)
+        federation_query_object.define_entities_field(schema_entities)
 
-          super
-        end
+        super(federation_query_object)
+
+        federation_query_object
       end
 
       private

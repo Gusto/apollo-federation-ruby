@@ -3,6 +3,7 @@
 require 'spec_helper'
 require 'graphql'
 require 'apollo-federation/schema'
+require 'apollo-federation/object'
 
 RSpec.describe ApolloFederation::Schema do
   describe '.federation_version' do
@@ -95,6 +96,24 @@ RSpec.describe ApolloFederation::Schema do
       end
 
       expect(schema.federation_2?).to be(true)
+    end
+  end
+
+  describe '.query' do
+    it 'traverses the query type' do
+      cat_type = Class.new(GraphQL::Schema::Object) do
+        graphql_name 'Cat'
+      end
+      query_type = Class.new(GraphQL::Schema::Object) do
+        graphql_name 'Query'
+        field :cat, cat_type, null: false
+      end
+      schema = Class.new(GraphQL::Schema) do
+        include ApolloFederation::Schema
+        query query_type
+      end
+
+      expect(schema.get_type('Cat')).to eq(cat_type)
     end
   end
 end
