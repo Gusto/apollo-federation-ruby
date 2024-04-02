@@ -1,3 +1,10 @@
+## [3.8.5](https://github.com/Gusto/apollo-federation-ruby/compare/v3.8.4...v3.8.5) (2024-04-02)
+
+
+### Bug Fixes
+
+* ensure query object is traversed ([#270](https://github.com/Gusto/apollo-federation-ruby/issues/270)) ([72cc8b7](https://github.com/Gusto/apollo-federation-ruby/commit/72cc8b7a384cb5c694970bc981384c631e71bc9b))
+
 ## [3.8.4](https://github.com/Gusto/apollo-federation-ruby/compare/v3.8.3...v3.8.4) (2023-10-30)
 
 ## [3.8.3](https://github.com/Gusto/apollo-federation-ruby/compare/v3.8.2...v3.8.3) (2023-07-20)
