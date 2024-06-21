@@ -8,7 +8,7 @@ module ApolloFederation
     include HasDirectives
 
     VERSION_1_DIRECTIVES = %i[external requires provides].freeze
-    VERSION_2_DIRECTIVES = %i[shareable inaccessible override tags].freeze
+    VERSION_2_DIRECTIVES = %i[shareable inaccessible override tags authenticated requiresScopes].freeze
 
     def initialize(*args, **kwargs, &block)
       add_v1_directives(**kwargs)
@@ -59,13 +59,17 @@ module ApolloFederation
       nil
     end
 
-    def add_v2_directives(shareable: nil, inaccessible: nil, override: nil, tags: [], **_kwargs)
+    def add_v2_directives(shareable: nil, inaccessible: nil, override: nil, authenticated: nil, requires_scopes: nil, tags: [], **_kwargs)
       if shareable
         add_directive(name: 'shareable')
       end
 
       if inaccessible
         add_directive(name: 'inaccessible')
+      end
+
+      if authenticated
+        add_directive(name: 'authenticated')
       end
 
       if override
@@ -76,6 +80,16 @@ module ApolloFederation
             values: override[:from],
           ],
         )
+      end
+
+      if requires_scopes
+        add_directive(
+          name: 'requiresScopes',
+          arguments: [
+            name: 'scopes',
+            values: requires_scopes,
+          ],
+          )
       end
 
       tags.each do |tag|

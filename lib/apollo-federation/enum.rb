@@ -11,6 +11,14 @@ module ApolloFederation
     module ClassMethods
       include HasDirectives
 
+      def authenticated
+        add_directive(name: 'authenticated')
+      end
+
+      def requires_scopes(scopes)
+        add_directive(name: 'tag', arguments: [name: 'scopes', values: scopes])
+      end
+
       def tag(name:)
         add_directive(name: 'tag', arguments: [name: 'name', values: name])
       end
