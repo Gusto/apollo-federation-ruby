@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'pry-byebug'
-
 RSpec::Matchers.define :match_sdl do |expected|
   match do |actual|
     actual_without_comments = actual.chomp.gsub(/"""(.|\n)*"""/, '')
