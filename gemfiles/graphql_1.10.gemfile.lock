@@ -12,7 +12,7 @@ PATH
   remote: ..
   specs:
     apollo-federation (3.8.5)
-      google-protobuf (~> 3.22)
+      google-protobuf (>= 3.22, < 5.0)
       graphql (>= 1.10.14)
 
 GEM
@@ -37,12 +37,18 @@ GEM
       minitest (>= 5.1)
       tzinfo (~> 2.0)
     ast (2.4.2)
+    bigdecimal (3.1.8)
     builder (3.2.4)
     concurrent-ruby (1.2.2)
     crass (1.0.6)
     diff-lcs (1.5.0)
     erubi (1.12.0)
-    google-protobuf (3.25.3-x86_64-linux)
+    google-protobuf (4.27.2-arm64-darwin)
+      bigdecimal
+      rake (>= 13)
+    google-protobuf (4.27.2-x86_64-linux)
+      bigdecimal
+      rake (>= 13)
     graphql (1.10.14)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
