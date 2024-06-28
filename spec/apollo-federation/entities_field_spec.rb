@@ -253,16 +253,16 @@ RSpec.describe ApolloFederation::EntitiesField do
               end
 
               context 'when the type does not define a resolve_reference method' do
-                it { is_expected.to match_array [{ 'id' => id.to_s, 'otherField' => nil }] }
+                it { is_expected.to contain_exactly({ 'id' => id.to_s, 'otherField' => nil }) }
                 it { expect(errors).to be_nil }
               end
 
               context 'when the type defines a resolve_references method' do
                 let(:representations) do
-                  [{ __typename: typename, id: id_1 }, { __typename: typename, id: id_2 }]
+                  [{ __typename: typename, id: id1 }, { __typename: typename, id: id2 }]
                 end
-                let(:id_1) { 123 }
-                let(:id_2) { 456 }
+                let(:id1) { 123 }
+                let(:id2) { 456 }
 
                 let(:type_with_key) do
                   Class.new(base_object) do
@@ -278,11 +278,10 @@ RSpec.describe ApolloFederation::EntitiesField do
                 end
 
                 it {
-                  expect(subject).to match_array [
-                    { 'id' => id_1.to_s, 'otherField' => 'data!' },
-                    { 'id' => id_2.to_s, 'otherField' => 'data2!' },
-                  ]
+                  expect(subject).to contain_exactly({ 'id' => id1.to_s, 'otherField' => 'data!' },
+                                                     { 'id' => id2.to_s, 'otherField' => 'data2!' },)
                 }
+
                 it { expect(errors).to be_nil }
 
                 context 'when resolve_references returns a lazy object' do
@@ -311,11 +310,10 @@ RSpec.describe ApolloFederation::EntitiesField do
                   end
 
                   it {
-                    expect(subject).to match_array [
-                      { 'id' => id_1.to_s, 'otherField' => 'data!' },
-                      { 'id' => id_2.to_s, 'otherField' => 'data2!' },
-                    ]
+                    expect(subject).to contain_exactly({ 'id' => id1.to_s, 'otherField' => 'data!' },
+                                                       { 'id' => id2.to_s, 'otherField' => 'data2!' },)
                   }
+
                   it { expect(errors).to be_nil }
                 end
 
@@ -428,7 +426,7 @@ RSpec.describe ApolloFederation::EntitiesField do
                   end
                 end
 
-                it { is_expected.to match_array [{ 'id' => id.to_s, 'otherField' => 'data!' }] }
+                it { is_expected.to contain_exactly({ 'id' => id.to_s, 'otherField' => 'data!' }) }
                 it { expect(errors).to be_nil }
 
                 context 'when resolve_reference returns a lazy object' do
@@ -457,7 +455,7 @@ RSpec.describe ApolloFederation::EntitiesField do
                     end
                   end
 
-                  it { is_expected.to match_array [{ 'id' => id.to_s, 'otherField' => 'data!' }] }
+                  it { is_expected.to contain_exactly({ 'id' => id.to_s, 'otherField' => 'data!' }) }
                   it { expect(errors).to be_nil }
 
                   context 'when lazy object raises an error' do
@@ -539,7 +537,7 @@ RSpec.describe ApolloFederation::EntitiesField do
                     end
                   end
 
-                  it { is_expected.to match_array [{ 'myId' => id.to_s, 'otherField' => 'data!' }] }
+                  it { is_expected.to contain_exactly({ 'myId' => id.to_s, 'otherField' => 'data!' }) }
                   it { expect(errors).to be_nil }
                 end
 
@@ -558,7 +556,7 @@ RSpec.describe ApolloFederation::EntitiesField do
                     end
                   end
 
-                  it { is_expected.to match_array [{ 'myId' => id.to_s, 'otherField' => 'data!' }] }
+                  it { is_expected.to contain_exactly({ 'myId' => id.to_s, 'otherField' => 'data!' }) }
                   it { expect(errors).to be_nil }
                 end
 
@@ -580,7 +578,7 @@ RSpec.describe ApolloFederation::EntitiesField do
                     end
                   end
 
-                  it { is_expected.to match_array [{ 'myId' => id.to_s, 'otherField' => 'data!' }] }
+                  it { is_expected.to contain_exactly({ 'myId' => id.to_s, 'otherField' => 'data!' }) }
                   it { expect(errors).to be_nil }
                 end
               end

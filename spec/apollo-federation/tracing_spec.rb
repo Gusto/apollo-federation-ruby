@@ -211,7 +211,7 @@ RSpec.describe ApolloFederation::Tracing do
       end
     end
 
-    class Lazy
+    class Lazy # rubocop:todo Lint/ConstantDefinitionInBlock, RSpec/LeakyConstantDeclaration
       def initialize(value = 'lazy_value')
         @value = value
       end

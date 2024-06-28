@@ -26,7 +26,7 @@ module ApolloFederation
       end
     end
 
-    def _entities(representations:)
+    def _entities(representations:) # rubocop:todo Metrics
       final_result = Array.new(representations.size)
       grouped_references_with_indices =
         representations

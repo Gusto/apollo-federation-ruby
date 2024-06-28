@@ -56,10 +56,10 @@ GEM
     loofah (2.19.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
+    mini_portile2 (2.8.7)
     minitest (5.18.0)
-    nokogiri (1.14.2-arm64-darwin)
-      racc (~> 1.4)
-    nokogiri (1.14.2-x86_64-linux)
+    nokogiri (1.14.2)
+      mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
     parallel (1.25.1)
     parser (3.3.3.0)
@@ -108,6 +108,7 @@ GEM
 PLATFORMS
   arm64-darwin-21
   arm64-darwin-22
+  arm64-darwin-23
   x86_64-linux
 
 DEPENDENCIES
@@ -118,7 +119,7 @@ DEPENDENCIES
   rack
   rake
   rspec
-  rubocop (~> 0.75.0)
+  rubocop
   rubocop-rspec
   webrick
 
