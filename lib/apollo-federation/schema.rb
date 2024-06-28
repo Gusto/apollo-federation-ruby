@@ -3,7 +3,7 @@
 require 'apollo-federation/entities_field'
 require 'apollo-federation/service_field'
 require 'apollo-federation/entity'
-require 'apollo-federation/federated_document_from_schema_definition.rb'
+require 'apollo-federation/federated_document_from_schema_definition'
 
 module ApolloFederation
   module Schema

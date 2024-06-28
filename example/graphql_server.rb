@@ -3,7 +3,6 @@
 require 'rack'
 require 'json'
 require 'graphql'
-require 'pry-byebug'
 require 'apollo-federation'
 require 'optparse'
 require 'webrick'
