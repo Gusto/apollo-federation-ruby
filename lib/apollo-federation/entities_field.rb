@@ -38,7 +38,7 @@ module ApolloFederation
         references = references_with_indices.map(&:first)
         indices = references_with_indices.map(&:last)
 
-        type = context.types.type(typename)
+        type = context.schema.get_type(typename)
         if type.nil? || type.kind != GraphQL::TypeKinds::OBJECT
           # TODO: Raise a specific error class?
           raise "The _entities resolver tried to load an entity for type \"#{typename}\"," \

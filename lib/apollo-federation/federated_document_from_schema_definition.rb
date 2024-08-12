@@ -69,7 +69,7 @@ module ApolloFederation
     def build_type_definition_nodes(types)
       non_federation_types = types.select do |type|
         if query_type?(type)
-          !@types.fields(type).all? { |field| FEDERATION_QUERY_FIELDS.include?(field.graphql_name) }
+          !warden.fields(type).all? { |field| FEDERATION_QUERY_FIELDS.include?(field.graphql_name) }
         else
           !FEDERATION_TYPES.include?(type.graphql_name)
         end
@@ -79,8 +79,12 @@ module ApolloFederation
 
     private
 
+    def warden
+      @warden ||= GraphQL::Schema::Warden.new(context: {}, schema: schema)
+    end
+
     def query_type?(type)
-      type == @types.query_root
+      type == warden.root_type_for_operation('query')
     end
 
     def merge_directives(node, type)
