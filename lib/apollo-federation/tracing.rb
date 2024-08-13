@@ -23,8 +23,8 @@ module ApolloFederation
     # Tracing is depreacted in graphql-ruby 2.0.0 and will be removed in 3.0.0
     # https://github.com/rmosolgo/graphql-ruby/pull/4878/files#
     def silence_deprecation_warning?
-      graphql_version = Gem.loaded_specs['graphql'].version
-      graphql_version >= Gem::Version.new('2') && graphql_version < Gem::Version.new('3')
+      graphql_version = Gem::Version.new(GraphQL::VERSION)
+      graphql_version >= Gem::Version.new('2.3.0') && graphql_version < Gem::Version.new('3')
     end
 
     # @deprecated There is no need to call this method. Traces are added to the result automatically
