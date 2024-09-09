@@ -40,6 +40,40 @@ module ApolloFederation
       EXECUTE_FIELD = 'execute_field'
       EXECUTE_FIELD_LAZY = 'execute_field_lazy'
 
+      def execute_multiplex(multiplex:)
+        ApolloFederation::Tracing::Tracer.execute_multiplex(multiplex: multiplex) { yield }
+      end
+
+      def execute_query_lazy(query:, multiplex:)
+        ApolloFederation::Tracing::Tracer.execute_query_lazy(query: query, multiplex: multiplex) { yield }
+      end
+
+      def execute_field(field:, query:, ast_node:, arguments:, object:)
+        ApolloFederation::Tracing::Tracer.execute_field(
+          field: field,
+          query: query,
+          ast_node: ast_node,
+          arguments: arguments,
+          object: object,
+          owner: field.owner,
+          path: query.context[:current_path],
+        ) { yield }
+      end
+
+      def execute_field_lazy(field:, query:, ast_node:, arguments:, object:)
+        ApolloFederation::Tracing::Tracer.execute_field_lazy(
+          field: field,
+          query: query,
+          ast_node: ast_node,
+          arguments: arguments,
+          object: object,
+          owner: field.owner,
+          path: query.context[:current_path],
+        ) { yield }
+      end
+
+      # The method below was used by older versions of graphql-ruby.
+      # After graphq-ruby 2.3.0 the trace modules should respond to specific methods such as `execute_field` above.
       def self.trace(key, data, &block)
         case key
         when EXECUTE_MULTIPLEX

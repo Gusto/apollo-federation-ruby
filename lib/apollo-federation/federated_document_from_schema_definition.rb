@@ -69,7 +69,7 @@ module ApolloFederation
     def build_type_definition_nodes(types)
       non_federation_types = types.select do |type|
         if query_type?(type)
-          !warden.fields(type).all? { |field| FEDERATION_QUERY_FIELDS.include?(field.graphql_name) }
+          !fields_for_type(type).all? { |field| FEDERATION_QUERY_FIELDS.include?(field.graphql_name) }
         else
           !FEDERATION_TYPES.include?(type.graphql_name)
         end
@@ -79,8 +79,23 @@ module ApolloFederation
 
     private
 
+    def fields_for_type(type)
+      return warden.fields(type) if use_warden?
+
+      @types.fields(type)
+    end
+
     def query_type?(type)
-      type == warden.root_type_for_operation('query')
+      return type == warden.root_type_for_operation('query') if use_warden?
+
+      type == @types.query_root
+    end
+
+    # graphql-ruby 2.3.8 removed the warden definition from a number of places:
+    # https://github.com/rmosolgo/graphql-ruby/compare/v2.3.7...v2.3.8#diff-e9dd0d295a58b66fabd1cf717040de5a78ade0feac6aeabae5247b5785c029ab
+    # The internal usage of `warden` was replaced with `types` in many cases.
+    def use_warden?
+      Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('2.3.8')
     end
 
     def merge_directives(node, type)
