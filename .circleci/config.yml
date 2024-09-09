@@ -9,14 +9,14 @@ commands:
       - restore_cache:
           name: Restore Ruby Package Cache
           keys:
-            - v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile" }}
+            - v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "apollo-federation.gemspec" }}-{{ checksum "Gemfile" }}
       - run:
           name: Install base Ruby dependencies
           command: |
             bundle install --jobs=1 --retry=3 --path=vendor/bundle
       - save_cache:
           name: Save Ruby Package Cache
-          key: v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile" }}
+          key: v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "apollo-federation.gemspec" }}-{{ checksum "Gemfile" }}
           paths:
             - ./vendor/bundle
   appraisal-install:
@@ -31,7 +31,7 @@ commands:
       - restore_cache:
           name: Restore Appraisal package cache
           keys:
-            - v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile" }}
+            - v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "apollo-federation.gemspec" }}-{{ checksum "current_appraisal.gemfile" }}
       - run:
           name: Install appraisal dependencies
           # Appraisal by default will install dependencies under `gemfiles/vendor/bundle`, so if we want
@@ -40,7 +40,7 @@ commands:
             bundle exec appraisal << parameters.appraisal >> bundle install --jobs=1 --retry=3 --path=../vendor/bundle
       - save_cache:
           name: Save Appraisal package cache
-          key: v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile" }}
+          key: v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "apollo-federation.gemspec" }}-{{ checksum "current_appraisal.gemfile" }}
           paths:
             - ./vendor/bundle
 
