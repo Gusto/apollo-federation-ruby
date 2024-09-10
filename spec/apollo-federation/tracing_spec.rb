@@ -211,15 +211,17 @@ RSpec.describe ApolloFederation::Tracing do
       end
     end
 
-    class Lazy
-      def initialize(value = 'lazy_value')
-        @value = value
+    describe 'lazy values' do
+      let(:lazy_class) do
+        Class.new do
+          def initialize(value = 'lazy_value')
+            @value = value
+          end
+
+          attr_reader :value
+        end
       end
 
-      attr_reader :value
-    end
-
-    describe 'lazy values' do
       let(:schema) do
         item_obj = Class.new(GraphQL::Schema::Object) do
           graphql_name 'Item'
@@ -266,6 +268,10 @@ RSpec.describe ApolloFederation::Tracing do
           query query_obj
           lazy_resolve(Lazy, :value)
         end
+      end
+
+      before do
+        stub_const('Lazy', lazy_class)
       end
 
       it 'works with lazy values' do
