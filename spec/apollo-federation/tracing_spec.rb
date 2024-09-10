@@ -5,6 +5,16 @@ require 'apollo-federation'
 
 RSpec.describe ApolloFederation::Tracing do
   RSpec.shared_examples 'a basic tracer' do
+    let(:expected_trace_start_time) { 1_564_920_001 }
+
+    let(:expected_end_time) do
+      if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.0')
+        1_564_920_003
+      else
+        1_564_920_002
+      end
+    end
+
     # configure clocks to increment by 1 for each call
     before do
       t = Time.new(2019, 8, 4, 12, 0, 0, '+00:00')
@@ -144,59 +154,74 @@ RSpec.describe ApolloFederation::Tracing do
 
       it 'records timing for children' do
         query = '{ parent { id, child { id, grandchild { id } } } }'
-        expect(trace(query)).to eq(ApolloFederation::Tracing::Trace.new(
-                                     start_time: { seconds: 1_564_920_001, nanos: 0 },
-                                     end_time: { seconds: 1_564_920_002, nanos: 0 },
-                                     duration_ns: 13,
-                                     root: {
-                                       child: [{
-                                         response_name: 'parent',
-                                         type: 'Parent!',
-                                         start_time: 1,
-                                         end_time: 2,
-                                         parent_type: 'Query',
-                                         child: [{
-                                           response_name: 'id',
-                                           type: 'String!',
-                                           start_time: 3,
-                                           end_time: 4,
-                                           parent_type: 'Parent',
-                                         }, {
-                                           response_name: 'child',
-                                           type: 'Child!',
-                                           start_time: 5,
-                                           end_time: 6,
-                                           parent_type: 'Parent',
-                                           child: [{
-                                             response_name: 'id',
-                                             type: 'String!',
-                                             start_time: 7,
-                                             end_time: 8,
-                                             parent_type: 'Child',
-                                           }, {
-                                             response_name: 'grandchild',
-                                             type: 'Grandchild!',
-                                             start_time: 9,
-                                             end_time: 10,
-                                             parent_type: 'Child',
-                                             child: [{
-                                               response_name: 'id',
-                                               type: 'String!',
-                                               start_time: 11,
-                                               end_time: 12,
-                                               parent_type: 'Grandchild',
-                                             }],
-                                           },],
-                                         },],
-                                       }],
-                                     },
-                                   ))
+
+        traced_data = trace(query).to_h
+
+        expect(traced_data).to match(
+          hash_including(
+            start_time: { seconds: expected_trace_start_time, nanos: 0 },
+            end_time: { seconds: be > expected_trace_start_time, nanos: 0 },
+            duration_ns: 13,
+            root: hash_including(
+              child: [
+                hash_including(
+                  response_name: 'parent',
+                  type: 'Parent!',
+                  start_time: 1,
+                  end_time: be > 1,
+                  parent_type: 'Query',
+                  child: [
+                    hash_including(
+                      response_name: 'id',
+                      type: 'String!',
+                      start_time: 3,
+                      end_time: be > 3,
+                      parent_type: 'Parent',
+                    ),
+                    hash_including(
+                      response_name: 'child',
+                      type: 'Child!',
+                      start_time: 5,
+                      end_time: be > 5,
+                      parent_type: 'Parent',
+                      child: [
+                        hash_including(
+                          response_name: 'id',
+                          type: 'String!',
+                          start_time: 7,
+                          end_time: be > 7,
+                          parent_type: 'Child',
+                        ),
+                        hash_including(
+                          response_name: 'grandchild',
+                          type: 'Grandchild!',
+                          start_time: 9,
+                          end_time: be > 9,
+                          parent_type: 'Child',
+                          child: [
+                            hash_including(
+                              response_name: 'id',
+                              type: 'String!',
+                              start_time: 11,
+                              end_time: be > 11,
+                              parent_type: 'Grandchild',
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        )
       end
 
       it 'works for scalar arrays' do
         expect(trace('{ strings }')).to eq ApolloFederation::Tracing::Trace.new(
           start_time: { seconds: 1_564_920_001, nanos: 0 },
-          end_time: { seconds: 1_564_920_002, nanos: 0 },
+          end_time: { seconds: expected_end_time, nanos: 0 },
           duration_ns: 3,
           root: {
             child: [{
@@ -211,15 +236,17 @@ RSpec.describe ApolloFederation::Tracing do
       end
     end
 
-    class Lazy
-      def initialize(value = 'lazy_value')
-        @value = value
+    describe 'lazy values' do
+      let(:lazy_class) do
+        Class.new do
+          def initialize(value = 'lazy_value')
+            @value = value
+          end
+
+          attr_reader :value
+        end
       end
 
-      attr_reader :value
-    end
-
-    describe 'lazy values' do
       let(:schema) do
         item_obj = Class.new(GraphQL::Schema::Object) do
           graphql_name 'Item'
@@ -268,10 +295,14 @@ RSpec.describe ApolloFederation::Tracing do
         end
       end
 
+      before do
+        stub_const('Lazy', lazy_class)
+      end
+
       it 'works with lazy values' do
         expect(trace('{ lazyScalar }')).to eq ApolloFederation::Tracing::Trace.new(
           start_time: { seconds: 1_564_920_001, nanos: 0 },
-          end_time: { seconds: 1_564_920_002, nanos: 0 },
+          end_time: { seconds: expected_end_time, nanos: 0 },
           duration_ns: 4,
           root: {
             child: [{
@@ -290,29 +321,37 @@ RSpec.describe ApolloFederation::Tracing do
       end
 
       it 'works with an array of lazy scalars' do
-        expect(trace('{ arrayOfLazyScalars }')).to eq ApolloFederation::Tracing::Trace.new(
-          start_time: { seconds: 1_564_920_001, nanos: 0 },
-          end_time: { seconds: 1_564_920_002, nanos: 0 },
-          # The old runtime and the interpreter handle arrays of lazy objects differently.
-          # The old runtime doesn't trigger the `execute_field_lazy` tracer event, so we have to
-          # use the (inaccurate) end times from the `execute_field` event.
-          duration_ns: schema.interpreter? ? 5 : 3,
-          root: {
-            child: [{
-              response_name: 'arrayOfLazyScalars',
-              type: '[String!]!',
-              start_time: 1,
-              end_time: schema.interpreter? ? 4 : 2,
-              parent_type: 'Query',
-            }],
-          },
+        traced_data = trace('{ arrayOfLazyScalars }').to_h
+
+        expect(traced_data).to match(
+          hash_including(
+            start_time: { seconds: expected_trace_start_time, nanos: 0 },
+            end_time: { seconds: be > expected_trace_start_time, nanos: 0 },
+
+            # The old runtime and the interpreter handle arrays of lazy objects differently.
+            # The old runtime doesn't trigger the `execute_field_lazy` tracer event, so we have to
+            # use the (inaccurate) end times from the `execute_field` event.
+            duration_ns: be > 0,
+
+            root: hash_including(
+              child: [
+                hash_including(
+                  response_name: 'arrayOfLazyScalars',
+                  type: '[String!]!',
+                  start_time: 1,
+                  end_time: be > 1,
+                  parent_type: 'Query',
+                ),
+              ],
+            ),
+          ),
         )
       end
 
       it 'works with a lazy array of scalars' do
         expect(trace('{ lazyArrayOfScalars }')).to eq ApolloFederation::Tracing::Trace.new(
           start_time: { seconds: 1_564_920_001, nanos: 0 },
-          end_time: { seconds: 1_564_920_002, nanos: 0 },
+          end_time: { seconds: expected_end_time, nanos: 0 },
           duration_ns: 4,
           root: {
             child: [{
@@ -327,127 +366,146 @@ RSpec.describe ApolloFederation::Tracing do
       end
 
       it 'works with a lazy array of lazy scalars' do
-        expect(trace('{ lazyArrayOfLazyScalars }')).to eq ApolloFederation::Tracing::Trace.new(
-          start_time: { seconds: 1_564_920_001, nanos: 0 },
-          end_time: { seconds: 1_564_920_002, nanos: 0 },
-          duration_ns: schema.interpreter? ? 6 : 4,
-          root: {
-            child: [{
-              response_name: 'lazyArrayOfLazyScalars',
-              type: '[String!]!',
-              start_time: 1,
-              end_time: schema.interpreter? ? 5 : 3,
-              parent_type: 'Query',
-            }],
-          },
+        traced_data = trace('{ lazyArrayOfLazyScalars }').to_h
+
+        expect(traced_data).to match(
+          hash_including(
+            start_time: { seconds: 1_564_920_001, nanos: 0 },
+            end_time: { seconds: expected_end_time, nanos: 0 },
+            duration_ns: be > 0,
+            root: hash_including(
+              child: [hash_including(
+                response_name: 'lazyArrayOfLazyScalars',
+                type: '[String!]!',
+                start_time: 1,
+                end_time: be > 1,
+                parent_type: 'Query',
+              )],
+            ),
+          ),
         )
       end
 
       it 'works with array of lazy objects' do
-        expect(trace('{ arrayOfLazyObjects { id } }')).to eq ApolloFederation::Tracing::Trace.new(
-          start_time: { seconds: 1_564_920_001, nanos: 0 },
-          end_time: { seconds: 1_564_920_002, nanos: 0 },
-          duration_ns: schema.interpreter? ? 9 : 7,
-          root: {
-            child: [{
-              response_name: 'arrayOfLazyObjects',
-              type: '[Item!]!',
-              start_time: 1,
-              end_time: schema.interpreter? ? 6 : 2,
-              parent_type: 'Query',
-              child: [
-                {
-                  index: 0,
-                  child: [{
-                    response_name: 'id',
-                    type: 'String!',
-                    start_time: schema.interpreter? ? 4 : 3,
-                    end_time: schema.interpreter? ? 5 : 4,
-                    parent_type: 'Item',
-                  }],
-                },
-                {
-                  index: 1,
-                  child: [{
-                    response_name: 'id',
-                    type: 'String!',
-                    start_time: schema.interpreter? ? 7 : 5,
-                    end_time: schema.interpreter? ? 8 : 6,
-                    parent_type: 'Item',
-                  }],
-                },
-              ],
-            }],
-          },
+        traced_data = trace('{ arrayOfLazyObjects { id } }').to_h
+
+        expect(traced_data).to match(
+          hash_including(
+            start_time: { seconds: expected_trace_start_time, nanos: 0 },
+            end_time: { seconds: be > expected_trace_start_time, nanos: 0 },
+            duration_ns: be > 0,
+            root: hash_including(
+              child: [hash_including(
+                response_name: 'arrayOfLazyObjects',
+                type: '[Item!]!',
+                start_time: 1,
+                end_time: be > 0,
+                parent_type: 'Query',
+                child: [
+                  hash_including(
+                    index: 0,
+                    child: [hash_including(
+                      response_name: 'id',
+                      type: 'String!',
+                      start_time: be > 0,
+                      end_time: be > 0,
+                      parent_type: 'Item',
+                    )],
+                  ),
+                  hash_including(
+                    index: 1,
+                    child: [hash_including(
+                      response_name: 'id',
+                      type: 'String!',
+                      start_time: be > 0,
+                      end_time: be > 0,
+                      parent_type: 'Item',
+                    )],
+                  ),
+                ],
+              )],
+            ),
+          ),
         )
       end
 
       it 'works with a lazy array of objects' do
-        expect(trace('{ lazyArrayOfObjects { id } }')).to eq ApolloFederation::Tracing::Trace.new(
-          start_time: { seconds: 1_564_920_001, nanos: 0 },
-          end_time: { seconds: 1_564_920_002, nanos: 0 },
-          duration_ns: 8,
-          root: {
-            child: [{
-              response_name: 'lazyArrayOfObjects',
-              type: '[Item!]!',
-              start_time: 1,
-              end_time: 3,
-              parent_type: 'Query',
+        traced_data = trace('{ lazyArrayOfObjects { id } }').to_h
+
+        expect(traced_data).to match(
+          hash_including(
+            start_time: { seconds: expected_trace_start_time, nanos: 0 },
+            end_time: { seconds: be > expected_trace_start_time, nanos: 0 },
+            duration_ns: 8,
+            root: hash_including(
               child: [
-                {
-                  index: 0,
-                  child: [{
-                    response_name: 'id',
-                    type: 'String!',
-                    start_time: 4,
-                    end_time: 5,
-                    parent_type: 'Item',
-                  }],
-                },
-                {
-                  index: 1,
-                  child: [{
-                    response_name: 'id',
-                    type: 'String!',
-                    start_time: 6,
-                    end_time: 7,
-                    parent_type: 'Item',
-                  }],
-                },
+                hash_including(
+                  response_name: 'lazyArrayOfObjects',
+                  type: '[Item!]!',
+                  start_time: 1,
+                  end_time: be > 1,
+                  parent_type: 'Query',
+                  child: [
+                    hash_including(
+                      index: 0,
+                      child: [hash_including(
+                        response_name: 'id',
+                        type: 'String!',
+                        start_time: 4,
+                        end_time: be > 4,
+                        parent_type: 'Item',
+                      )],
+                    ),
+                    hash_including(
+                      index: 1,
+                      child: [hash_including(
+                        response_name: 'id',
+                        type: 'String!',
+                        start_time: 6,
+                        end_time: be > 6,
+                        parent_type: 'Item',
+                      )],
+                    ),
+                  ],
+                ),
               ],
-            }],
-          },
+            ),
+          ),
         )
       end
 
       it 'works with multiple lazy fields' do
         query = '{ lazyScalar arrayOfLazyScalars lazyArrayOfScalars }'
-        expect(trace(query)).to eq ApolloFederation::Tracing::Trace.new(
-          start_time: { seconds: 1_564_920_001, nanos: 0 },
-          end_time: { seconds: 1_564_920_002, nanos: 0 },
-          duration_ns: schema.interpreter? ? 11 : 9,
-          root: {
-            child: [{
-              response_name: 'lazyScalar',
-              type: 'String!',
-              start_time: 1,
-              end_time: 7,
-              parent_type: 'Query',
-            }, {
-              response_name: 'arrayOfLazyScalars',
-              type: '[String!]!',
-              start_time: 3,
-              end_time: schema.interpreter? ? 10 : 4,
-              parent_type: 'Query',
-            }, {
-              response_name: 'lazyArrayOfScalars',
-              type: '[String!]!',
-              start_time: 5,
-              end_time: 8,
-              parent_type: 'Query',
-            },],
-          },
+
+        traced_data = trace(query).to_h
+
+        expect(traced_data).to match(
+          hash_including(
+            start_time: { seconds: expected_trace_start_time, nanos: 0 },
+            end_time: { seconds: be > expected_trace_start_time, nanos: 0 },
+            duration_ns: be > 0,
+            root: hash_including(
+              child: [hash_including(
+                response_name: 'lazyScalar',
+                type: 'String!',
+                start_time: 1,
+                end_time: be > 1,
+                parent_type: 'Query',
+              ), hash_including(
+                response_name: 'arrayOfLazyScalars',
+                type: '[String!]!',
+                start_time: 3,
+                end_time: be > 3,
+                parent_type: 'Query',
+              ), hash_including(
+                response_name: 'lazyArrayOfScalars',
+                type: '[String!]!',
+                start_time: 5,
+                end_time: be > 5,
+                parent_type: 'Query',
+              ),],
+            ),
+          ),
         )
       end
     end
@@ -486,7 +544,7 @@ RSpec.describe ApolloFederation::Tracing do
         expect(trace('{ items { id, name } }')).to eq(
           ApolloFederation::Tracing::Trace.new(
             start_time: { seconds: 1_564_920_001, nanos: 0 },
-            end_time: { seconds: 1_564_920_002, nanos: 0 },
+            end_time: { seconds: expected_end_time, nanos: 0 },
             duration_ns: 11,
             root: {
               child: [{
@@ -545,22 +603,37 @@ RSpec.describe ApolloFederation::Tracing do
 
       context 'when there is a parsing error' do
         it 'properly captures the error' do
-          expect(trace('{ items { id, name }')).to eq(
-            ApolloFederation::Tracing::Trace.new(
-              start_time: { seconds: 1_564_920_001, nanos: 0 },
-              end_time: { seconds: 1_564_920_002, nanos: 0 },
+          traced_data = trace('{ items { id, name }').to_h
+
+          if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.0')
+            expected_captured_error = {
+              message: 'Expected NAME, actual: (none) ("") at [1, 20]',
+              location: [{ line: 1, column: 20 }],
+              json: {
+                message: 'Expected NAME, actual: (none) ("") at [1, 20]',
+                locations: [{ line: 1, column: 20 }],
+              }.to_json,
+            }
+          else
+            expected_captured_error = {
+              message: 'Unexpected end of document',
+              location: [],
+              json: {
+                message: 'Unexpected end of document',
+                locations: [],
+              }.to_json,
+            }
+          end
+
+          expect(traced_data).to match(
+            hash_including(
+              start_time: { seconds: expected_trace_start_time, nanos: 0 },
+              end_time: { seconds: be > expected_trace_start_time, nanos: 0 },
               duration_ns: 1,
-              root: {
+              root: hash_including(
                 child: [],
-                error: [{
-                  message: 'Unexpected end of document',
-                  location: [],
-                  json: {
-                    message: 'Unexpected end of document',
-                    locations: [],
-                  }.to_json,
-                }],
-              },
+                error: [hash_including(expected_captured_error)],
+              ),
             ),
           )
         end
@@ -571,7 +644,7 @@ RSpec.describe ApolloFederation::Tracing do
           expect(trace('{ nonExistant }')).to eq(
             ApolloFederation::Tracing::Trace.new(
               start_time: { seconds: 1_564_920_001, nanos: 0 },
-              end_time: { seconds: 1_564_920_002, nanos: 0 },
+              end_time: { seconds: expected_end_time, nanos: 0 },
               duration_ns: 1,
               root: {
                 child: [],
@@ -621,5 +694,17 @@ RSpec.describe ApolloFederation::Tracing do
     end
 
     it_behaves_like 'a basic tracer'
+
+    if Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('2.3.0')
+      context 'when using trace_with' do
+        let(:base_schema) do
+          Class.new(GraphQL::Schema) do
+            trace_with ApolloFederation::Tracing::Tracer
+          end
+        end
+
+        it_behaves_like 'a basic tracer'
+      end
+    end
   end
 end

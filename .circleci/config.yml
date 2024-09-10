@@ -6,25 +6,17 @@ orbs:
 commands:
   bundle-install:
     steps:
-      - run:
-          name: Configure Bundler
-          command: |
-            echo 'export BUNDLER_VERSION=$(cat Gemfile.lock | tail -1 | tr -d " ")' >> $BASH_ENV
-            source $BASH_ENV
-            gem install bundler
       - restore_cache:
           name: Restore Ruby Package Cache
           keys:
-            - v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-            - v6-gem-cache-{{ arch }}-{{ .Branch }}-
-            - v6-gem-cache-{{ arch }}-
+            - v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "apollo-federation.gemspec" }}-{{ checksum "Gemfile" }}
       - run:
           name: Install base Ruby dependencies
           command: |
             bundle install --jobs=1 --retry=3 --path=vendor/bundle
       - save_cache:
           name: Save Ruby Package Cache
-          key: v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "apollo-federation.gemspec" }}-{{ checksum "Gemfile" }}
           paths:
             - ./vendor/bundle
   appraisal-install:
@@ -33,22 +25,22 @@ commands:
         type: string
     steps:
       - run:
-          name: Copy lockfile
+          name: Copy current appraisal gemspec
           command: |
-            bundle exec appraisal << parameters.appraisal >>  "cp \$BUNDLE_GEMFILE.lock current_appraisal.gemfile.lock"
+            bundle exec appraisal << parameters.appraisal >>  "cp \$BUNDLE_GEMFILE current_appraisal.gemfile"
       - restore_cache:
           name: Restore Appraisal package cache
           keys:
-            - v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
-            - v6-gem-cache-{{ arch }}-{{ .Branch }}-
-            - v6-gem-cache-{{ arch }}-
+            - v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "apollo-federation.gemspec" }}-{{ checksum "current_appraisal.gemfile" }}
       - run:
           name: Install appraisal dependencies
+          # Appraisal by default will install dependencies under `gemfiles/vendor/bundle`, so if we want
+          # to have them under `vendor/bundle` we need to specify `../vendor/bundle`
           command: |
             bundle exec appraisal << parameters.appraisal >> bundle install --jobs=1 --retry=3 --path=../vendor/bundle
       - save_cache:
           name: Save Appraisal package cache
-          key: v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
+          key: v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "apollo-federation.gemspec" }}-{{ checksum "current_appraisal.gemfile" }}
           paths:
             - ./vendor/bundle
 
@@ -96,7 +88,14 @@ jobs:
       - appraisal-install:
           appraisal: << parameters.appraisal >>
       - gusto/yarn-install
-      - run: bundle exec appraisal << parameters.appraisal >> yarn test
+      - run: bundle config set path './vendor/bundle'
+      # Tell appraisal to use the common cache under `vendor/bundle` in the main directory
+      # instead of `gemfiles/vendor/bundle`:
+      - run: bundle exec appraisal bundle config set path '../vendor/bundle'
+      # Sometimes graphql servers aren't getting closed quickly enough on CI.
+      # We don't care about it as long as the tests pass.
+      # Let's quit as soon as the tests pass by using `forceExit` flag.
+      - run: bundle exec appraisal << parameters.appraisal >> yarn test --forceExit
       - run: yarn lint
   release:
     docker:
@@ -117,7 +116,7 @@ workflows:
       - ruby-test:
           matrix:
             parameters:
-              appraisal: ['graphql-1.10', 'graphql-1.11', 'graphql-1.12', 'graphql-1.13', 'graphql-2.0']
+              appraisal: ['graphql-1.10', 'graphql-1.11', 'graphql-1.12', 'graphql-1.13', 'graphql-2.0', 'graphql-2.3']
               ruby: ['3.0', '3.1', '3.2']
             exclude:
               - appraisal: 'graphql-1.10'
@@ -129,7 +128,7 @@ workflows:
       - integration-tests:
           matrix:
             parameters:
-              appraisal: ['graphql-1.10', 'graphql-1.11', 'graphql-1.12', 'graphql-1.13', 'graphql-2.0']
+              appraisal: ['graphql-1.10', 'graphql-1.11', 'graphql-1.12', 'graphql-1.13', 'graphql-2.0', 'graphql-2.3']
               ruby: ['3.0', '3.1', '3.2']
             exclude:
               - appraisal: 'graphql-1.10'
