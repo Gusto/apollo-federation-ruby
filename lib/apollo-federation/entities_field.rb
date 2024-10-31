@@ -26,6 +26,7 @@ module ApolloFederation
       end
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def _entities(representations:)
       final_result = Array.new(representations.size)
       grouped_references_with_indices =
@@ -85,6 +86,7 @@ module ApolloFederation
         final_result
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     private
 

@@ -18,6 +18,16 @@ module ApolloFederation
       def inaccessible
         add_directive(name: 'inaccessible')
       end
+
+      def policy(policies)
+        add_directive(
+          name: 'policy',
+          arguments: [
+            name: 'policies',
+            values: policies,
+          ],
+        )
+      end
     end
   end
 end

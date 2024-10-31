@@ -3,12 +3,15 @@ require: rubocop-rspec
 AllCops:
   TargetRubyVersion: 2.3
   DisplayCopNames: true
+  NewCops: disable
   Exclude:
     - 'node_modules/**/*'
     - 'gemfiles/**/*'
     - 'vendor/**/*'
     - lib/apollo-federation/tracing/proto/apollo_pb.rb
 
+Gemspec/DevelopmentDependencies:
+  Enabled: false
 #
 # We prefer trailing commas so that the git diff is reduced when adding elements
 #
@@ -21,8 +24,6 @@ Style/TrailingCommaInArrayLiteral:
 Style/TrailingCommaInHashLiteral:
   Enabled: true
   EnforcedStyleForMultiline: consistent_comma
-Style/BracesAroundHashParameters:
-  EnforcedStyle: context_dependent
 Style/ConditionalAssignment:
   EnforcedStyle: assign_inside_condition
   IncludeTernaryExpressions: false
@@ -38,7 +39,12 @@ Style/NegatedIf:
   Enabled: false
 Style/Documentation:
   Enabled: false
-
+Style/HashAsLastArrayItem:
+  Enabled: false
+Naming/VariableNumber:
+  Enabled: false
+Lint/ConstantDefinitionInBlock:
+  Enabled: false
 Metrics/AbcSize:
   Enabled: false
 Metrics/BlockLength:
@@ -50,11 +56,10 @@ Metrics/ModuleLength:
 Metrics/ParameterLists:
   Max: 5
   CountKeywordArgs: false
-Metrics/LineLength:
+Layout/LineLength:
   Max: 120
   Exclude:
     - lib/apollo-federation/tracing/proto/apollo_pb.rb
-
 Naming/FileName:
   Exclude:
     - 'lib/apollo-federation.rb'
@@ -64,10 +69,21 @@ RSpec/ExampleLength:
   Enabled: false
 RSpec/NestedGroups:
   Enabled: false
-RSpec/FilePath:
+RSpec/SpecFilePathFormat:
   CustomTransform:
     ApolloFederation: apollo-federation
-
+RSpec/RepeatedExampleGroupDescription:
+  Enabled: false
+RSpec/LeakyConstantDeclaration:
+  Enabled: false
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+RSpec/IndexedLet:
+  Enabled: false
+RSpec/EmptyLineAfterExample:
+  Enabled: false
+RSpec/MatchArray:
+  Enabled: false
 # Disabled so we can support Ruby 2.2
 # Rubocop only supports >= 2.3
 Gemspec/RequiredRubyVersion:

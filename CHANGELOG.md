@@ -1,3 +1,24 @@
+# [3.10.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.9.0...v3.10.0) (2024-11-21)
+
+
+### Features
+
+* add support for [@compose](https://github.com/compose)Directive ([#3](https://github.com/mondaycom/apollo-federation-ruby/issues/3)) ([6d7ccf2](https://github.com/mondaycom/apollo-federation-ruby/commit/6d7ccf2e98ead837847ab1b16b44b3b68adbfe84))
+
+# [3.9.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.8.5...v3.9.0) (2024-11-20)
+
+
+### Features
+
+* update google-protobuf ([#291](https://github.com/Gusto/apollo-federation-ruby/issues/291)) ([2deda45](https://github.com/Gusto/apollo-federation-ruby/commit/2deda45fd37b6e7e9749a0be43b83def6963b8b6))
+
+# [3.9.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.8.5...v3.9.0) (2025-02-05)
+
+
+### Features
+
+* drop old ruby; remove appraisals ([#290](https://github.com/Gusto/apollo-federation-ruby/issues/290)) ([9caa715](https://github.com/Gusto/apollo-federation-ruby/commit/9caa7159b16cf813b23bc067ef2d2b33b06501a2))
+
 # [3.10.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.9.0...v3.10.0) (2025-02-05)
 
 
