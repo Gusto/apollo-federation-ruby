@@ -15,13 +15,13 @@ RSpec.describe ApolloFederation::Schema do
       expect(schema.federation_version).to eq('1.0')
     end
 
-    it 'returns the specified version when set to 2.0' do
+    it 'returns the specified version when set to 2.6' do
       schema = Class.new(GraphQL::Schema) do
         include ApolloFederation::Schema
-        federation version: '2.0'
+        federation version: '2.6'
       end
 
-      expect(schema.federation_version).to eq('2.0')
+      expect(schema.federation_version).to eq('2.6')
     end
 
     it 'returns the specified version when set to 2.3' do

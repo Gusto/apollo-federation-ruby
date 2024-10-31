@@ -302,6 +302,20 @@ class User < BaseObject
 end
 ```
 
+### The `@policy` directive (Apollo Federation v2)
+
+[Apollo documentation](https://www.apollographql.com/docs/federation/federated-types/federated-directives/#policy)
+
+Call `policy` within your class definition or pass the `policy:` option to your field definition:
+
+```ruby
+class Product < BaseObject
+  policy policies: [["stock:read"]]
+  field :id, ID, null: false
+  field :inStock, Boolean, null: false, policy: { policies: [["stock:read"]] }
+end
+```
+
 ### Field set syntax
 
 Field sets can be either strings encoded with the Apollo Field Set [syntax]((https://www.apollographql.com/docs/apollo-server/federation/federation-spec/#scalar-_fieldset)) or arrays, hashes and snake case symbols that follow the graphql-ruby conventions:

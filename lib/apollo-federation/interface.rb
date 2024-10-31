@@ -26,6 +26,16 @@ module ApolloFederation
         add_directive(name: 'tag', arguments: [name: 'name', values: name])
       end
 
+      def policy(policies)
+        add_directive(
+          name: "policy",
+          arguments: [
+            name: 'policies',
+            values: policies,
+          ]
+        )
+      end
+
       def key(fields:, camelize: true)
         add_directive(
           name: 'key',
