@@ -80,11 +80,11 @@ module ApolloFederation
 
       if policy
         add_directive(
-          name: "policy",
+          name: 'policy',
           arguments: [
             name: 'policies',
-            values: policy[:policies]
-          ]
+            values: policy[:policies],
+          ],
         )
       end
 

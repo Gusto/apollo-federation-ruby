@@ -34,11 +34,11 @@ module ApolloFederation
 
       def policy(policies)
         add_directive(
-          name: "policy",
+          name: 'policy',
           arguments: [
             name: 'policies',
             values: policies,
-          ]
+          ],
         )
       end
 

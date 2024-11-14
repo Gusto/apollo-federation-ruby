@@ -295,7 +295,7 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       expect(execute_sdl(schema)).to match_sdl(
-                                       <<~GRAPHQL,
+        <<~GRAPHQL,
           extend schema
             @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@inaccessible", "@policy", "@tag"])
 
@@ -308,7 +308,7 @@ RSpec.describe ApolloFederation::ServiceField do
             position: Position
           }
         GRAPHQL
-                                     )
+      )
     end
 
     context 'with a custom link namespace provided' do
@@ -689,7 +689,7 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       expect(execute_sdl(schema)).to match_sdl(
-                                       <<~GRAPHQL,
+        <<~GRAPHQL,
           extend schema
             @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@inaccessible", "@policy", "@tag"])
 
@@ -701,7 +701,7 @@ RSpec.describe ApolloFederation::ServiceField do
             upc: String!
           }
         GRAPHQL
-                                     )
+      )
     end
 
     it 'returns valid SDL for interface types' do
@@ -909,7 +909,7 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       expect(execute_sdl(schema)).to match_sdl(
-                                       <<~GRAPHQL,
+        <<~GRAPHQL,
           extend schema
             @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@inaccessible", "@policy", "@tag"])
 
@@ -918,7 +918,7 @@ RSpec.describe ApolloFederation::ServiceField do
             PEN
           }
         GRAPHQL
-                                     )
+      )
     end
 
     it 'returns valid SDL for inaccessible enum types' do
@@ -1033,7 +1033,7 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       expect(execute_sdl(schema)).to match_sdl(
-                                       <<~GRAPHQL,
+        <<~GRAPHQL,
           extend schema
             @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@inaccessible", "@policy", "@tag"])
 
@@ -1047,7 +1047,7 @@ RSpec.describe ApolloFederation::ServiceField do
 
           scalar UPC @policy(policies: [["private"]])
         GRAPHQL
-                                     )
+      )
     end
 
     it 'returns valid SDL for inaccessible scalar types' do
@@ -1591,7 +1591,7 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       expect(execute_sdl(schema)).to match_sdl(
-                                       <<~GRAPHQL,
+        <<~GRAPHQL,
           extend schema
             @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@inaccessible", "@policy", "@tag"])
 
@@ -1600,7 +1600,7 @@ RSpec.describe ApolloFederation::ServiceField do
             isStock: Boolean! @policy(policies: [["private"]])
           }
         GRAPHQL
-                                     )
+      )
     end
 
     it 'returns valid SDL for @interfaceObject directives' do
