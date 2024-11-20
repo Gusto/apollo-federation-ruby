@@ -1,12 +1,9 @@
 name: "Semantic Pull Request"
 
 on:
-  pull_request_target:
-    types:
-      - opened
-      - edited
-      - synchronize
-      - reopened
+  pull_request:
+    branches:
+      - main
 
 permissions:
   pull-requests: write
@@ -44,3 +41,76 @@ jobs:
         with:
           header: pr-title-lint-error
           delete: true
+
+  semantic-versioning:
+    name: Report semantic changelog
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run install
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
+      - name: Check semantic versioning
+        id: semantic-release
+        run: |
+          GITHUB_REF=${{ github.head_ref }}
+          npx semantic-release --no-ci --dry-run --plugins @semantic-release/commit-analyzer,@semantic-release/release-notes-generator --branches ${{ github.head_ref }} > output.txt
+          OUTPUT=$(cat output.txt | base64 -w 0)
+          echo "::set-output name=releaseNote::$OUTPUT"
+
+      - name: Report semantic versioning
+        uses: actions/github-script@v3
+        if: ${{ steps.semantic-release.outputs.releaseNote != '' }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // build release note
+            const semanticReleaseOutput = Buffer.from('${{ steps.semantic-release.outputs.releaseNote }}', 'base64').toString('utf8');
+            const semanticReleaseLogMatch = /^[[0-9:\sAMPM]+\]\s\[semantic-release\].*$/;
+            const lines = semanticReleaseOutput.split('\n');
+            const lastSemanticReleaseLogIndex = [...lines]
+                .reverse()
+                .findIndex((line) => line.match(semanticReleaseLogMatch));
+            
+            const releaseNoteIndex = lines.length - lastSemanticReleaseLogIndex;
+            const releaseNote = lines.slice(releaseNoteIndex);
+            
+            let res = releaseNote.join('\n');
+            if (!releaseNote.length || !res) {
+                res = '### No release note would be generated.';
+            }
+            
+            const SEMANTIC_RELEASE_BODY_HEADER = '## 📝 Semantic Release Report';
+            const body = [SEMANTIC_RELEASE_BODY_HEADER, res].join('\n');
+            
+            // get last comment
+            const comments = await github.issues.listComments({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo
+            });
+            
+            // find comments to delete
+            const commentsToDelete = comments.data.filter((comment) =>
+                comment.body.startsWith(SEMANTIC_RELEASE_BODY_HEADER)
+            );
+            
+            // delete comments
+            const prms = commentsToDelete.map((comment) =>
+                github.issues.deleteComment({
+                    comment_id: comment.id,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo
+                })
+            );
+            
+            await Promise.all(prms);
+            
+            // create new comment for release note
+            github.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body
+            });
