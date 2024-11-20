@@ -87,7 +87,7 @@ jobs:
     env:
       BUNDLE_APP_CONFIG: .bundle
       GEM_HOST_API_KEY: ${{ secrets.GEM_HOST_API_KEY }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
