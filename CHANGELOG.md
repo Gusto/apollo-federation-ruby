@@ -1,3 +1,10 @@
+# [3.9.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.8.5...v3.9.0) (2024-11-20)
+
+
+### Features
+
+* add [@policy](https://github.com/policy) and respect federation_version in link ([410ef6c](https://github.com/mondaycom/apollo-federation-ruby/commit/410ef6c99efc5e33b9c0cdd29161fc7451ae3a88))
+
 ## [3.8.5](https://github.com/Gusto/apollo-federation-ruby/compare/v3.8.4...v3.8.5) (2024-04-02)
 
 
