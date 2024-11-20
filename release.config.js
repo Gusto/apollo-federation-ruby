@@ -13,6 +13,7 @@ module.exports = {
       'semantic-release-rubygem',
       {
         updateGemfileLock: 'bundle install',
+        gemPublish: false,
       },
     ],
     [

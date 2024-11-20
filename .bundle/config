@@ -1,3 +1,0 @@
----
-BUNDLE_BUILD__JARO_WINKLER: "--with-cflags=-Wno-error=incompatible-function-pointer-types"
-BUNDLE_BUILD__DEBASE: "--with-cflags=-Wno-error=incompatible-function-pointer-types"

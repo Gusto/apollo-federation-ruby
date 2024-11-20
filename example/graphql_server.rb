@@ -2,6 +2,7 @@
 
 require 'rack'
 require 'json'
+require 'ostruct'
 require 'graphql'
 require 'pry-byebug'
 require 'apollo-federation'

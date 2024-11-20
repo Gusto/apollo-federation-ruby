@@ -1,0 +1,99 @@
+name: Main
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  ruby-lint:
+    runs-on: ubuntu-latest
+    env:
+      BUNDLE_APP_CONFIG: .bundle
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+      - run: bundle exec rubocop
+  ruby-test:
+    runs-on: ubuntu-latest
+    env:
+      BUNDLE_APP_CONFIG: .bundle
+    strategy:
+      fail-fast: false
+      matrix:
+        appraisal: [ 'graphql-1.10', 'graphql-1.11', 'graphql-1.12', 'graphql-1.13', 'graphql-2.0' ]
+        ruby: [ '3.0', '3.1', '3.2' ]
+        exclude:
+          - appraisal: 'graphql-1.10'
+            ruby: '3.2'
+          - appraisal: 'graphql-1.11'
+            ruby: '3.2'
+          - appraisal: 'graphql-1.12'
+            ruby: '3.2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Run appraisal install
+        uses: ./.github/actions/appraisal-install
+        with:
+          appraisal: ${{ matrix.appraisal }}
+      - run: bundle config list
+      - run: bundle exec appraisal ${{ matrix.appraisal }} bundle config list
+      - run: bundle exec appraisal ${{ matrix.appraisal }} rake
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    env:
+      BUNDLE_APP_CONFIG: .bundle
+    strategy:
+      fail-fast: false
+      matrix:
+        appraisal: [ 'graphql-1.10', 'graphql-1.11', 'graphql-1.12', 'graphql-1.13', 'graphql-2.0' ]
+        ruby: [ '3.0', '3.1', '3.2' ]
+        exclude:
+          - appraisal: 'graphql-1.10'
+            ruby: '3.2'
+          - appraisal: 'graphql-1.11'
+            ruby: '3.2'
+          - appraisal: 'graphql-1.12'
+            ruby: '3.2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Run appraisal install
+        uses: ./.github/actions/appraisal-install
+        with:
+          appraisal: ${{ matrix.appraisal }}
+      - name: Run install
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
+      - run: bundle exec appraisal ${{ matrix.appraisal }} yarn test
+      - run: yarn lint
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [ ruby-lint, ruby-test, integration-tests ]
+    if: github.ref == 'refs/heads/main'
+    env:
+      BUNDLE_APP_CONFIG: .bundle
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+      - name: Run install
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
+      - run: npx semantic-release
