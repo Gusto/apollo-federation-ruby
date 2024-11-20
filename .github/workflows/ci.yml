@@ -99,3 +99,5 @@ jobs:
         with:
           cmd: install
       - run: npx semantic-release
+        env:
+          BUNDLE_FROZEN: false
