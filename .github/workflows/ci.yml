@@ -86,6 +86,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     env:
       BUNDLE_APP_CONFIG: .bundle
+      GEM_HOST_API_KEY: ${{ secrets.GEM_HOST_API_KEY }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
