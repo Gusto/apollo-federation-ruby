@@ -100,8 +100,8 @@ module ApolloFederation
     end
 
     def directive_name(directive)
-      if schema.federation_2? && !Schema::IMPORTED_DIRECTIVES.include?(directive[:name])
-        "#{schema.link_namespace}__#{directive[:name]}"
+      if schema.federation_2? && schema.all_links.none? { |link| link[:import]&.include?(directive[:name]) }
+        "#{schema.default_link_namespace}__#{directive[:name]}"
       else
         directive[:name]
       end
