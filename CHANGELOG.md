@@ -1,3 +1,10 @@
+# [3.10.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.9.0...v3.10.0) (2024-11-21)
+
+
+### Features
+
+* add support for [@compose](https://github.com/compose)Directive ([#3](https://github.com/mondaycom/apollo-federation-ruby/issues/3)) ([6d7ccf2](https://github.com/mondaycom/apollo-federation-ruby/commit/6d7ccf2e98ead837847ab1b16b44b3b68adbfe84))
+
 # [3.9.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.8.5...v3.9.0) (2024-11-20)
 
 
