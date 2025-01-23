@@ -27,35 +27,10 @@ commands:
           key: v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ./vendor/bundle
-  appraisal-install:
-    parameters:
-      appraisal:
-        type: string
-    steps:
-      - run:
-          name: Copy lockfile
-          command: |
-            bundle exec appraisal << parameters.appraisal >>  "cp \$BUNDLE_GEMFILE.lock current_appraisal.gemfile.lock"
-      - restore_cache:
-          name: Restore Appraisal package cache
-          keys:
-            - v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
-            - v6-gem-cache-{{ arch }}-{{ .Branch }}-
-            - v6-gem-cache-{{ arch }}-
-      - run:
-          name: Install appraisal dependencies
-          command: |
-            bundle exec appraisal << parameters.appraisal >> bundle install --jobs=1 --retry=3 --path=../vendor/bundle
-      - save_cache:
-          name: Save Appraisal package cache
-          key: v6-gem-cache-{{ arch }}-{{ .Branch }}-{{ checksum "current_appraisal.gemfile.lock" }}
-          paths:
-            - ./vendor/bundle
-
 jobs:
   ruby-lint:
     docker:
-      - image: cimg/ruby:3.3-node
+      - image: cimg/ruby:<< parameters.ruby >>-node
     environment:
       BUNDLE_APP_CONFIG: .bundle
     steps:
@@ -64,8 +39,6 @@ jobs:
       - run: bundle exec rubocop
   ruby-test:
     parameters:
-      appraisal:
-        type: string
       ruby:
         type: string
     docker:
@@ -75,15 +48,10 @@ jobs:
     steps:
       - checkout
       - bundle-install
-      - appraisal-install:
-          appraisal: << parameters.appraisal >>
       - run: bundle config list
-      - run: bundle exec appraisal << parameters.appraisal >> bundle config list
-      - run: bundle exec appraisal << parameters.appraisal >> rake
+      - run: bundle exec rspec
   integration-tests:
     parameters:
-      appraisal:
-        type: string
       ruby:
         type: string
     docker:
@@ -93,10 +61,8 @@ jobs:
     steps:
       - checkout
       - bundle-install
-      - appraisal-install:
-          appraisal: << parameters.appraisal >>
       - gusto/yarn-install
-      - run: bundle exec appraisal << parameters.appraisal >> yarn test
+      - run: bundle exec yarn test
       - run: yarn lint
   release:
     docker:
@@ -117,31 +83,11 @@ workflows:
       - ruby-test:
           matrix:
             parameters:
-              appraisal: ['graphql-1.13', 'graphql-2.0']
               ruby: ['3.2', '3.3', '3.4']
       - integration-tests:
           matrix:
             parameters:
-              appraisal: [ 'graphql-1.13', 'graphql-2.0']
               ruby: ['3.2', '3.3', '3.4']
-              - appraisal: 'graphql-1.10'
-                ruby: '3.2'
-              - appraisal: 'graphql-1.10'
-                ruby: '3.3'
-              - appraisal: 'graphql-1.10'
-                ruby: '3.4'
-              - appraisal: 'graphql-1.11'
-                ruby: '3.2'
-              - appraisal: 'graphql-1.11'
-                ruby: '3.3'
-              - appraisal: 'graphql-1.11'
-                ruby: '3.4'
-              - appraisal: 'graphql-1.12'
-                ruby: '3.2'
-              - appraisal: 'graphql-1.12'
-                ruby: '3.3'
-              - appraisal: 'graphql-1.12'
-                ruby: '3.4'
       - release:
           requires:
             - ruby-lint
