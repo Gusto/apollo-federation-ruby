@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'google-protobuf', '< 5'
 
-  spec.add_development_dependency 'actionpack'
+  spec.add_development_dependency 'actionpack', '~> 7'
   spec.add_development_dependency 'appraisal'
   spec.add_development_dependency 'debug'
   spec.add_development_dependency 'pry-byebug'
