@@ -63,6 +63,8 @@ RSpec/ExampleLength:
   Enabled: false
 RSpec/NestedGroups:
   Enabled: false
+RSpec/RepeatedExampleGroupDescription:
+  Enabled: false
 RSpec/FilePath:
   CustomTransform:
     ApolloFederation: apollo-federation
