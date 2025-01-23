@@ -158,7 +158,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  actionpack (~> 7)
+  actionpack (~> 7.2)
   apollo-federation!
   appraisal
   debug
