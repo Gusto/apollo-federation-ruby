@@ -29,6 +29,9 @@ commands:
             - ./vendor/bundle
 jobs:
   ruby-lint:
+    parameters:
+      ruby:
+        type: string
     docker:
       - image: cimg/ruby:<< parameters.ruby >>-node
     environment:
@@ -79,7 +82,10 @@ workflows:
   version: 2
   main:
     jobs:
-      - ruby-lint
+      - ruby-lint:
+          matrix:
+            parameters:
+              ruby: ['3.2', '3.3', '3.4']
       - ruby-test:
           matrix:
             parameters:
