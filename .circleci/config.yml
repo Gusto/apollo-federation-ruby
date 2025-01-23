@@ -117,33 +117,13 @@ workflows:
       - ruby-test:
           matrix:
             parameters:
-              appraisal: ['graphql-1.10', 'graphql-1.11', 'graphql-1.12', 'graphql-1.13', 'graphql-2.0']
-              ruby: ['3.1', '3.2', '3.3', '3.4']
-            exclude:
-              - appraisal: 'graphql-1.10'
-                ruby: '3.2'
-              - appraisal: 'graphql-1.10'
-                ruby: '3.3'
-              - appraisal: 'graphql-1.10'
-                ruby: '3.4'
-              - appraisal: 'graphql-1.11'
-                ruby: '3.2'
-              - appraisal: 'graphql-1.11'
-                ruby: '3.3'
-              - appraisal: 'graphql-1.11'
-                ruby: '3.4'
-              - appraisal: 'graphql-1.12'
-                ruby: '3.2'
-              - appraisal: 'graphql-1.12'
-                ruby: '3.3'
-              - appraisal: 'graphql-1.12'
-                ruby: '3.4'
+              appraisal: ['graphql-1.13', 'graphql-2.0']
+              ruby: ['3.2', '3.3', '3.4']
       - integration-tests:
           matrix:
             parameters:
-              appraisal: ['graphql-1.10', 'graphql-1.11', 'graphql-1.12', 'graphql-1.13', 'graphql-2.0']
-              ruby: ['3.1', '3.2', '3.3', '3.4']
-            exclude:
+              appraisal: [ 'graphql-1.13', 'graphql-2.0']
+              ruby: ['3.2', '3.3', '3.4']
               - appraisal: 'graphql-1.10'
                 ruby: '3.2'
               - appraisal: 'graphql-1.10'
