@@ -100,7 +100,7 @@ jobs:
       - checkout
       - bundle-install
       - yarn-install
-      - run: npx semantic-release
+      - run: yarn semantic-release
 
 workflows:
   version: 2
