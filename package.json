@@ -3,6 +3,10 @@
   "private": true,
   "main": "index.js",
   "license": "MIT",
+  "engines": {
+    "node": "22.11.0",
+    "yarn": "4.5.3"
+  },
   "scripts": {
     "circle:execute": "circleci config process ./.circleci/config.yml > .circleci/processed-config.yml && circleci local execute -c .circleci/processed-config.yml --job",
     "start-gateway": "nodemon --delay 2 ./example/gateway.js",
