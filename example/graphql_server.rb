@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rack'
+require 'rackup/handler/webrick'
 require 'json'
 require 'graphql'
 require 'pry-byebug'
@@ -34,7 +35,7 @@ class GraphQLServer
       end
     end.parse!
 
-    Rack::Handler::WEBrick.run(GraphQLServer.new(schema), **handler_options) do
+    Rackup::Handler::WEBrick.run(GraphQLServer.new(schema), **handler_options) do
       if test_mode
         $stdout.puts '_READY_'
         $stdout.flush
