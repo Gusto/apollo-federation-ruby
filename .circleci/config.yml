@@ -14,10 +14,14 @@ commands:
         name: Restore Yarn Package Cache
     - node/install:
         node-version: '22.11.0'
-    - node/install-yarn:
-        version: '4.5.3'
     - run:
-        command: yarn && git diff --exit-code yarn.lock
+        name: Enable Corepack
+        command: corepack enable --install-directory="/home/circleci/bin"
+    - run:
+        name: Set Yarn Version
+        command: corepack prepare yarn@4.5.3 --activate
+    - run:
+        command: yarn install && git diff --exit-code yarn.lock
         name: Install dependencies
     - save_cache:
         key: yarn-packages-{{ checksum "yarn.lock" }}
