@@ -4,6 +4,21 @@ orbs:
   gusto: gusto/gusto@0.0.13
 
 commands:
+  yarn-install:
+    steps:
+    - checkout
+    - restore_cache:
+        keys:
+          - yarn-packages-{{ checksum "yarn.lock" }}
+        name: Restore Yarn Package Cache
+    - run:
+        command: yarn && git diff --exit-code yarn.lock
+        name: Install dependencies
+    - save_cache:
+        key: yarn-packages-{{ checksum "yarn.lock" }}
+        name: Save Yarn Package Cache
+        paths:
+          - ~/.cache/yarn
   bundle-install:
     steps:
       - run:
@@ -64,7 +79,7 @@ jobs:
     steps:
       - checkout
       - bundle-install
-      - gusto/yarn-install
+      - yarn-install
       - run: bundle exec yarn test
       - run: yarn lint
   release:
@@ -75,7 +90,7 @@ jobs:
     steps:
       - checkout
       - bundle-install
-      - gusto/yarn-install
+      - yarn-install
       - run: npx semantic-release
 
 workflows:
