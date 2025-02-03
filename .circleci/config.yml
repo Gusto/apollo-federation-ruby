@@ -12,6 +12,9 @@ commands:
           - yarn-packages-{{ checksum "yarn.lock" }}
         name: Restore Yarn Package Cache
     - run:
+        name: Install Yarn 4.5.3
+        command: npm install -g yarn@4.5.3
+    - run:
         command: yarn && git diff --exit-code yarn.lock
         name: Install dependencies
     - save_cache:
