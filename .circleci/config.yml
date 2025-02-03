@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   gusto: gusto/gusto@0.0.13
+  node: circleci/node@7.0.0
 
 commands:
   yarn-install:
@@ -11,9 +12,10 @@ commands:
         keys:
           - yarn-packages-{{ checksum "yarn.lock" }}
         name: Restore Yarn Package Cache
-    - run:
-        name: Install Yarn 4.5.3
-        command: npm install -g yarn@4.5.3
+    - node/install:
+        node-version: '22.11.0'
+    - node/install-yarn:
+        version: '4.5.3'
     - run:
         command: yarn && git diff --exit-code yarn.lock
         name: Install dependencies
