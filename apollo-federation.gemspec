@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'graphql'
 
-  spec.add_dependency 'google-protobuf', '~> 3.22'
+  spec.add_runtime_dependency 'google-protobuf', '< 5'
 
   spec.add_development_dependency 'actionpack'
   spec.add_development_dependency 'debug'

@@ -8,6 +8,7 @@ AllCops:
     - 'node_modules/**/*'
     - 'gemfiles/**/*'
     - 'vendor/**/*'
+    - lib/apollo-federation/tracing/proto/apollo_pb.rb
 
 Gemspec/DevelopmentDependencies:
   Enabled: false
