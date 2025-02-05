@@ -7,6 +7,7 @@ AllCops:
     - 'node_modules/**/*'
     - 'gemfiles/**/*'
     - 'vendor/**/*'
+    - lib/apollo-federation/tracing/proto/apollo_pb.rb
 
 #
 # We prefer trailing commas so that the git diff is reduced when adding elements
