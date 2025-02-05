@@ -11,7 +11,7 @@ GIT
 PATH
   remote: .
   specs:
-    apollo-federation (3.8.5)
+    apollo-federation (3.9.0)
       google-protobuf (~> 3.22)
       graphql (>= 1.10.14)
 
@@ -42,28 +42,21 @@ GEM
     coderay (1.1.3)
     concurrent-ruby (1.2.2)
     crass (1.0.6)
-    debase (0.2.5.beta2)
-      debase-ruby_core_source (>= 0.10.12)
-    debase-ruby_core_source (3.2.0)
     diff-lcs (1.5.0)
     erubi (1.12.0)
-    google-protobuf (3.22.2-arm64-darwin)
-    google-protobuf (3.22.2-x86_64-darwin)
-    google-protobuf (3.22.2-x86_64-linux)
+    google-protobuf (3.22.2)
     graphql (2.0.19)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
-    jaro_winkler (1.5.4)
+    jaro_winkler (1.5.6)
     loofah (2.19.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     method_source (1.0.0)
+    mini_portile2 (2.8.8)
     minitest (5.18.0)
-    nokogiri (1.14.2-arm64-darwin)
-      racc (~> 1.4)
-    nokogiri (1.14.2-x86_64-darwin)
-      racc (~> 1.4)
-    nokogiri (1.14.2-x86_64-linux)
+    nokogiri (1.14.2)
+      mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
     parallel (1.22.1)
     parser (3.2.1.1)
@@ -119,6 +112,7 @@ GEM
 PLATFORMS
   arm64-darwin-21
   arm64-darwin-22
+  arm64-darwin-23
   x86_64-darwin-20
   x86_64-darwin-21
   x86_64-darwin-22
@@ -128,7 +122,6 @@ DEPENDENCIES
   actionpack
   apollo-federation!
   appraisal!
-  debase (= 0.2.5.beta2)
   graphql (~> 2.0.0)
   pry-byebug
   rack
