@@ -79,6 +79,10 @@ module ApolloFederation
 
     private
 
+    def warden
+      @warden ||= GraphQL::Schema::Warden.new(context: {}, schema: schema)
+    end
+
     def query_type?(type)
       type == warden.root_type_for_operation('query')
     end
