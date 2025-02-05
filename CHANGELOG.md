@@ -1,3 +1,10 @@
+# [3.9.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.8.5...v3.9.0) (2025-02-05)
+
+
+### Features
+
+* drop old ruby; remove appraisals ([#290](https://github.com/Gusto/apollo-federation-ruby/issues/290)) ([9caa715](https://github.com/Gusto/apollo-federation-ruby/commit/9caa7159b16cf813b23bc067ef2d2b33b06501a2))
+
 ## [3.8.5](https://github.com/Gusto/apollo-federation-ruby/compare/v3.8.4...v3.8.5) (2024-04-02)
 
 
