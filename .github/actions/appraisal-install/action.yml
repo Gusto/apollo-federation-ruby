@@ -1,0 +1,23 @@
+name: Appraisal install
+inputs:
+  appraisal:
+    description: "Appraisal version to install"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Copy lockfile
+      shell: bash
+      run: bundle exec appraisal ${{ inputs.appraisal }} "cp \$BUNDLE_GEMFILE.lock current_appraisal.gemfile.lock"
+    - name: Appraisal package cache
+      uses: actions/cache@v4
+      with:
+        key: v6-gem-cache-${{ runner.os }}-${{ github.ref }}-${{ hashFiles('current_appraisal.gemfile.lock') }}
+        path: vendor/bundle
+        restore-keys: |
+          v6-gem-cache-${{ runner.os }}-${{ github.ref }}-
+          v6-gem-cache-${{ runner.os }}-
+    - name: Install appraisal dependencies
+      shell: bash
+      run: bundle exec appraisal ${{ inputs.appraisal }} bundle install --jobs=1 --retry=3 --path=../vendor/bundle
