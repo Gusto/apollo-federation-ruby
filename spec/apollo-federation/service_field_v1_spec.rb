@@ -54,6 +54,37 @@ RSpec.describe ApolloFederation::ServiceField do
           GRAPHQL
         )
       end
+
+      it 'returns valid SDL for @key directives' do
+        product = Class.new(base_object) do
+          graphql_name 'Product'
+          key fields: :upc
+
+          field :upc, String, null: false
+        end
+
+        query_obj = Class.new(base_object) do
+          graphql_name 'Query'
+
+          field :product, product, null: true
+        end
+
+        schema = Class.new(base_schema) do
+          query query_obj
+        end
+
+        expect(execute_sdl(schema)).to match_sdl(
+          <<~GRAPHQL,
+            type Product @key(fields: "upc") {
+              upc: String!
+            }
+
+            type Query {
+              product: Product
+            }
+          GRAPHQL
+        )
+      end
     end
 
     context 'when a Query object is not provided' do
@@ -73,6 +104,27 @@ RSpec.describe ApolloFederation::ServiceField do
             """
             type _Service {
               sdl: String
+            }
+          GRAPHQL
+        )
+      end
+
+      it 'returns valid SDL for @key directives' do
+        product = Class.new(base_object) do
+          graphql_name 'Product'
+          key fields: :upc
+
+          field :upc, String, null: false
+        end
+
+        schema = Class.new(base_schema) do
+          orphan_types product
+        end
+
+        expect(execute_sdl(schema)).to match_sdl(
+          <<~GRAPHQL,
+            type Product @key(fields: "upc") {
+              upc: String!
             }
           GRAPHQL
         )
@@ -209,62 +261,6 @@ RSpec.describe ApolloFederation::ServiceField do
           }
         GRAPHQL
       )
-    end
-
-    context 'when a Query object is provided' do
-      it 'returns valid SDL for @key directives' do
-        product = Class.new(base_object) do
-          graphql_name 'Product'
-          key fields: :upc
-
-          field :upc, String, null: false
-        end
-
-        query_obj = Class.new(base_object) do
-          graphql_name 'Query'
-
-          field :product, product, null: true
-        end
-
-        schema = Class.new(base_schema) do
-          query query_obj
-        end
-
-        expect(execute_sdl(schema)).to match_sdl(
-          <<~GRAPHQL,
-            type Product @key(fields: "upc") {
-              upc: String!
-            }
-
-            type Query {
-              product: Product
-            }
-          GRAPHQL
-        )
-      end
-    end
-
-    context 'when a Query object is not provided' do
-      it 'returns valid SDL for @key directives' do
-        product = Class.new(base_object) do
-          graphql_name 'Product'
-          key fields: :upc
-
-          field :upc, String, null: false
-        end
-
-        schema = Class.new(base_schema) do
-          orphan_types product
-        end
-
-        expect(execute_sdl(schema)).to match_sdl(
-          <<~GRAPHQL,
-            type Product @key(fields: "upc") {
-              upc: String!
-            }
-          GRAPHQL
-        )
-      end
     end
 
     it 'returns valid SDL for multiple @key directives' do

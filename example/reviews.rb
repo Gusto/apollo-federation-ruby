@@ -100,7 +100,12 @@ class ReviewSchema < GraphQL::Schema
     use GraphQL::Execution::Interpreter
     use GraphQL::Analysis::AST
   end
-  use ApolloFederation::Tracing
+
+  if Gem::Version.new(GraphQL::VERSION) < Gem::Version.new('2.3.0')
+    use ApolloFederation::Tracing
+  else
+    trace_with ApolloFederation::Tracing::Tracer
+  end
 
   include ApolloFederation::Schema
 
