@@ -282,6 +282,20 @@ class Product < BaseObject
 end
 ```
 
+### The `@interfaceObject` directive (Apollo Federation v2.3)
+
+[Apollo documentation](https://www.apollographql.com/docs/federation/federated-types/federated-directives/#interfaceobject)
+
+Call `interface_object` within your class definition:
+
+```ruby
+class Product < BaseObject
+  interface_object
+  key fields: :id
+  field :id, ID, null: false
+end
+```
+
 ### The `@tag` directive (Apollo Federation v2)
 
 [Apollo documentation](https://www.apollographql.com/docs/federation/federated-types/federated-directives/#tag)
@@ -327,7 +341,7 @@ Define a `resolve_reference` class method on your object. The method will be pas
 class User < BaseObject
   key fields: :user_id
   field :user_id, ID, null: false
-  
+
   def self.resolve_reference(reference, context)
     USERS.find { |user| user[:userId] == reference[:userId] }
   end
@@ -341,7 +355,7 @@ class User < BaseObject
   key fields: :user_id
   field :user_id, ID, null: false
   underscore_reference_keys true
-  
+
   def self.resolve_reference(reference, context)
     USERS.find { |user| user[:user_id] == reference[:user_id] }
   end
@@ -356,6 +370,61 @@ class BaseObject < GraphQL::Schema::Object
   field_class BaseField
   underscore_reference_keys true
 end
+```
+
+### Reference resolvers for Interfaces
+
+[Apollo documentation](https://www.apollographql.com/docs/federation/federated-types/interfaces/#required-resolvers)
+
+```ruby
+  module Product
+    include BaseInterface
+
+    key fields: :id
+    field :id, ID, null: false
+    field :title, String, null: true
+
+    definition_methods do
+      def resolve_type(obj, _ctx)
+        if obj.is_a?(Book)
+          BookType
+        elsif obj.is_a?(Movie)
+          MovieType
+      end
+
+      def resolve_reference(reference, _context)
+        PRODUCTS.find { |product| product[:id] == reference[:id] }
+      end
+    end
+  end
+
+  class BookType < BaseObject
+    implements Product
+    graphql_name 'Book'
+
+    key fields: :id
+    field :id, ID, null: false
+    field :title, String, null: true
+    field :pages, Integer, null: true
+
+    def self.resolve_reference(reference, _context)
+      BOOKS.find { |book| book[:id] == reference[:id] }
+    end
+  end
+
+  class MovieType < BaseObject
+    implements Product
+    graphql_name 'Movie'
+
+    key fields: :id
+    field :id, ID, null: false
+    field :title, String, null: true
+    field :minutes, Integer, null: true
+
+    def self.resolve_reference(reference, _context)
+      MOVIES.find { |movie| movie[:id] == reference[:id] }
+    end
+  end
 ```
 
 ### Tracing
