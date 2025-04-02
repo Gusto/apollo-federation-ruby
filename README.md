@@ -471,6 +471,7 @@ See discussion at [#74](https://github.com/Gusto/apollo-federation-ruby/issues/7
 ## Maintainers
 
 Gusto GraphQL Team:
+
 - [Sara Laupp](https://github.com/slauppy)
 - [Seth Copeland](https://github.com/sethc2)
 - [Simon Coffin](https://github.com/simoncoffin)
