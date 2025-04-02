@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'actionpack'
   spec.add_development_dependency 'debug'
   spec.add_development_dependency 'pry-byebug'
-  spec.add_development_dependency 'rack'
+  spec.add_development_dependency 'rack', '~> 2.0'
   spec.add_development_dependency 'rackup'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec'
