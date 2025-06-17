@@ -1,3 +1,10 @@
+# [3.11.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.10.0...v3.11.0) (2025-06-17)
+
+
+### Features
+
+* add cost directive support ([#11](https://github.com/mondaycom/apollo-federation-ruby/issues/11)) ([43dd096](https://github.com/mondaycom/apollo-federation-ruby/commit/43dd0966f248efe6399787d6971fb251a1c29ea1))
+
 # [3.10.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.9.0...v3.10.0) (2024-11-21)
 
 
