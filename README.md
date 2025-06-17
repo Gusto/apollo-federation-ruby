@@ -316,6 +316,21 @@ class Product < BaseObject
 end
 ```
 
+### The `@cost` directive (Apollo Federation v2)
+
+Use `cost` to indicate the relative execution cost for schema elements. The
+directive can be applied at the object, enum, scalar, field, or argument level.
+Weight defaults to `1` if omitted.
+
+```ruby
+class Product < BaseObject
+  cost weight: 5
+
+  field :id, ID, null: false
+  field :name, String, null: true, cost: { weight: 2 }
+end
+```
+
 ### Field set syntax
 
 Field sets can be either strings encoded with the Apollo Field Set [syntax]((https://www.apollographql.com/docs/apollo-server/federation/federation-spec/#scalar-_fieldset)) or arrays, hashes and snake case symbols that follow the graphql-ruby conventions:

@@ -8,7 +8,7 @@ module ApolloFederation
     include HasDirectives
 
     VERSION_1_DIRECTIVES = %i[external requires provides].freeze
-    VERSION_2_DIRECTIVES = %i[shareable inaccessible override policy tags].freeze
+    VERSION_2_DIRECTIVES = %i[shareable inaccessible override policy tags cost].freeze
 
     def initialize(*args, **kwargs, &block)
       add_v1_directives(**kwargs)
@@ -59,46 +59,64 @@ module ApolloFederation
       nil
     end
 
-    def add_v2_directives(shareable: nil, inaccessible: nil, override: nil, tags: [], policy: nil, **_kwargs)
-      if shareable
-        add_directive(name: 'shareable')
+    def add_v2_directives(shareable: nil, inaccessible: nil, override: nil, tags: [], policy: nil, cost: nil, **_kwargs)
+      [{ flag: shareable, name: 'shareable' }, { flag: inaccessible, name: 'inaccessible' }].each do |directive|
+        add_directive(name: directive[:name]) if directive[:flag]
       end
 
-      if inaccessible
-        add_directive(name: 'inaccessible')
-      end
+      add_override_directive(override)
+      add_policy_directive(policy)
+      add_cost_directive(cost)
 
-      if override
-        add_directive(
-          name: 'override',
-          arguments: [
-            name: 'from',
-            values: override[:from],
-          ],
-        )
-      end
-
-      if policy
-        add_directive(
-          name: 'policy',
-          arguments: [
-            name: 'policies',
-            values: policy[:policies],
-          ],
-        )
-      end
-
-      tags.each do |tag|
-        add_directive(
-          name: 'tag',
-          arguments: [
-            name: 'name',
-            values: tag[:name],
-          ],
-        )
-      end
+      tags.each { |tag| add_tag_directive(tag) }
 
       nil
+    end
+
+    def add_override_directive(override)
+      return unless override
+
+      add_directive(
+        name: 'override',
+        arguments: [
+          name: 'from',
+          values: override[:from],
+        ],
+      )
+    end
+
+    def add_policy_directive(policy)
+      return unless policy
+
+      add_directive(
+        name: 'policy',
+        arguments: [
+          name: 'policies',
+          values: policy[:policies],
+        ],
+      )
+    end
+
+    def add_cost_directive(cost)
+      return unless cost
+
+      add_directive(
+        name: 'cost',
+        arguments: [
+          name: 'weight',
+          values: cost[:weight] || 1,
+        ],
+      )
+    end
+
+    def add_tag_directive(tag)
+      add_directive(
+        name: 'tag',
+        arguments: [
+          name: 'name',
+          values: tag[:name],
+        ],
+      )
     end
   end
 end

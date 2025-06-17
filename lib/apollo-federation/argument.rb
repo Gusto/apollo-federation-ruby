@@ -6,7 +6,7 @@ module ApolloFederation
   module Argument
     include HasDirectives
 
-    VERSION_2_DIRECTIVES = %i[tags inaccessible].freeze
+    VERSION_2_DIRECTIVES = %i[tags inaccessible cost].freeze
 
     def initialize(*args, **kwargs, &block)
       add_v2_directives(**kwargs)
@@ -22,7 +22,7 @@ module ApolloFederation
 
     private
 
-    def add_v2_directives(tags: [], inaccessible: nil, **_kwargs)
+    def add_v2_directives(tags: [], inaccessible: nil, cost: nil, **_kwargs)
       tags.each do |tag|
         add_directive(
           name: 'tag',
@@ -34,6 +34,16 @@ module ApolloFederation
       end
 
       add_directive(name: 'inaccessible') if inaccessible
+
+      return unless cost
+
+      add_directive(
+        name: 'cost',
+        arguments: [
+          name: 'weight',
+          values: cost[:weight] || 1,
+        ],
+      )
     end
   end
 end

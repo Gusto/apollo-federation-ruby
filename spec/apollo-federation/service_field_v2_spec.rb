@@ -115,7 +115,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product {
             upc: String!
@@ -150,7 +150,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product @federation__extends {
             upc: String!
@@ -186,7 +186,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Position @federation__shareable {
             x: Int!
@@ -223,7 +223,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Position @inaccessible {
             x: Int!
@@ -260,7 +260,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Position @tag(name: "private") {
             x: Int!
@@ -297,9 +297,46 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Position @policy(policies: [["private"]]) {
+            x: Int!
+            y: Int!
+          }
+
+          type Query {
+            position: Position
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for types with cost' do
+      position = Class.new(base_object) do
+        graphql_name 'Position'
+        cost weight: 5
+
+        field :x, Integer, null: false
+        field :y, Integer, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :position, position, null: true
+      end
+
+      schema = Class.new(base_schema) do
+        query query_obj
+        federation version: '2.6'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
+
+          type Position @cost(weight: 5) {
             x: Int!
             y: Int!
           }
@@ -334,7 +371,7 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.6", as: "fed2", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+              @link(url: "https://specs.apollo.dev/federation/v2.6", as: "fed2", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
             type Product @fed2__extends {
               upc: String!
@@ -370,7 +407,7 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.6", as: "fed2", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+              @link(url: "https://specs.apollo.dev/federation/v2.6", as: "fed2", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
             type Position @fed2__shareable {
               x: Int!
@@ -407,7 +444,7 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.6", as: "fed2", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+              @link(url: "https://specs.apollo.dev/federation/v2.6", as: "fed2", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
             type Position @inaccessible {
               x: Int!
@@ -444,7 +481,7 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.6", as: "fed2", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+              @link(url: "https://specs.apollo.dev/federation/v2.6", as: "fed2", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
             type Position @tag(name: "private") {
               x: Int!
@@ -480,7 +517,7 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.6", as: "fed2", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+              @link(url: "https://specs.apollo.dev/federation/v2.6", as: "fed2", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
             type Product @fed2__key(fields: "upc") {
               upc: String!
@@ -511,7 +548,7 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.6", as: "fed2", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+              @link(url: "https://specs.apollo.dev/federation/v2.6", as: "fed2", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
             type Product @fed2__extends @fed2__key(fields: "upc") {
               price: Int
@@ -538,7 +575,7 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+              @link(url: "https://specs.apollo.dev/federation/v2.3", as: "fed2", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
             type Product @fed2__interfaceObject @fed2__key(fields: "id") {
               id: ID!
@@ -587,7 +624,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Book implements Product {
             upc: String!
@@ -639,7 +676,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Book implements Product {
             upc: String!
@@ -691,7 +728,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Book implements Product {
             upc: String!
@@ -754,7 +791,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Book implements Product @federation__extends @federation__key(fields: "upc") {
             upc: String! @federation__external
@@ -798,7 +835,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Book {
             upc: String!
@@ -836,7 +873,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Book {
             upc: String!
@@ -874,7 +911,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           enum ProductType @policy(policies: [["private"]]) {
             BOOK
@@ -911,9 +948,46 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           enum ProductType @tag(name: "private") {
+            BOOK
+            PEN
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for enum types with cost' do
+      base_enum = Class.new(GraphQL::Schema::Enum) do
+        include ApolloFederation::Enum
+      end
+
+      product_type = Class.new(base_enum) do
+        graphql_name 'ProductType'
+        cost weight: 5
+
+        value 'BOOK'
+        value 'PEN'
+      end
+
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+
+        field :type, product_type, null: false
+      end
+
+      schema = Class.new(base_schema) do
+        orphan_types product_type, product
+        federation version: '2.6'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
+
+          enum ProductType @cost(weight: 5) {
             BOOK
             PEN
           }
@@ -948,7 +1022,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           enum ProductType @inaccessible {
             BOOK
@@ -989,7 +1063,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product {
             upc: UPC!
@@ -1035,7 +1109,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product {
             upc: UPC!
@@ -1046,6 +1120,52 @@ RSpec.describe ApolloFederation::ServiceField do
           }
 
           scalar UPC @policy(policies: [["private"]])
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for scalar types with cost' do
+      base_scalar = Class.new(GraphQL::Schema::Scalar) do
+        include ApolloFederation::Scalar
+      end
+
+      upc = Class.new(base_scalar) do
+        graphql_name 'UPC'
+
+        cost weight: 5
+      end
+
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+
+        field :upc, upc, null: false
+      end
+
+      query_obj = Class.new(base_object) do
+        graphql_name 'Query'
+
+        field :product, product, null: true
+      end
+
+      schema = Class.new(base_schema) do
+        query query_obj
+        federation version: '2.6'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
+
+          type Product {
+            upc: UPC!
+          }
+
+          type Query {
+            product: Product
+          }
+
+          scalar UPC @cost(weight: 5)
         GRAPHQL
       )
     end
@@ -1081,7 +1201,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product {
             upc: UPC!
@@ -1131,7 +1251,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           """
           Autogenerated return type of CreateProduct.
@@ -1186,7 +1306,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           """
           Autogenerated return type of CreateProduct.
@@ -1241,7 +1361,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           """
           Autogenerated return type of CreateProduct.
@@ -1296,7 +1416,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           """
           Autogenerated return type of CreateProduct.
@@ -1345,7 +1465,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           """
           Autogenerated return type of CreateProduct.
@@ -1356,6 +1476,51 @@ RSpec.describe ApolloFederation::ServiceField do
 
           type Mutation {
             createProduct(upc: String! @tag(name: "private")): CreateProductPayload
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for cost argument types' do
+      base_argument = Class.new(GraphQL::Schema::Argument) do
+        include ApolloFederation::Argument
+      end
+
+      create_product = Class.new(GraphQL::Schema::Mutation) do
+        graphql_name 'CreateProduct'
+
+        argument_class base_argument
+
+        argument :upc, String, required: true, cost: { weight: 5 }
+
+        field :success, GraphQL::Types::Boolean, null: false
+      end
+
+      mutations = Class.new(base_object) do
+        graphql_name 'Mutation'
+
+        field :create_product, mutation: create_product
+      end
+
+      schema = Class.new(base_schema) do
+        mutation mutations
+        federation version: '2.6'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
+
+          """
+          Autogenerated return type of CreateProduct.
+          """
+          type CreateProductPayload {
+            success: Boolean!
+          }
+
+          type Mutation {
+            createProduct(upc: String! @cost(weight: 5)): CreateProductPayload
           }
         GRAPHQL
       )
@@ -1390,7 +1555,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           """
           Autogenerated return type of CreateProduct.
@@ -1429,7 +1594,7 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+              @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
             type Product @federation__key(fields: "upc") {
               upc: String!
@@ -1460,7 +1625,7 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+              @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
             type Product @federation__key(fields: "upc") {
               upc: String!
@@ -1488,7 +1653,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product @federation__key(fields: "upc") @federation__key(fields: "name") {
             name: String
@@ -1514,7 +1679,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product @federation__key(fields: "upc", resolvable: false) {
             upc: String!
@@ -1539,7 +1704,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product @federation__key(fields: "upc") {
             upc: String!
@@ -1566,7 +1731,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product @federation__extends @federation__key(fields: "upc") {
             price: Int
@@ -1593,11 +1758,38 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product @federation__key(fields: "id") {
             id: ID!
             isStock: Boolean! @policy(policies: [["private"]])
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for @cost directive' do
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+        key fields: :id
+
+        field :id, 'ID', null: false
+        field :isStock, 'Boolean', null: false, cost: { weight: 5 }
+      end
+
+      schema = Class.new(base_schema) do
+        orphan_types product
+        federation version: '2.6'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
+
+          type Product @federation__key(fields: "id") {
+            id: ID!
+            isStock: Boolean! @cost(weight: 5)
           }
         GRAPHQL
       )
@@ -1620,7 +1812,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product @federation__interfaceObject @federation__key(fields: "id") {
             id: ID!
@@ -1651,7 +1843,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Position {
             x: Int! @federation__shareable
@@ -1687,7 +1879,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Position {
             x: Int! @inaccessible
@@ -1723,7 +1915,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Position {
             x: Int! @tag(name: "private")
@@ -1759,7 +1951,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Position {
             x: Int! @tag(name: "private") @tag(name: "protected")
@@ -1811,7 +2003,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product {
             type: ProductType!
@@ -1867,7 +2059,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product {
             type: ProductType!
@@ -1923,7 +2115,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product {
             type: ProductType!
@@ -1959,7 +2151,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product @federation__extends @federation__key(fields: "id") {
             id: ID!
@@ -1995,7 +2187,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product @federation__extends @federation__key(fields: "upc") {
             price: Int
@@ -2030,7 +2222,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product @federation__extends @federation__key(fields: "upc") {
             price: Int @federation__external
@@ -2059,7 +2251,7 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+              @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
             type Product @federation__key(fields: "productId") {
               productId: String!
@@ -2087,7 +2279,7 @@ RSpec.describe ApolloFederation::ServiceField do
         expect(execute_sdl(schema)).to match_sdl(
           <<~GRAPHQL,
             extend schema
-              @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+              @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
             type Product @federation__extends @federation__key(fields: "product_id") {
               options: [String!]! @federation__requires(fields: "my_id")
@@ -2120,7 +2312,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product @federation__extends @federation__key(fields: "upc") {
             upc: String! @federation__external
@@ -2148,7 +2340,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product @federation__key(fields: "id") {
             id: ID!
@@ -2182,7 +2374,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", as: "fed2", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", as: "fed2", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product @fed2__extends {
             upc: String!
@@ -2219,7 +2411,7 @@ RSpec.describe ApolloFederation::ServiceField do
       expect(execute_sdl(schema)).to match_sdl(
         <<~GRAPHQL,
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.6", as: "fed2", import: ["@composeDirective", "@inaccessible", "@policy", "@tag"])
+            @link(url: "https://specs.apollo.dev/federation/v2.6", as: "fed2", import: ["@composeDirective", "@inaccessible", "@policy", "@tag", "@cost"])
 
           type Product @fed2__extends {
             upc: String!
