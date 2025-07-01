@@ -1,3 +1,10 @@
+# [3.12.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.11.0...v3.12.0) (2025-07-01)
+
+
+### Features
+
+* add [@list](https://github.com/list)Size directive support ([#12](https://github.com/mondaycom/apollo-federation-ruby/issues/12)) ([cdd81d0](https://github.com/mondaycom/apollo-federation-ruby/commit/cdd81d04bfc6a17b6b483a75928f54b6af716988))
+
 # [3.11.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.10.0...v3.11.0) (2025-06-17)
 
 
