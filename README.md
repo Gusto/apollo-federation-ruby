@@ -331,6 +331,16 @@ class Product < BaseObject
 end
 ```
 
+### The `@listSize` directive (Apollo Federation v2.9)
+
+Use `list_size` to describe the expected size of list results for query planning:
+
+```ruby
+class Product < BaseObject
+  field :reviews, [String], null: false, list_size: { assumed_size: 5 }
+end
+```
+
 ### Field set syntax
 
 Field sets can be either strings encoded with the Apollo Field Set [syntax]((https://www.apollographql.com/docs/apollo-server/federation/federation-spec/#scalar-_fieldset)) or arrays, hashes and snake case symbols that follow the graphql-ruby conventions:

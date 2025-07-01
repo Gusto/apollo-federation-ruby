@@ -7,7 +7,7 @@ require 'apollo-federation/federated_document_from_schema_definition'
 
 module ApolloFederation
   module Schema
-    IMPORTED_DIRECTIVES = ['composeDirective', 'inaccessible', 'policy', 'tag', 'cost'].freeze
+    IMPORTED_DIRECTIVES = ['composeDirective', 'inaccessible', 'policy', 'tag', 'cost', 'listSize'].freeze
 
     def self.included(klass)
       klass.extend(CommonMethods)
