@@ -116,4 +116,60 @@ RSpec.describe ApolloFederation::Schema do
       expect(schema.get_type('Cat')).to eq(cat_type)
     end
   end
+
+  if Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('1.12.0')
+    describe '.federation_sdl' do
+      context 'when filtering custom directives from imports' do
+        def create_test_schema
+          custom_type = Class.new(GraphQL::Schema::Object) do
+            include ApolloFederation::Object
+            graphql_name 'CustomType'
+
+            # Federation directive - should be imported in newer versions
+            key fields: :id
+
+            # Custom directive - should NOT be imported
+            add_directive(name: 'version', arguments: [
+                            { name: 'from', values: '1.0' },
+                            { name: 'to', values: '2.0' },
+                          ],)
+
+            field :id, GraphQL::Types::ID, null: false
+          end
+
+          query_type = Class.new(GraphQL::Schema::Object) do
+            graphql_name 'Query'
+            field :custom, custom_type, null: false
+          end
+
+          Class.new(GraphQL::Schema) do
+            include ApolloFederation::Schema
+            query query_type
+            federation version: '2.6'
+          end
+        end
+
+        # Test that custom directives are not imported regardless of GraphQL version
+        it 'does not import custom directives from federation specs' do
+          sdl = create_test_schema.federation_sdl
+          expect(sdl).not_to include('"@version"')
+        end
+
+        it 'includes custom directive in type definition' do
+          sdl = create_test_schema.federation_sdl
+          expect(sdl).to include('@version(from: "1.0", to: "2.0")')
+        end
+
+        it 'includes federation directive in type definition' do
+          sdl = create_test_schema.federation_sdl
+          expect(sdl).to include('@key(fields: "id")')
+        end
+
+        it 'includes @link directive with import array for federation directives' do
+          sdl = create_test_schema.federation_sdl
+          expect(sdl).to include('@link(url: "https://specs.apollo.dev/federation/v2.6", import: ["@key"])')
+        end
+      end
+    end
+  end
 end

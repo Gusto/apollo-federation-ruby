@@ -419,6 +419,8 @@ To support [federated tracing](https://www.apollographql.com/docs/apollo-server/
 
 When using tools like [rover](https://www.apollographql.com/docs/rover/) for schema validation, etc., add a Rake task that prints the Federated SDL to a file:
 
+The generated SDL automatically imports only the federation directives that your schema uses when targeting Federation v2.
+
 ```rb
 namespace :graphql do
   namespace :federation do

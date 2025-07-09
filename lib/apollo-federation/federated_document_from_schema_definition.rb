@@ -2,6 +2,7 @@
 
 require 'graphql'
 require 'apollo-federation/service'
+require 'set'
 
 module ApolloFederation
   class FederatedDocumentFromSchemaDefinition < GraphQL::Language::DocumentFromSchemaDefinition
@@ -14,6 +15,13 @@ module ApolloFederation
       '_entities',
       '_service',
     ].freeze
+
+    attr_reader :used_directives
+
+    def initialize(*args, **kwargs)
+      super
+      @used_directives = Set.new
+    end
 
     def build_object_type_node(object_type)
       object_node = super
@@ -91,6 +99,7 @@ module ApolloFederation
       end
 
       directives.each do |directive|
+        @used_directives << directive[:name]
         node = node.merge_directive(
           name: directive_name(directive),
           arguments: build_arguments_node(directive[:arguments]),
@@ -100,7 +109,7 @@ module ApolloFederation
     end
 
     def directive_name(directive)
-      if schema.federation_2? && schema.all_links.none? { |link| link[:import]&.include?(directive[:name]) }
+      if schema.federation_2? && schema.default_link_namespace
         "#{schema.default_link_namespace}__#{directive[:name]}"
       else
         directive[:name]

@@ -7,14 +7,16 @@ require 'apollo-federation/federated_document_from_schema_definition'
 
 module ApolloFederation
   module Schema
-    IMPORTED_DIRECTIVES = ['composeDirective', 'inaccessible', 'policy', 'tag', 'cost', 'listSize'].freeze
-
     def self.included(klass)
       klass.extend(CommonMethods)
     end
 
     module CommonMethods
-      DEFAULT_LINK_NAMESPACE = 'federation'
+      # All federation directives that can be imported from Apollo Federation specs
+      FEDERATION_DIRECTIVES = %w[
+        external requires provides key shareable inaccessible override policy
+        cost listSize tag extends interfaceObject composeDirective
+      ].freeze
 
       def federation(version: '1.0', default_link_namespace: nil, links: [], compose_directives: [])
         @federation_version = version
@@ -35,12 +37,15 @@ module ApolloFederation
         document_from_schema = FederatedDocumentFromSchemaDefinition.new(self, context: context)
 
         output = GraphQL::Language::Printer.new.print(document_from_schema.document)
-        output.prepend(federation_2_prefix) if federation_2?
+        if federation_2?
+          used = document_from_schema.used_directives.to_a
+          output.prepend(federation_2_prefix(used_directives: used))
+        end
         output
       end
 
       def default_link_namespace
-        @default_link_namespace || find_inherited_value(:default_link_namespace, DEFAULT_LINK_NAMESPACE)
+        @default_link_namespace || find_inherited_value(:default_link_namespace, nil)
       end
 
       def query(new_query_object = nil)
@@ -63,13 +68,28 @@ module ApolloFederation
         @links || find_inherited_value(:links, [])
       end
 
-      def all_links
-        imported_directives = IMPORTED_DIRECTIVES
+      def all_links(used_directives: [])
+        # Filter used_directives to only include federation directives
+        federation_used_directives = used_directives.select { |directive| FEDERATION_DIRECTIVES.include?(directive) }
+
+        # If custom namespace is provided, don't import any directives (use prefixed versions instead)
+        if default_link_namespace
+          imported_directives = []
+        else
+          # Collect all directives that should be imported
+          all_directives = federation_used_directives
+          # Include @composeDirective when compose_directives are configured
+          all_directives << 'composeDirective' if compose_directives.any?
+
+          # Remove duplicates while preserving order
+          imported_directives = all_directives.uniq
+        end
+
         default_link = {
           url: "https://specs.apollo.dev/federation/v#{federation_version}",
           import: imported_directives,
         }
-        default_link[:as] = default_link_namespace if default_link_namespace != DEFAULT_LINK_NAMESPACE
+        default_link[:as] = default_link_namespace if default_link_namespace
         [default_link, *links]
       end
 
@@ -79,14 +99,14 @@ module ApolloFederation
         @orig_query_object || find_inherited_value(:original_query)
       end
 
-      def federation_2_prefix
+      def federation_2_prefix(used_directives: [])
         schema = ['extend schema']
 
-        all_links.each do |link|
+        all_links(used_directives: used_directives).each do |link|
           link_str = '  @link('
           link_str += "url: \"#{link[:url]}\""
           link_str += ", as: \"#{link[:as]}\"" if link[:as]
-          if link[:import]
+          if link[:import] && !link[:import].empty?
             imported_directives = link[:import].map { |d| "\"@#{d}\"" }.join(', ')
             link_str += ", import: [#{imported_directives}]"
           end
