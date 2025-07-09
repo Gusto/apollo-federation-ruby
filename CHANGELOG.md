@@ -1,3 +1,10 @@
+# [3.13.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.12.0...v3.13.0) (2025-07-09)
+
+
+### Features
+
+* refactor Apollo Federation schema handling ([#14](https://github.com/mondaycom/apollo-federation-ruby/issues/14)) ([d1be570](https://github.com/mondaycom/apollo-federation-ruby/commit/d1be570732c2eb02a4ff4dfab92c0a88d0f45128))
+
 # [3.12.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.11.0...v3.12.0) (2025-07-01)
 
 

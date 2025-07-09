@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    apollo-federation (3.12.0)
+    apollo-federation (3.13.0)
       google-protobuf (~> 3.22)
       graphql (>= 1.10.14)
 
@@ -55,6 +55,9 @@ GEM
     drb (2.2.1)
     erubi (1.13.0)
     google-protobuf (3.25.5)
+    google-protobuf (3.25.5-arm64-darwin)
+    google-protobuf (3.25.5-x86_64-darwin)
+    google-protobuf (3.25.5-x86_64-linux)
     graphql (2.0.31)
       base64
     i18n (1.14.6)
