@@ -1,3 +1,13 @@
+# [3.13.1](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.13.0...v3.13.1) (2025-08-18)
+
+### Bug Fixes
+
+* **warden compatibility**: Fix GraphQL-Ruby 2.x compatibility by replacing warden usage with backward-compatible methods ([#PR-TBD](https://github.com/mondaycom/apollo-federation-ruby/issues/PR-TBD))
+  - Fixed `undefined local variable or method 'warden'` error in GraphQL Ruby 2.x
+  - Added backward-compatible `fields_for_type` and `root_type_for_operation` methods
+  - Updated `entities_field.rb` to use schema.types when warden is not available
+  - Maintains full compatibility with both GraphQL Ruby 1.x and 2.x
+
 # [3.13.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.12.0...v3.13.0) (2025-07-09)
 
 

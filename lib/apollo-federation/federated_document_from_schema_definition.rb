@@ -77,7 +77,7 @@ module ApolloFederation
     def build_type_definition_nodes(types)
       non_federation_types = types.select do |type|
         if query_type?(type)
-          !warden.fields(type).all? { |field| FEDERATION_QUERY_FIELDS.include?(field.graphql_name) }
+          !fields_for_type(type).all? { |field| FEDERATION_QUERY_FIELDS.include?(field.graphql_name) }
         else
           !FEDERATION_TYPES.include?(type.graphql_name)
         end
@@ -87,8 +87,39 @@ module ApolloFederation
 
     private
 
+    # RUBY_RAILS_UPGRADE: Backward-compatible method to handle GraphQL Ruby 2.x warden removal
+    # This method provides compatibility between GraphQL Ruby 1.x (with warden) and 2.x (with @types)
+    def fields_for_type(type)
+      return warden.fields(type) if use_warden?
+      
+      @types.fields(type)
+    end
+
+    # RUBY_RAILS_UPGRADE: Backward-compatible method to get root type for operation
+    # This method provides compatibility between GraphQL Ruby 1.x (with warden)
+    # and 2.x, where root types are exposed via @types.<operation>_root
+    def root_type_for_operation(operation_name)
+      return warden.root_type_for_operation(operation_name) if use_warden?
+
+      case operation_name.to_s
+      when 'query'
+        @types.query_root
+      when 'mutation'
+        @types.mutation_root
+      when 'subscription'
+        @types.subscription_root
+      else
+        nil
+      end
+    end
+
+    # RUBY_RAILS_UPGRADE: Detect if we should use warden (GraphQL Ruby 1.x) or @types (GraphQL Ruby 2.x)
+    def use_warden?
+      respond_to?(:warden) && !warden.nil?
+    end
+
     def query_type?(type)
-      type == warden.root_type_for_operation('query')
+      type == root_type_for_operation('query')
     end
 
     def merge_directives(node, type)

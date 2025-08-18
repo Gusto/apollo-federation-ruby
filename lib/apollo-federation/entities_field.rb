@@ -39,8 +39,13 @@ module ApolloFederation
         references = references_with_indices.map(&:first)
         indices = references_with_indices.map(&:last)
 
-        # TODO: Use warden or schema?
-        type = context.warden.get_type(typename)
+        # RUBY_RAILS_UPGRADE: Fixed warden usage for GraphQL Ruby 2.x compatibility
+        # Use warden in GraphQL Ruby 1.x, or context.schema.types in GraphQL Ruby 2.x
+        type = if context.respond_to?(:warden) && !context.warden.nil?
+                 context.warden.get_type(typename)
+               else
+                 context.schema.types[typename]
+               end
         if type.nil? || type.kind != GraphQL::TypeKinds::OBJECT
           # TODO: Raise a specific error class?
           raise "The _entities resolver tried to load an entity for type \"#{typename}\"," \
