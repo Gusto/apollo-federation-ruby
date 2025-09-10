@@ -258,7 +258,7 @@ module ApolloFederation
 
         result[:extensions] ||= {}
         result[:extensions][ApolloFederation::Tracing::KEY] =
-          Base64.encode64(proto.class.encode(proto))
+          Base64.strict_encode64(proto.class.encode(proto))
 
         if result.context[:debug_tracing]
           result[:extensions][ApolloFederation::Tracing::DEBUG_KEY] = proto.to_h
