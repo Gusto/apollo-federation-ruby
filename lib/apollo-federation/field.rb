@@ -23,6 +23,30 @@ module ApolloFederation
       super(*args, **kwargs, &block)
     end
 
+    # We expose list_size directive so that it can be used in resolvers
+    def add_list_size_directive(list_size)
+      return unless list_size
+
+      arguments = []
+      if list_size.key?(:assumed_size)
+        arguments << { name: 'assumedSize', values: list_size[:assumed_size] }
+      end
+      if (slicing_args = list_size[:slicing_arguments])
+        arguments << { name: 'slicingArguments', values: slicing_args }
+        if list_size.key?(:require_one_slicing_argument)
+          arguments << {
+            name: 'requireOneSlicingArgument',
+            values: list_size[:require_one_slicing_argument],
+          }
+        end
+      end
+      if list_size[:sized_fields]
+        arguments << { name: 'sizedFields', values: list_size[:sized_fields] }
+      end
+
+      add_directive(name: 'listSize', arguments: arguments) unless arguments.empty?
+    end
+
     private
 
     def add_v1_directives(external: nil, requires: nil, provides: nil, **_kwargs)
@@ -110,29 +134,6 @@ module ApolloFederation
           values: cost[:weight] || 1,
         ],
       )
-    end
-
-    def add_list_size_directive(list_size)
-      return unless list_size
-
-      arguments = []
-      if list_size.key?(:assumed_size)
-        arguments << { name: 'assumedSize', values: list_size[:assumed_size] }
-      end
-      if (slicing_args = list_size[:slicing_arguments])
-        arguments << { name: 'slicingArguments', values: slicing_args }
-        if list_size.key?(:require_one_slicing_argument)
-          arguments << {
-            name: 'requireOneSlicingArgument',
-            values: list_size[:require_one_slicing_argument],
-          }
-        end
-      end
-      if list_size[:sized_fields]
-        arguments << { name: 'sizedFields', values: list_size[:sized_fields] }
-      end
-
-      add_directive(name: 'listSize', arguments: arguments) unless arguments.empty?
     end
 
     def add_tag_directive(tag)

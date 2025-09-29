@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
+require 'active_support/concern'
 require 'graphql'
 require 'apollo-federation/schema'
 require 'apollo-federation/field'
@@ -18,6 +19,18 @@ RSpec.describe ApolloFederation::ServiceField do
     let(:base_object) do
       base_field = Class.new(GraphQL::Schema::Field) do
         include ApolloFederation::Field
+
+        def initialize(*args, permission_scope: nil, camelize: true, skip_depth: false, **kwargs, &block)
+          @permission_scope = permission_scope
+          @skip_depth = skip_depth
+
+          super(*args, camelize: camelize, **kwargs, &block)
+          resolver_class = kwargs[:resolver_class]
+
+          return unless resolver_class.respond_to?(:apply_list_size_directive)
+
+          resolver_class.apply_list_size_directive(self)
+        end
       end
 
       Class.new(GraphQL::Schema::Object) do
@@ -1817,6 +1830,68 @@ RSpec.describe ApolloFederation::ServiceField do
           type Product @key(fields: "id") {
             id: ID!
             reviews: [String!]! @listSize(assumedSize: 5)
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'returns valid SDL for @listSize directive added by resolver' do
+      module Pagination
+        extend ActiveSupport::Concern
+
+        included do
+          argument :limit, Integer, 'Number of items to get, the default is 60.', default_value: 60, required: false
+          argument :page, Integer, 'Page number to get, starting at 1.', default_value: 1, required: false
+        end
+
+        class_methods do
+          def apply_list_size_directive(field)
+            field.add_list_size_directive({ slicing_arguments: ['limit'], require_one_slicing_argument: true })
+          end
+        end
+      end
+
+      test_resolver = Class.new(GraphQL::Schema::Resolver) do
+        include Pagination
+
+        type [String], null: false
+
+        def resolve
+          ['Great product!', 'Highly recommended', 'Excellent quality']
+        end
+      end
+
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+        key fields: :id
+
+        field :id, 'ID', null: false
+        field :reviews, resolver: test_resolver
+      end
+
+      schema = Class.new(base_schema) do
+        orphan_types product
+        federation version: '2.9'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.9", import: ["@listSize", "@key"])
+
+          type Product @key(fields: "id") {
+            id: ID!
+            reviews(
+              """
+              Number of items to get, the default is 60.
+              """
+              limit: Int = 60
+
+              """
+              Page number to get, starting at 1.
+              """
+              page: Int = 1
+            ): [String!]! @listSize(slicingArguments: ["limit"], requireOneSlicingArgument: true)
           }
         GRAPHQL
       )
