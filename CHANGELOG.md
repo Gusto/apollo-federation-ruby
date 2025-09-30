@@ -1,3 +1,10 @@
+# [3.14.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.13.0...v3.14.0) (2025-09-30)
+
+
+### Features
+
+* Enable list size directive registration from resolvers ([#16](https://github.com/mondaycom/apollo-federation-ruby/issues/16)) ([5df69bf](https://github.com/mondaycom/apollo-federation-ruby/commit/5df69bf145e1cde9d0a100b01223071ee09ec854))
+
 # [3.13.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.12.0...v3.13.0) (2025-07-09)
 
 
