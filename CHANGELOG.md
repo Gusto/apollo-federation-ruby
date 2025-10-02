@@ -1,3 +1,10 @@
+# [3.15.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.14.0...v3.15.0) (2025-10-02)
+
+
+### Features
+
+* introduce Resolver module with list_size method ([#18](https://github.com/mondaycom/apollo-federation-ruby/issues/18)) ([af4c7ec](https://github.com/mondaycom/apollo-federation-ruby/commit/af4c7ec6906aa59cad2dc946353673fd51a98e5e))
+
 # [3.14.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.13.0...v3.14.0) (2025-09-30)
 
 
