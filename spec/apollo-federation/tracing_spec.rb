@@ -89,7 +89,7 @@ RSpec.describe ApolloFederation::Tracing do
     def trace(query)
       result = schema.execute(query, context: { tracing_enabled: true })
 
-      ApolloFederation::Tracing::Trace.decode(Base64.decode64(result[:extensions][:ftv1]))
+      ApolloFederation::Tracing::Trace.decode(Base64.strict_decode64(result[:extensions][:ftv1]))
     end
 
     describe 'building the trace tree' do
