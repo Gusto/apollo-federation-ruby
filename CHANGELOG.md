@@ -1,3 +1,10 @@
+## [3.15.1](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.15.0...v3.15.1) (2025-10-02)
+
+
+### Bug Fixes
+
+* Apollo Federated Tracing (ftv1) with Apollo Router ([#19](https://github.com/mondaycom/apollo-federation-ruby/issues/19)) ([6c86b04](https://github.com/mondaycom/apollo-federation-ruby/commit/6c86b041540e8465cd2a677a168c69f0aaa11811))
+
 # [3.15.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.14.0...v3.15.0) (2025-10-02)
 
 
