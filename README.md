@@ -105,6 +105,14 @@ class BaseScalar < GraphQL::Schema::Scalar
 end
 ```
 
+Include the `ApolloFederation::Resolver` module in your base resolver class:
+
+```ruby
+class BaseResolver < GraphQL::Schema::Resolver
+  include ApolloFederation::Resolver
+end
+```
+
 Finally, include the `ApolloFederation::Schema` module in your schema:
 
 ```ruby
@@ -333,11 +341,30 @@ end
 
 ### The `@listSize` directive (Apollo Federation v2.9)
 
-Use `list_size` to describe the expected size of list results for query planning:
+Use `list_size` to describe the expected size of list results for query planning.
+
+On a field:
 
 ```ruby
 class Product < BaseObject
   field :reviews, [String], null: false, list_size: { assumed_size: 5 }
+end
+```
+
+In a resolver:
+
+```ruby
+class ProductReviewsResolver < BaseResolver
+  type [String], null: false
+  list_size slicing_arguments: [:limit], assumed_size: 100
+
+  def resolve
+    # resolver logic
+  end
+end
+
+class Product < BaseObject
+  field :reviews, resolver: ProductReviewsResolver
 end
 ```
 
