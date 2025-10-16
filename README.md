@@ -1,6 +1,6 @@
 # apollo-federation
 
-[![CircleCI](https://circleci.com/gh/Gusto/apollo-federation-ruby/tree/main.svg?style=svg)](https://circleci.com/gh/Gusto/apollo-federation-ruby/tree/main)
+[![CI](https://github.com/Gusto/apollo-federation-ruby/actions/workflows/ci.yml/badge.svg)](https://github.com/Gusto/apollo-federation-ruby/actions/workflows/ci.yml)
 
 This gem extends the [GraphQL Ruby](http://graphql-ruby.org/) gem to add support for creating an [Apollo Federation](https://www.apollographql.com/docs/apollo-server/federation/introduction/) schema.
 
@@ -144,7 +144,9 @@ This will start up the gateway and serve it at http://localhost:5000.
 
 ## Usage
 
-The API is designed to mimic the API of [Apollo's federation library](https://www.apollographql.com/docs/apollo-server/federation/introduction/). It's best to read and understand the way federation works, in general, before attempting to use this library.
+The API is designed to mimic the API of [Apollo's federation library](https://www.apollographql.com/docs/apollo-server/federation/introduction/).
+
+It's best to read and understand the way federation works, in general, before attempting to use this library.
 
 ### Extending a type
 

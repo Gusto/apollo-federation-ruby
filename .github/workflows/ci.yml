@@ -1,0 +1,122 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+env:
+  BUNDLE_APP_CONFIG: .bundle
+
+jobs:
+  ruby-lint:
+    name: Ruby Lint (Ruby ${{ matrix.ruby }})
+    runs-on:
+      group: gusto-ubuntu-default
+    strategy:
+      matrix:
+        ruby: ['3.2', '3.3', '3.4']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - name: Run RuboCop
+        run: bundle exec rubocop
+
+  ruby-test:
+    name: Ruby Test (Ruby ${{ matrix.ruby }})
+    runs-on:
+      group: gusto-ubuntu-default
+    strategy:
+      matrix:
+        ruby: ['3.2', '3.3', '3.4']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - name: Show bundle config
+        run: bundle config list
+
+      - name: Run RSpec
+        run: bundle exec rspec
+
+  integration-tests:
+    name: Integration Tests (Ruby ${{ matrix.ruby }})
+    runs-on:
+      group: gusto-ubuntu-default
+    strategy:
+      matrix:
+        ruby: ['3.2', '3.3', '3.4']
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install yarn dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run yarn tests
+        run: bundle exec yarn test
+
+      - name: Run yarn lint
+        run: yarn lint
+
+  release:
+    name: Release
+    runs-on:
+      group: gusto-ubuntu-default
+    needs: [ruby-lint, ruby-test, integration-tests]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install yarn dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run semantic-release
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+
