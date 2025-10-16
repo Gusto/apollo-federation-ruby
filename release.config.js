@@ -24,6 +24,7 @@ module.exports = {
           'Gemfile.lock',
           'lib/apollo-federation/version.rb',
         ],
+        message: 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}',
       },
     ],
     '@semantic-release/github',
