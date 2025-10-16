@@ -622,26 +622,26 @@ RSpec.describe ApolloFederation::Tracing do
             }
           end
 
-        expect(traced_data).to match(
-          hash_including(
-            start_time: { seconds: expected_trace_start_time },
-            end_time: { seconds: expected_trace_start_time + 2 },
-            duration_ns: 2,
-            root: hash_including(
-              error: [hash_including(expected_captured_error)],
+          expect(traced_data).to match(
+            hash_including(
+              start_time: { seconds: expected_trace_start_time },
+              end_time: { seconds: expected_trace_start_time + 2 },
+              duration_ns: 2,
+              root: hash_including(
+                error: [hash_including(expected_captured_error)],
+              ),
             ),
-          ),
-        )
+          )
         end
       end
 
       context 'when there is a validation error' do
         it 'properly captures the error' do
-        expect(trace('{ nonExistant }')).to eq(
-          ApolloFederation::Tracing::Trace.new(
-            start_time: { seconds: expected_trace_start_time },
-            end_time: { seconds: expected_trace_start_time + 2 },
-            duration_ns: 2,
+          expect(trace('{ nonExistant }')).to eq(
+            ApolloFederation::Tracing::Trace.new(
+              start_time: { seconds: expected_trace_start_time },
+              end_time: { seconds: expected_trace_start_time + 2 },
+              duration_ns: 2,
               root: {
                 error: [{
                   message: "Field 'nonExistant' doesn't exist on type 'Query'",

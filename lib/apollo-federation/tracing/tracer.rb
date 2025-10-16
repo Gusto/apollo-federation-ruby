@@ -24,14 +24,14 @@
 #
 #     <execute_field_lazy></execute_field_lazy>
 #
-  #   </execute_query_lazy>
-  #
-  #   # In graphql-ruby < 2.5.12, `execute_query_lazy` *always* fires.
-  #   # In graphql-ruby >= 2.5.12, `execute_query_lazy` only fires when there are lazy values.
-  #   # We record end times in both `execute_multiplex` (as a fallback) and `execute_query_lazy`
-  #   # (to capture the full execution time including lazy resolution when present).
-  #
-  # </execute_multiplex>
+#   </execute_query_lazy>
+#
+#   # In graphql-ruby < 2.5.12, `execute_query_lazy` *always* fires.
+#   # In graphql-ruby >= 2.5.12, `execute_query_lazy` only fires when there are lazy values.
+#   # We record end times in both `execute_multiplex` (as a fallback) and `execute_query_lazy`
+#   # (to capture the full execution time including lazy resolution when present).
+#
+# </execute_multiplex>
 
 module ApolloFederation
   module Tracing
