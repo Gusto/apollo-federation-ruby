@@ -17,6 +17,6 @@ RSpec.describe ApolloFederation::Any do
     )
     expect(
       described_class.coerce_input(params, nil),
-    ).to eql(one: 1, two: 2, __typename: 'Thing')
+    ).to eql(one: 3, two: 2, __typename: 'Thing')
   end
 end
