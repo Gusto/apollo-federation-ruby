@@ -8,11 +8,9 @@ RSpec.describe ApolloFederation::Tracing do
     let(:expected_trace_start_time) { 1_564_920_001 }
 
     let(:expected_end_time) do
-      if Gem::Version.new(GraphQL::VERSION) > Gem::Version.new('2.3.0')
-        1_564_920_003
-      else
-        1_564_920_002
-      end
+      # After our fix to record_trace_end_time in execute_multiplex (for graphql-ruby 2.5.12+),
+      # all versions now make an extra Time.now call, so end_time is always 1564920003
+      1_564_920_003
     end
 
     # configure clocks to increment by 1 for each call
@@ -161,7 +159,7 @@ RSpec.describe ApolloFederation::Tracing do
           hash_including(
             start_time: { seconds: expected_trace_start_time },
             end_time: { seconds: be > expected_trace_start_time },
-            duration_ns: 13,
+            duration_ns: 14,
             root: hash_including(
               child: [
                 hash_including(
@@ -222,7 +220,7 @@ RSpec.describe ApolloFederation::Tracing do
         expect(trace('{ strings }')).to eq ApolloFederation::Tracing::Trace.new(
           start_time: { seconds: 1_564_920_001, nanos: 0 },
           end_time: { seconds: expected_end_time, nanos: 0 },
-          duration_ns: 3,
+          duration_ns: 4,
           root: {
             child: [{
               response_name: 'strings',
@@ -303,7 +301,7 @@ RSpec.describe ApolloFederation::Tracing do
         expect(trace('{ lazyScalar }')).to eq ApolloFederation::Tracing::Trace.new(
           start_time: { seconds: 1_564_920_001, nanos: 0 },
           end_time: { seconds: expected_end_time, nanos: 0 },
-          duration_ns: 4,
+          duration_ns: 5,
           root: {
             child: [{
               response_name: 'lazyScalar',
@@ -352,7 +350,7 @@ RSpec.describe ApolloFederation::Tracing do
         expect(trace('{ lazyArrayOfScalars }')).to eq ApolloFederation::Tracing::Trace.new(
           start_time: { seconds: 1_564_920_001, nanos: 0 },
           end_time: { seconds: expected_end_time, nanos: 0 },
-          duration_ns: 4,
+          duration_ns: 5,
           root: {
             child: [{
               response_name: 'lazyArrayOfScalars',
@@ -371,7 +369,7 @@ RSpec.describe ApolloFederation::Tracing do
         expect(traced_data).to match(
           hash_including(
             start_time: { seconds: expected_trace_start_time },
-            end_time: { seconds: expected_trace_start_time + 1 },
+            end_time: { seconds: expected_trace_start_time + 2 },
             duration_ns: be > 0,
             root: hash_including(
               child: [hash_including(
@@ -435,8 +433,8 @@ RSpec.describe ApolloFederation::Tracing do
         expect(traced_data).to match(
           hash_including(
             start_time: { seconds: expected_trace_start_time },
-            end_time: { seconds: expected_trace_start_time + 1 },
-            duration_ns: 8,
+            end_time: { seconds: expected_trace_start_time + 2 },
+            duration_ns: 9,
             root: hash_including(
               child: [
                 hash_including(
@@ -545,7 +543,7 @@ RSpec.describe ApolloFederation::Tracing do
           ApolloFederation::Tracing::Trace.new(
             start_time: { seconds: expected_trace_start_time, nanos: 0 },
             end_time: { seconds: expected_end_time, nanos: 0 },
-            duration_ns: 11,
+            duration_ns: 12,
             root: {
               child: [{
                 response_name: 'items',
@@ -624,26 +622,26 @@ RSpec.describe ApolloFederation::Tracing do
             }
           end
 
-          expect(traced_data).to match(
-            hash_including(
-              start_time: { seconds: expected_trace_start_time },
-              end_time: { seconds: expected_trace_start_time + 1 },
-              duration_ns: 1,
-              root: hash_including(
-                error: [hash_including(expected_captured_error)],
-              ),
+        expect(traced_data).to match(
+          hash_including(
+            start_time: { seconds: expected_trace_start_time },
+            end_time: { seconds: expected_trace_start_time + 2 },
+            duration_ns: 2,
+            root: hash_including(
+              error: [hash_including(expected_captured_error)],
             ),
-          )
+          ),
+        )
         end
       end
 
       context 'when there is a validation error' do
         it 'properly captures the error' do
-          expect(trace('{ nonExistant }')).to eq(
-            ApolloFederation::Tracing::Trace.new(
-              start_time: { seconds: expected_trace_start_time },
-              end_time: { seconds: expected_trace_start_time + 1 },
-              duration_ns: 1,
+        expect(trace('{ nonExistant }')).to eq(
+          ApolloFederation::Tracing::Trace.new(
+            start_time: { seconds: expected_trace_start_time },
+            end_time: { seconds: expected_trace_start_time + 2 },
+            duration_ns: 2,
               root: {
                 error: [{
                   message: "Field 'nonExistant' doesn't exist on type 'Query'",
