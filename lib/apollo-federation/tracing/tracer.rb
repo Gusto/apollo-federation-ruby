@@ -24,12 +24,14 @@
 #
 #     <execute_field_lazy></execute_field_lazy>
 #
-#   </execute_query_lazy>
-#
-#   # `execute_query_lazy` *always* fires, so it's a
-#   # safe place to capture ending times of the full query.
-#
-# </execute_multiplex>
+  #   </execute_query_lazy>
+  #
+  #   # In graphql-ruby < 2.5.12, `execute_query_lazy` *always* fires.
+  #   # In graphql-ruby >= 2.5.12, `execute_query_lazy` only fires when there are lazy values.
+  #   # We record end times in both `execute_multiplex` (as a fallback) and `execute_query_lazy`
+  #   # (to capture the full execution time including lazy resolution when present).
+  #
+  # </execute_multiplex>
 
 module ApolloFederation
   module Tracing
@@ -95,6 +97,12 @@ module ApolloFederation
         data.fetch(:multiplex).queries.each { |query| start_trace(query) }
 
         results = block.call
+
+        # Step 4.5:
+        # Record end times for all queries.
+        # This acts as a fallback for queries without lazy values.
+        # execute_query_lazy will overwrite these times if lazy values are present.
+        data.fetch(:multiplex).queries.each { |query| record_trace_end_time(query) }
 
         # Step 5
         # Attach the trace to the 'extensions' key of each result
