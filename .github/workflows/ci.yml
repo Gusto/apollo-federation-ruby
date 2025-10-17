@@ -16,7 +16,7 @@ jobs:
       group: gusto-ubuntu-default
     strategy:
       matrix:
-        ruby: ['3.2', '3.3', '3.4']
+        ruby: ['3.4']
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -87,16 +87,19 @@ jobs:
 
   release:
     name: Release
+    environment: release
     runs-on:
       group: gusto-ubuntu-default
+    permissions:
+      contents: write
     needs: [ruby-lint, ruby-test, integration-tests]
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          persist-credentials: false
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -106,6 +109,11 @@ jobs:
 
       - name: Configure bundler for semantic-release
         run: bundle config set --local frozen false
+
+      - name: Configure git for semantic-release
+        run: |
+          git config --global user.name "semantic-release-bot"
+          git config --global user.email "semantic-release-bot@martynus.net"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -120,6 +128,5 @@ jobs:
         run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
 
