@@ -1,5 +1,15 @@
-## [3.15.1](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.15.0...v3.15.1) (2025-10-02)
+## [Unreleased]
 
+### Features
+
+* Add support for Ruby 3.4 and Rails 8 (cherry-picked from upstream)
+  * Add `mutex_m` and `ostruct` as explicit dependencies for Ruby 3.4 compatibility
+  * Add `debug` and `rackup` as development dependencies
+  * Remove `appraisal` gem and simplify testing approach
+  * Update CI to test against Ruby 3.2, 3.3, and 3.4
+  * Remove version constraint on `graphql` dependency
+
+## [3.15.1](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.15.0...v3.15.1) (2025-10-02)
 
 ### Bug Fixes
 
@@ -7,13 +17,11 @@
 
 # [3.15.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.14.0...v3.15.0) (2025-10-02)
 
-
 ### Features
 
 * introduce Resolver module with list_size method ([#18](https://github.com/mondaycom/apollo-federation-ruby/issues/18)) ([af4c7ec](https://github.com/mondaycom/apollo-federation-ruby/commit/af4c7ec6906aa59cad2dc946353673fd51a98e5e))
 
 # [3.14.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.13.0...v3.14.0) (2025-09-30)
-
 
 ### Features
 
@@ -21,13 +29,11 @@
 
 # [3.13.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.12.0...v3.13.0) (2025-07-09)
 
-
 ### Features
 
 * refactor Apollo Federation schema handling ([#14](https://github.com/mondaycom/apollo-federation-ruby/issues/14)) ([d1be570](https://github.com/mondaycom/apollo-federation-ruby/commit/d1be570732c2eb02a4ff4dfab92c0a88d0f45128))
 
 # [3.12.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.11.0...v3.12.0) (2025-07-01)
-
 
 ### Features
 
@@ -35,13 +41,11 @@
 
 # [3.11.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.10.0...v3.11.0) (2025-06-17)
 
-
 ### Features
 
 * add cost directive support ([#11](https://github.com/mondaycom/apollo-federation-ruby/issues/11)) ([43dd096](https://github.com/mondaycom/apollo-federation-ruby/commit/43dd0966f248efe6399787d6971fb251a1c29ea1))
 
 # [3.10.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.9.0...v3.10.0) (2024-11-21)
-
 
 ### Features
 
@@ -49,13 +53,11 @@
 
 # [3.9.0](https://github.com/mondaycom/apollo-federation-ruby/compare/v3.8.5...v3.9.0) (2024-11-20)
 
-
 ### Features
 
 * add [@policy](https://github.com/policy) and respect federation_version in link ([410ef6c](https://github.com/mondaycom/apollo-federation-ruby/commit/410ef6c99efc5e33b9c0cdd29161fc7451ae3a88))
 
 ## [3.8.5](https://github.com/Gusto/apollo-federation-ruby/compare/v3.8.4...v3.8.5) (2024-04-02)
-
 
 ### Bug Fixes
 
@@ -71,13 +73,11 @@
 
 # [3.8.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.7.1...v3.8.0) (2023-06-02)
 
-
 ### Features
 
 * optionally underscore _Any keys ([#248](https://github.com/Gusto/apollo-federation-ruby/issues/248)) ([f1688e7](https://github.com/Gusto/apollo-federation-ruby/commit/f1688e793ba08195a06ddad74d84f2858dcdfcdf))
 
 ## [3.7.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.7.0...v3.7.1) (2023-06-01)
-
 
 ### Bug Fixes
 
@@ -87,13 +87,11 @@
 
 # [3.7.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.9...v3.7.0) (2023-05-26)
 
-
 ### Features
 
 * support [@key](https://github.com/key) directive resolvable argument ([#249](https://github.com/Gusto/apollo-federation-ruby/issues/249)) ([6df7030](https://github.com/Gusto/apollo-federation-ruby/commit/6df70305d3e6035946c9ac35d74387014b08b28a))
 
 ## [3.6.9](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.8...v3.6.9) (2023-05-23)
-
 
 ### Bug Fixes
 
@@ -101,13 +99,11 @@
 
 ## [3.6.8](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.7...v3.6.8) (2023-05-22)
 
-
 ### Bug Fixes
 
 * include inherited types in generated _Entity union ([#247](https://github.com/Gusto/apollo-federation-ruby/issues/247)) ([c377785](https://github.com/Gusto/apollo-federation-ruby/commit/c377785466736114d17beda8b6e27c2e0a56eb75))
 
 ## [3.6.7](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.6...v3.6.7) (2023-05-18)
-
 
 ### Bug Fixes
 
@@ -115,13 +111,11 @@
 
 ## [3.6.6](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.5...v3.6.6) (2023-04-26)
 
-
 ### Bug Fixes
 
 * ApolloFederation::Tracing.should_add_traces() looks for correct headers ([#240](https://github.com/Gusto/apollo-federation-ruby/issues/240)) ([d609977](https://github.com/Gusto/apollo-federation-ruby/commit/d609977869721c168b33e50e3823cd97a7f81ae5))
 
 ## [3.6.5](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.4...v3.6.5) (2023-04-25)
-
 
 ### Bug Fixes
 
@@ -129,13 +123,11 @@
 
 ## [3.6.4](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.3...v3.6.4) (2023-04-19)
 
-
 ### Bug Fixes
 
 * inherit Query type from schema superclass ([#241](https://github.com/Gusto/apollo-federation-ruby/issues/241)) ([0efb37e](https://github.com/Gusto/apollo-federation-ruby/commit/0efb37e2c2b14fc7ed99c695f35ed48d363d7695))
 
 ## [3.6.3](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.2...v3.6.3) (2023-04-12)
-
 
 ### Bug Fixes
 
@@ -145,13 +137,11 @@
 
 ## [3.6.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.0...v3.6.1) (2023-03-24)
 
-
 ### Bug Fixes
 
 * run w/ multiple ruby versions in CI to ensure compatibility ([#232](https://github.com/Gusto/apollo-federation-ruby/issues/232)) ([978c941](https://github.com/Gusto/apollo-federation-ruby/commit/978c941a12b34a9f86b0eb179d82fdd3e70eaa3b))
 
 ## [3.6.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.6.0...v3.6.1) (2023-03-24)
-
 
 ### Bug Fixes
 
@@ -159,13 +149,11 @@
 
 # [3.6.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.5.3...v3.6.0) (2023-03-17)
 
-
 ### Features
 
 * attempt to fix missing CHANGELOG entries ([07170d3](https://github.com/Gusto/apollo-federation-ruby/commit/07170d39738bec59952b0b952431ee2aecbf8f89))
 
 ## [3.5.3](https://github.com/Gusto/apollo-federation-ruby/compare/v3.5.2...v3.5.3) (2023-03-17)
-
 
 ### Features
 
@@ -177,13 +165,11 @@
 
 ## [3.5.2](https://github.com/Gusto/apollo-federation-ruby/compare/v3.5.1...v3.5.2) (2023-03-08)
 
-
 ### Reverts
 
 * Revert "chore: use Github App for authentication (#216)" (#227) ([f503704](https://github.com/Gusto/apollo-federation-ruby/commit/f5037047da67d809c3ffcbcc20318cd3996fb2e1)), closes [#216](https://github.com/Gusto/apollo-federation-ruby/issues/216) [#227](https://github.com/Gusto/apollo-federation-ruby/issues/227)
 
 ## [3.5.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.5.0...v3.5.1) (2023-03-08)
-
 
 ### Bug Fixes
 
@@ -191,13 +177,11 @@
 
 # [3.5.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.4.1...v3.5.0) (2023-03-08)
 
-
 ### Features
 
 * add tag directive from federation v2 ([#210](https://github.com/Gusto/apollo-federation-ruby/issues/210)) ([8c6e112](https://github.com/Gusto/apollo-federation-ruby/commit/8c6e11251b7bc7d6888a7a2b6e0feeea70171cb0))
 
 ## [3.4.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.4.0...v3.4.1) (2023-02-21)
-
 
 ### Bug Fixes
 
@@ -205,16 +189,13 @@
 
 # [3.4.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.3.1...v3.4.0) (2023-02-21)
 
-
 ### Bug Fixes
 
 * address some lint violations ([#219](https://github.com/Gusto/apollo-federation-ruby/issues/219)) ([dcd11e9](https://github.com/Gusto/apollo-federation-ruby/commit/dcd11e9384f168d125d2b60941d4bff161799824))
 
-
 ### Features
 
 * add support for the [@interface](https://github.com/interface)Object directive ([#218](https://github.com/Gusto/apollo-federation-ruby/issues/218)) ([c7b987d](https://github.com/Gusto/apollo-federation-ruby/commit/c7b987de1d2b32a4a77ceb09718373ffa5a60abb))
-
 
 ### NOTES
 
@@ -222,13 +203,11 @@
 
 ## [3.3.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.3.0...v3.3.1) (2023-01-05)
 
-
 ### Bug Fixes
 
 * address SNYK-RUBY-GOOGLEPROTOBUF-3167775 ([#212](https://github.com/Gusto/apollo-federation-ruby/issues/212)) ([c36b51e](https://github.com/Gusto/apollo-federation-ruby/commit/c36b51e521a60e8186100405cf81bba1a37f5978))
 
 # [3.3.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.2.0...v3.3.0) (2022-08-24)
-
 
 ### Features
 
@@ -236,13 +215,11 @@
 
 # [3.2.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.1.0...v3.2.0) (2022-08-15)
 
-
 ### Features
 
 * allow custom namespace for linked directives ([03fdfea](https://github.com/Gusto/apollo-federation-ruby/commit/03fdfeafaaea3c98ca4b7a734ce760ea08410530))
 
 # [3.1.0](https://github.com/Gusto/apollo-federation-ruby/compare/v3.0.0...v3.1.0) (2022-06-21)
-
 
 ### Features
 
@@ -250,18 +227,15 @@
 
 # [3.0.0](https://github.com/Gusto/apollo-federation-ruby/compare/v2.2.4...v3.0.0) (2022-04-05)
 
-
 ### Bug Fixes
 
 * camelize string fields to match sym behavior ([8f0382b](https://github.com/Gusto/apollo-federation-ruby/commit/8f0382b346d2cde5be252138275d67373b36acd7))
-
 
 ### BREAKING CHANGES
 
 * string fields will be camelized by default rather than passed as is.
 
 ## [2.2.4](https://github.com/Gusto/apollo-federation-ruby/compare/v2.2.3...v2.2.4) (2022-04-01)
-
 
 ### Bug Fixes
 
@@ -271,13 +245,11 @@
 
 ## [2.2.3](https://github.com/Gusto/apollo-federation-ruby/compare/v2.2.2...v2.2.3) (2022-03-22)
 
-
 ### Bug Fixes
 
 * **deps:** Bump minimist ([#186](https://github.com/Gusto/apollo-federation-ruby/issues/186)) ([a79cfe5](https://github.com/Gusto/apollo-federation-ruby/commit/a79cfe5ebf0a555b01446ed24abb53b11923a9b7))
 
 ## [2.2.2](https://github.com/Gusto/apollo-federation-ruby/compare/v2.2.1...v2.2.2) (2022-03-15)
-
 
 ### Bug Fixes
 
@@ -285,13 +257,11 @@
 
 ## [2.2.1](https://github.com/Gusto/apollo-federation-ruby/compare/v2.2.0...v2.2.1) (2022-03-08)
 
-
 ### Bug Fixes
 
 * Remove to_graphql and make the interpreter runtime a requirement for older GraphQL versions ([#177](https://github.com/Gusto/apollo-federation-ruby/issues/177)) ([bfc3082](https://github.com/Gusto/apollo-federation-ruby/commit/bfc308260c34eee04c3b7a5f0e8a0bffe1cb88c4))
 
 # [2.2.0](https://github.com/Gusto/apollo-federation-ruby/compare/v2.1.0...v2.2.0) (2022-02-04)
-
 
 ### Features
 
@@ -299,13 +269,11 @@
 
 # [2.1.0](https://github.com/Gusto/apollo-federation-ruby/compare/v2.0.3...v2.1.0) (2022-02-02)
 
-
 ### Features
 
 * snake case field references ([f5506ae](https://github.com/Gusto/apollo-federation-ruby/commit/f5506aecd10ea0c4a72744be07e0a9ad5cd45b16))
 
 ## [2.0.3](https://github.com/Gusto/apollo-federation-ruby/compare/v2.0.2...v2.0.3) (2022-02-02)
-
 
 ### Bug Fixes
 
@@ -313,13 +281,11 @@
 
 ## [2.0.2](https://github.com/Gusto/apollo-federation-ruby/compare/v2.0.1...v2.0.2) (2022-01-31)
 
-
 ### Bug Fixes
 
 * Use `bundle install` to avoid `bundle check` that changes our lockfiles ([#170](https://github.com/Gusto/apollo-federation-ruby/issues/170)) ([5c89ff1](https://github.com/Gusto/apollo-federation-ruby/commit/5c89ff1545dd1e6668fcdcf5b6fa89188cbb3ab4))
 
 ## [2.0.1](https://github.com/Gusto/apollo-federation-ruby/compare/v2.0.0...v2.0.1) (2022-01-27)
-
 
 ### Bug Fixes
 
@@ -327,9 +293,7 @@
 
 # [2.0.0](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.5...v2.0.0) (2022-01-27)
 
-
 * Remove beta disclaimer (#165) ([29da3de](https://github.com/Gusto/apollo-federation-ruby/commit/29da3deb0163c38d5d08f084e5e8dc67d8454358)), closes [#165](https://github.com/Gusto/apollo-federation-ruby/issues/165)
-
 
 ### BREAKING CHANGES
 
@@ -337,13 +301,11 @@
 
 ## [1.1.5](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.4...v1.1.5) (2020-10-29)
 
-
 ### Bug Fixes
 
 * pass context as a Hash to GraphQL::Schema.federation_sdl ([c13a94e](https://github.com/Gusto/apollo-federation-ruby/commit/c13a94e6487471b47f05907bd4f83c03fa7e6af7))
 
 ## [1.1.4](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.3...v1.1.4) (2020-09-25)
-
 
 ### Bug Fixes
 
@@ -351,13 +313,11 @@
 
 ## [1.1.4-beta.1](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.3...v1.1.4-beta.1) (2020-09-21)
 
-
 ### Bug Fixes
 
 * **tracing:** properly handle parsing and validation errors ([#101](https://github.com/Gusto/apollo-federation-ruby/issues/101)) ([6cf8202](https://github.com/Gusto/apollo-federation-ruby/commit/6cf820281dd85bd358c6bf4c176b9a73a9280d54))
 
 ## [1.1.3](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.2...v1.1.3) (2020-07-16)
-
 
 ### Bug Fixes
 
@@ -365,13 +325,11 @@
 
 ## [1.1.2](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.1...v1.1.2) (2020-06-09)
 
-
 ### Bug Fixes
 
 * Fix _service field type owner ([#70](https://github.com/Gusto/apollo-federation-ruby/issues/70)) ([364e54f](https://github.com/Gusto/apollo-federation-ruby/commit/364e54fbb333b7cd4fe30f04bf72733b0e18d3f4))
 
 ## [1.1.1](https://github.com/Gusto/apollo-federation-ruby/compare/v1.1.0...v1.1.1) (2020-05-29)
-
 
 ### Bug Fixes
 
@@ -379,13 +337,11 @@
 
 # [1.1.0](https://github.com/Gusto/apollo-federation-ruby/compare/v1.0.4...v1.1.0) (2020-05-27)
 
-
 ### Features
 
 * Add support for interpreter runtime ([#65](https://github.com/Gusto/apollo-federation-ruby/issues/65)) ([1957da0](https://github.com/Gusto/apollo-federation-ruby/commit/1957da0))
 
 ## [1.0.4](https://github.com/Gusto/apollo-federation-ruby/compare/v1.0.3...v1.0.4) (2020-04-06)
-
 
 ### Bug Fixes
 
@@ -393,13 +349,11 @@
 
 ## [1.0.3](https://github.com/Gusto/apollo-federation-ruby/compare/v1.0.2...v1.0.3) (2020-03-25)
 
-
 ### Bug Fixes
 
 * Make the tracer work with the new interpreter runtime ([#59](https://github.com/Gusto/apollo-federation-ruby/issues/59)) ([de4caf0](https://github.com/Gusto/apollo-federation-ruby/commit/de4caf0))
 
 ## [1.0.2](https://github.com/Gusto/apollo-federation-ruby/compare/v1.0.1...v1.0.2) (2020-02-19)
-
 
 ### Bug Fixes
 
@@ -407,18 +361,15 @@
 
 ## [1.0.1](https://github.com/Gusto/apollo-federation-ruby/compare/v1.0.0...v1.0.1) (2020-01-29)
 
-
 ### Bug Fixes
 
 * Send context to SDL generation / don't cache ([#45](https://github.com/Gusto/apollo-federation-ruby/issues/45)) ([9a29be1](https://github.com/Gusto/apollo-federation-ruby/commit/9a29be1))
 
 # [1.0.0](https://github.com/Gusto/apollo-federation-ruby/compare/v0.5.1...v1.0.0) (2019-12-09)
 
-
 ### Bug Fixes
 
 * specify dependency versions ([#35](https://github.com/Gusto/apollo-federation-ruby/issues/35)) ([0a29bb3](https://github.com/Gusto/apollo-federation-ruby/commit/0a29bb3))
-
 
 ### BREAKING CHANGES
 
@@ -426,13 +377,11 @@
 
 ## [0.5.1](https://github.com/Gusto/apollo-federation-ruby/compare/v0.5.0...v0.5.1) (2019-10-22)
 
-
 ### Bug Fixes
 
 * drop actionpack from runtime dependencies ([#34](https://github.com/Gusto/apollo-federation-ruby/issues/34)) ([64acd27](https://github.com/Gusto/apollo-federation-ruby/commit/64acd27))
 
 # [0.5.0](https://github.com/Gusto/apollo-federation-ruby/compare/v0.4.2...v0.5.0) (2019-10-22)
-
 
 ### Features
 
@@ -440,13 +389,11 @@
 
 ## [0.4.2](https://github.com/Gusto/apollo-federation-ruby/compare/v0.4.1...v0.4.2) (2019-10-21)
 
-
 ### Bug Fixes
 
 * typo in exception message ([#33](https://github.com/Gusto/apollo-federation-ruby/issues/33)) ([0a337f3](https://github.com/Gusto/apollo-federation-ruby/commit/0a337f3))
 
 ## [0.4.1](https://github.com/Gusto/apollo-federation-ruby/compare/v0.4.0...v0.4.1) (2019-10-12)
-
 
 ### Bug Fixes
 
@@ -454,13 +401,11 @@
 
 # [0.4.0](https://github.com/Gusto/apollo-federation-ruby/compare/v0.3.2...v0.4.0) (2019-09-10)
 
-
 ### Features
 
 * add support for federated tracing ([#16](https://github.com/Gusto/apollo-federation-ruby/issues/16)) ([57ecc5b](https://github.com/Gusto/apollo-federation-ruby/commit/57ecc5b)), closes [#14](https://github.com/Gusto/apollo-federation-ruby/issues/14)
 
 ## [0.3.2](https://github.com/Gusto/apollo-federation-ruby/compare/v0.3.1...v0.3.2) (2019-09-03)
-
 
 ### Bug Fixes
 
@@ -468,26 +413,22 @@
 
 ## [0.3.1](https://github.com/Gusto/apollo-federation-ruby/compare/v0.3.0...v0.3.1) (2019-09-03)
 
-
 ### Bug Fixes
 
 * push up lockfile changes ([4aaa827](https://github.com/Gusto/apollo-federation-ruby/commit/4aaa827))
 
 # [0.3.0](https://github.com/Gusto/apollo-federation-ruby/compare/v0.2.0...v0.3.0) (2019-09-03)
 
-
 ### Bug Fixes
 
 * checkout before running semantic-release ([cb67533](https://github.com/Gusto/apollo-federation-ruby/commit/cb67533))
 * install before running semantic-release ([0ebb5b5](https://github.com/Gusto/apollo-federation-ruby/commit/0ebb5b5))
-
 
 ### Features
 
 * switch from Travis to CircleCI ([#18](https://github.com/Gusto/apollo-federation-ruby/issues/18)) ([3af14b3](https://github.com/Gusto/apollo-federation-ruby/commit/3af14b3))
 
 ## [0.2.0](https://github.com/Gusto/apollo-federation-ruby/compare/v0.1.0...v0.2.0) (2019-08-01)
-
 
 ### Features
 
@@ -498,6 +439,5 @@
 * Fix an issue coercing the `_Any` scalar in a Rails app ([39e9213](https://github.com/Gusto/apollo-federation-ruby/commit/39e9213d90bb18c7f218085e1dcaed8f2b6fa835))
 
 ## 0.1.0 (2019-06-21)
-
 
 * First release
