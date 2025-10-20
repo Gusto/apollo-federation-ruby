@@ -4,6 +4,7 @@
 
 This gem extends the [GraphQL Ruby](http://graphql-ruby.org/) gem to add support for creating an [Apollo Federation](https://www.apollographql.com/docs/apollo-server/federation/introduction/) schema.
 
+
 ## Installation
 
 Add this line to your application's Gemfile:
