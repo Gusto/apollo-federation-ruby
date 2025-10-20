@@ -1,11 +1,3 @@
-## [3.10.2](https://github.com/Gusto/apollo-federation-ruby/compare/v3.10.1...v3.10.2) (2025-10-20)
-
-
-### Bug Fixes
-
-* change configuration for semantic workflow ([#298](https://github.com/Gusto/apollo-federation-ruby/issues/298)) ([57271fa](https://github.com/Gusto/apollo-federation-ruby/commit/57271fab7997b2601d828c70f0b721d16db57d6e))
-* tracer crash with graphql-ruby 2.5.12+ ([#302](https://github.com/Gusto/apollo-federation-ruby/issues/302)) ([2f0afbe](https://github.com/Gusto/apollo-federation-ruby/commit/2f0afbe80ad052375eea599c8a9d03e6a2562cde)), closes [#297](https://github.com/Gusto/apollo-federation-ruby/issues/297)
-
 ## [3.10.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.10.0...v3.10.1) (2025-04-02)
 
 
