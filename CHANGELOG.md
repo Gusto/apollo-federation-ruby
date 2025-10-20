@@ -1,3 +1,15 @@
+## [3.10.3](https://github.com/Gusto/apollo-federation-ruby/compare/v3.10.2...v3.10.3) (2025-10-20)
+
+
+### Bug Fixes
+
+* random update to README.md to trigger semantic-release ([#310](https://github.com/Gusto/apollo-federation-ruby/issues/310)) ([bfaa10e](https://github.com/Gusto/apollo-federation-ruby/commit/bfaa10e85a7e85781f2ae0373d656b0fc66d13eb))
+
+
+### Reverts
+
+* Revert "chore(release): 3.10.2 [skip ci]" (#309) ([a3937c6](https://github.com/Gusto/apollo-federation-ruby/commit/a3937c64f0ce9648edc10f74a80a4e825e01b4d4)), closes [#309](https://github.com/Gusto/apollo-federation-ruby/issues/309)
+
 ## [3.10.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.10.0...v3.10.1) (2025-04-02)
 
 
