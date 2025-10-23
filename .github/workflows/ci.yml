@@ -144,10 +144,15 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.4'
-          bundler-cache: true
+          bundler-cache: false
 
-      - name: Configure bundler for semantic-release
-        run: bundle config set --local frozen false
+      - name: Configure bundler
+        run: |
+          bundle config set --local path 'vendor/bundle'
+          bundle config set --local frozen false
+
+      - name: Install dependencies
+        run: bundle install
 
       - name: Configure git for semantic-release
         run: |
