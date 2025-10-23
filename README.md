@@ -1,6 +1,6 @@
 # apollo-federation
 
-[![CircleCI](https://circleci.com/gh/Gusto/apollo-federation-ruby/tree/main.svg?style=svg)](https://circleci.com/gh/Gusto/apollo-federation-ruby/tree/main)
+[![CI](https://github.com/Gusto/apollo-federation-ruby/actions/workflows/ci.yml/badge.svg)](https://github.com/Gusto/apollo-federation-ruby/actions/workflows/ci.yml)
 
 This gem extends the [GraphQL Ruby](http://graphql-ruby.org/) gem to add support for creating an [Apollo Federation](https://www.apollographql.com/docs/apollo-server/federation/introduction/) schema.
 
@@ -14,11 +14,11 @@ gem 'apollo-federation'
 
 And then execute:
 
-    $ bundle
+    bundle
 
 Or install it yourself as:
 
-    $ gem install apollo-federation
+    gem install apollo-federation
 
 ## Getting Started
 
@@ -134,21 +134,21 @@ end
 
 The [`example`](./example/) folder contains a Ruby implementation of Apollo's [`federation-demo`](https://github.com/apollographql/federation-demo). To run it locally, install the Ruby dependencies:
 
-    $ bundle
+    bundle
 
 Install the Node dependencies:
 
-    $ yarn
+    yarn
 
 Start all of the services:
 
-    $ yarn start-services
+    yarn start-services
 
 Start the gateway:
 
-    $ yarn start-gateway
+    yarn start-gateway
 
-This will start up the gateway and serve it at http://localhost:5000.
+This will start up the gateway and serve it at <http://localhost:5000>.
 
 ## Usage
 
@@ -235,6 +235,7 @@ class Review < BaseObject
   field :author, 'User', null: true, provides: { fields: :username }
 end
 ```
+
 See [field set syntax](#field-set-syntax) for more details on the format of the `fields` option.
 
 ### The `@shareable` directive (Apollo Federation v2)
@@ -413,6 +414,7 @@ class User < BaseObject
   end
 end
 ```
+
 Alternatively you can change the default for your project by setting `underscore_reference_keys` on `BaseObject`:
 
 ```ruby
@@ -428,8 +430,9 @@ end
 
 To support [federated tracing](https://www.apollographql.com/docs/apollo-server/federation/metrics/):
 
-1. Add `use ApolloFederation::Tracing` to your schema class.
+1. Add `trace_with ApolloFederation::Tracing::Tracer` to your schema class.
 2. Change your controller to add `tracing_enabled: true` to the execution context based on the presence of the "include trace" header:
+
    ```ruby
    def execute
      # ...
@@ -539,6 +542,7 @@ See discussion at [#74](https://github.com/Gusto/apollo-federation-ruby/issues/7
 ## Maintainers
 
 Gusto GraphQL Team:
+
 - [Sara Laupp](https://github.com/slauppy)
 - [Seth Copeland](https://github.com/sethc2)
 - [Simon Coffin](https://github.com/simoncoffin)

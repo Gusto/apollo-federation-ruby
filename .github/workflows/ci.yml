@@ -1,103 +1,170 @@
-name: Main
+name: CI
+
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
+    branches: [main]
+
+env:
+  BUNDLE_APP_CONFIG: .bundle
 
 jobs:
   ruby-lint:
+    name: Ruby Lint
     runs-on: ubuntu-latest
-    env:
-      BUNDLE_APP_CONFIG: .bundle
     steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.2'
-          bundler-cache: true
-      - run: bundle exec rubocop
+          ruby-version: '3.4'
+          bundler-cache: false
+
+      - name: Configure bundler
+        run: |
+          bundle config set --local path 'vendor/bundle'
+          bundle config set --local frozen false
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Run RuboCop
+        run: bundle exec rubocop
+
   ruby-test:
+    name: Ruby Test (Ruby ${{ matrix.ruby }}, GraphQL ${{ matrix.graphql }})
     runs-on: ubuntu-latest
-    env:
-      BUNDLE_APP_CONFIG: .bundle
     strategy:
       fail-fast: false
       matrix:
-        appraisal: [ 'graphql-1.10', 'graphql-1.11', 'graphql-1.12', 'graphql-1.13', 'graphql-2.0' ]
-        ruby: [ '3.0', '3.1', '3.2' ]
-        exclude:
-          - appraisal: 'graphql-1.10'
-            ruby: '3.2'
-          - appraisal: 'graphql-1.11'
-            ruby: '3.2'
-          - appraisal: 'graphql-1.12'
-            ruby: '3.2'
+        ruby: ['2.7', '3.4']
+        graphql: ['graphql-2.0.19', 'graphql-2.3']
     steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-      - name: Run appraisal install
-        uses: ./.github/actions/appraisal-install
-        with:
-          appraisal: ${{ matrix.appraisal }}
-      - run: bundle config list
-      - run: bundle exec appraisal ${{ matrix.appraisal }} bundle config list
-      - run: bundle exec appraisal ${{ matrix.appraisal }} rake
+          bundler-cache: false
+          bundler: ${{ matrix.ruby == '2.7' && '2.3' || 'default' }}
+
+      - name: Configure bundler
+        run: |
+          bundle config set --local path 'vendor/bundle'
+          bundle config set --local frozen false
+
+      - name: Update bundler in lockfile for Ruby 2.7
+        if: matrix.ruby == '2.7'
+        run: bundle update --bundler
+
+      - name: Install base dependencies
+        run: bundle install
+
+      - name: Generate appraisal gemfiles
+        run: bundle exec appraisal generate
+
+      - name: Install appraisal dependencies
+        run: bundle exec appraisal ${{ matrix.graphql }} bundle install
+
+      - name: Run RSpec
+        run: bundle exec appraisal ${{ matrix.graphql }} rspec
 
   integration-tests:
+    name: Integration Tests (Ruby ${{ matrix.ruby }}, GraphQL ${{ matrix.graphql }})
     runs-on: ubuntu-latest
-    env:
-      BUNDLE_APP_CONFIG: .bundle
     strategy:
       fail-fast: false
       matrix:
-        appraisal: [ 'graphql-1.10', 'graphql-1.11', 'graphql-1.12', 'graphql-1.13', 'graphql-2.0' ]
-        ruby: [ '3.0', '3.1', '3.2' ]
-        exclude:
-          - appraisal: 'graphql-1.10'
-            ruby: '3.2'
-          - appraisal: 'graphql-1.11'
-            ruby: '3.2'
-          - appraisal: 'graphql-1.12'
-            ruby: '3.2'
+        ruby: ['2.7', '3.4']
+        graphql: ['graphql-2.0.19', 'graphql-2.3']
     steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-      - name: Run appraisal install
-        uses: ./.github/actions/appraisal-install
+          bundler-cache: false
+          bundler: ${{ matrix.ruby == '2.7' && '2.3' || 'default' }}
+
+      - name: Configure bundler
+        run: |
+          bundle config set --local path 'vendor/bundle'
+          bundle config set --local frozen false
+
+      - name: Update bundler in lockfile for Ruby 2.7
+        if: matrix.ruby == '2.7'
+        run: bundle update --bundler
+
+      - name: Install base dependencies
+        run: bundle install
+
+      - name: Generate appraisal gemfiles
+        run: bundle exec appraisal generate
+
+      - name: Install appraisal dependencies
+        run: bundle exec appraisal ${{ matrix.graphql }} bundle install
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          appraisal: ${{ matrix.appraisal }}
-      - name: Run install
-        uses: borales/actions-yarn@v4
-        with:
-          cmd: install
-      - run: bundle exec appraisal ${{ matrix.appraisal }} yarn test
-      - run: yarn lint
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install yarn dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run yarn tests
+        run: bundle exec appraisal ${{ matrix.graphql }} yarn test
+
+      - name: Run yarn lint
+        run: yarn lint
 
   release:
+    name: Release
     runs-on: ubuntu-latest
-    needs: [ ruby-lint, ruby-test, integration-tests ]
-    if: github.ref == 'refs/heads/main'
-    env:
-      BUNDLE_APP_CONFIG: .bundle
-      GEM_HOST_API_KEY: ${{ secrets.GEM_HOST_API_KEY }}
-      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+    permissions:
+      contents: write
+    needs: [ruby-lint, ruby-test, integration-tests]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          ruby-version: '3.2'
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
           bundler-cache: true
-      - name: Run install
-        uses: borales/actions-yarn@v4
+
+      - name: Configure bundler for semantic-release
+        run: bundle config set --local frozen false
+
+      - name: Configure git for semantic-release
+        run: |
+          git config --global user.name "semantic-release-bot"
+          git config --global user.email "semantic-release-bot@martynus.net"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          cmd: install
-      - run: npx semantic-release
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install yarn dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run semantic-release
+        run: npx semantic-release
         env:
-          BUNDLE_FROZEN: false
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}

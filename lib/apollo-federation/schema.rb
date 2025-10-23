@@ -129,7 +129,7 @@ module ApolloFederation
         types_schema = Class.new(self)
         # Add the original query objects to the types. We have to use orphan_types here to avoid
         # infinite recursion
-        types_schema.orphan_types(original_query)
+        types_schema.orphan_types(original_query) if original_query
 
         # Walk through all of the types and determine which ones are entities (any type with a
         # "key" directive)

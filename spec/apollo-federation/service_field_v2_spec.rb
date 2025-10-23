@@ -630,7 +630,13 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types book
+        # GraphQL 2.0-2.3: Both types must be in orphan_types (no auto-discovery for orphan types)
+        # GraphQL 2.3+: Can use extra_types for interfaces
+        if Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('2.3.0')
+          extra_types book, product
+        else
+          orphan_types book, product
+        end
         federation version: '2.6'
       end
 
@@ -682,7 +688,13 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types book
+        # GraphQL 2.0-2.3: Both types must be in orphan_types (no auto-discovery for orphan types)
+        # GraphQL 2.3+: Can use extra_types for interfaces
+        if Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('2.3.0')
+          extra_types book, product
+        else
+          orphan_types book, product
+        end
         federation version: '2.6'
       end
 
@@ -734,7 +746,13 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types book
+        # GraphQL 2.0-2.3: Both types must be in orphan_types (no auto-discovery for orphan types)
+        # GraphQL 2.3+: Can use extra_types for interfaces
+        if Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('2.3.0')
+          extra_types book, product
+        else
+          orphan_types book, product
+        end
         federation version: '2.6'
       end
 
@@ -841,7 +859,11 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types book, product
+        if Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('2.3.0')
+          extra_types book, product
+        else
+          orphan_types book, product
+        end
         federation version: '2.6'
       end
 
@@ -879,7 +901,11 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types book, product
+        if Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('2.3.0')
+          extra_types book, product
+        else
+          orphan_types book, product
+        end
         federation version: '2.6'
       end
 
@@ -917,7 +943,11 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types product_type, product
+        if Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('2.3.0')
+          extra_types product_type
+        else
+          orphan_types product_type, product
+        end
         federation version: '2.6'
       end
 
@@ -954,7 +984,11 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types product_type, product
+        if Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('2.3.0')
+          extra_types product_type
+        else
+          orphan_types product_type, product
+        end
         federation version: '2.6'
       end
 
@@ -991,7 +1025,11 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types product_type, product
+        if Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('2.3.0')
+          extra_types product_type
+        else
+          orphan_types product_type, product
+        end
         federation version: '2.6'
       end
 
@@ -1028,7 +1066,11 @@ RSpec.describe ApolloFederation::ServiceField do
       end
 
       schema = Class.new(base_schema) do
-        orphan_types product_type, product
+        if Gem::Version.new(GraphQL::VERSION) >= Gem::Version.new('2.3.0')
+          extra_types product_type
+        else
+          orphan_types product_type, product
+        end
         federation version: '2.6'
       end
 

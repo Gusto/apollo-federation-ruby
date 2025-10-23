@@ -26,8 +26,10 @@
 #
 #   </execute_query_lazy>
 #
-#   # `execute_query_lazy` *always* fires, so it's a
-#   # safe place to capture ending times of the full query.
+#   # In graphql-ruby < 2.5.12, `execute_query_lazy` *always* fires.
+#   # In graphql-ruby >= 2.5.12, `execute_query_lazy` only fires when there are lazy values.
+#   # We record end times in both `execute_multiplex` (as a fallback) and `execute_query_lazy`
+#   # (to capture the full execution time including lazy resolution when present).
 #
 # </execute_multiplex>
 
@@ -40,6 +42,40 @@ module ApolloFederation
       EXECUTE_FIELD = 'execute_field'
       EXECUTE_FIELD_LAZY = 'execute_field_lazy'
 
+      def execute_multiplex(multiplex:)
+        ApolloFederation::Tracing::Tracer.execute_multiplex(multiplex: multiplex) { yield }
+      end
+
+      def execute_query_lazy(query:, multiplex:)
+        ApolloFederation::Tracing::Tracer.execute_query_lazy(query: query, multiplex: multiplex) { yield }
+      end
+
+      def execute_field(field:, query:, ast_node:, arguments:, object:)
+        ApolloFederation::Tracing::Tracer.execute_field(
+          field: field,
+          query: query,
+          ast_node: ast_node,
+          arguments: arguments,
+          object: object,
+          owner: field.owner,
+          path: query.context[:current_path],
+        ) { yield }
+      end
+
+      def execute_field_lazy(field:, query:, ast_node:, arguments:, object:)
+        ApolloFederation::Tracing::Tracer.execute_field_lazy(
+          field: field,
+          query: query,
+          ast_node: ast_node,
+          arguments: arguments,
+          object: object,
+          owner: field.owner,
+          path: query.context[:current_path],
+        ) { yield }
+      end
+
+      # The method below was used by older versions of graphql-ruby.
+      # After graphq-ruby 2.3.0 the trace modules should respond to specific methods such as `execute_field` above.
       def self.trace(key, data, &block)
         case key
         when EXECUTE_MULTIPLEX
@@ -61,6 +97,12 @@ module ApolloFederation
         data.fetch(:multiplex).queries.each { |query| start_trace(query) }
 
         results = block.call
+
+        # Step 4.5:
+        # Record end times for all queries.
+        # This acts as a fallback for queries without lazy values.
+        # execute_query_lazy will overwrite these times if lazy values are present.
+        data.fetch(:multiplex).queries.each { |query| record_trace_end_time(query) }
 
         # Step 5
         # Attach the trace to the 'extensions' key of each result

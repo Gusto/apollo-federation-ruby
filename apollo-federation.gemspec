@@ -27,17 +27,26 @@ Gem::Specification.new do |spec|
 
   spec.files = `git ls-files bin lib *.md LICENSE`.split("\n")
 
-  spec.add_dependency 'graphql', '>= 1.10.14'
+  spec.add_dependency 'graphql'
 
-  spec.add_dependency 'google-protobuf', '~> 3.22'
+  spec.add_runtime_dependency 'google-protobuf', '< 5'
 
   spec.add_development_dependency 'actionpack'
   spec.add_development_dependency 'appraisal'
   spec.add_development_dependency 'pry-byebug'
-  spec.add_development_dependency 'rack'
+  spec.add_development_dependency 'rack', '~> 2.0'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec'
   spec.add_development_dependency 'rubocop', '~> 1.68.0'
-  spec.add_development_dependency 'rubocop-rspec'
+  spec.add_development_dependency 'rubocop-rspec', '~> 3.0'
   spec.add_development_dependency 'webrick'
+
+  # Ruby 3.0+ only dependencies
+  if Gem.ruby_version >= Gem::Version.new('3.0.0')
+    spec.add_development_dependency 'debug'
+    spec.add_development_dependency 'rackup'
+    # Ruby 3.4+ requires explicit mutex_m and ostruct
+    spec.add_development_dependency 'mutex_m' if Gem.ruby_version >= Gem::Version.new('3.4.0')
+    spec.add_development_dependency 'ostruct' if Gem.ruby_version >= Gem::Version.new('3.4.0')
+  end
 end

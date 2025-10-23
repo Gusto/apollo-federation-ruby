@@ -8,6 +8,7 @@ AllCops:
     - 'node_modules/**/*'
     - 'gemfiles/**/*'
     - 'vendor/**/*'
+    - lib/apollo-federation/tracing/proto/apollo_pb.rb
 
 Gemspec/DevelopmentDependencies:
   Enabled: false
@@ -48,6 +49,8 @@ Metrics/AbcSize:
   Enabled: false
 Metrics/BlockLength:
   Enabled: false
+Metrics/ClassLength:
+  Enabled: false
 Metrics/MethodLength:
   Enabled: false
 Metrics/ModuleLength:
@@ -55,6 +58,8 @@ Metrics/ModuleLength:
 Metrics/ParameterLists:
   Max: 5
   CountKeywordArgs: false
+Style/ExplicitBlockArgument:
+  Enabled: false
 Layout/LineLength:
   Max: 120
   Exclude:

@@ -283,6 +283,7 @@ RSpec.describe ApolloFederation::EntitiesField do
                     { 'id' => id_2.to_s, 'otherField' => 'data2!' },
                   ]
                 }
+
                 it { expect(errors).to be_nil }
 
                 context 'when resolve_references returns a lazy object' do
@@ -316,6 +317,7 @@ RSpec.describe ApolloFederation::EntitiesField do
                       { 'id' => id_2.to_s, 'otherField' => 'data2!' },
                     ]
                   }
+
                   it { expect(errors).to be_nil }
                 end
 
