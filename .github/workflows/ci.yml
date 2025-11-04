@@ -95,11 +95,19 @@ jobs:
     needs: [ruby-lint, ruby-test, integration-tests]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
+      - name: Generate Sudo GitHub Token
+        id: generate_token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ vars.TOKEN_APP_ID }}
+          installation_id: ${{ vars.TOKEN_APP_INSTALLATION_ID }}
+          private_key: ${{ secrets.TOKEN_APP_PRIVATE_KEY }}
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.SEMANTIC_RELEASE_TOKEN }}
+          token: ${{ steps.generate_token.outputs.token }}
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -127,6 +135,6 @@ jobs:
       - name: Run semantic-release
         run: npx semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
 
