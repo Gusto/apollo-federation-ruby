@@ -99,8 +99,8 @@ jobs:
         id: generate_token
         uses: tibdex/github-app-token@v1
         with:
-          app_id: ${{ vars.TOKEN_APP_ID }}
-          installation_id: ${{ vars.TOKEN_APP_INSTALLATION_ID }}
+          app_id: ${{ secrets.TOKEN_APP_ID }}
+          installation_id: ${{ secrets.TOKEN_APP_INSTALLATION_ID }}
           private_key: ${{ secrets.TOKEN_APP_PRIVATE_KEY }}
 
       - name: Checkout code
