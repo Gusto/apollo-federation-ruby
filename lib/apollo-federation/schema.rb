@@ -76,13 +76,59 @@ module ApolloFederation
         # infinite recursion
         types_schema.orphan_types(original_query)
 
-        # Walk through all of the types and determine which ones are entities (any type with a
-        # "key" directive)
-        types_schema.send(:non_introspection_types).values.flatten.select do |type|
-          # TODO: Interfaces can have a key...
-          type.include?(ApolloFederation::Object) &&
-            type.federation_directives&.any? { |directive| directive[:name] == 'key' }
+        entities_collection, federation_entities, interface_types_map = collect_entitites(types_schema)
+
+        if federation_entities.any?
+          entity_names = entities_collection.map(&:graphql_name)
+
+          federation_entities.each do |interface|
+            members = interface_types_map.fetch(interface.graphql_name, [])
+            not_entity_members = members.reject { |member| entity_names.include?(member) }
+
+            # If all interface members are entities, it is valid so we add it to the collection
+            if not_entity_members.empty?
+              entities_collection << interface
+            else
+              raise "Interface #{interface.graphql_name} is not valid. " \
+                "Types `#{not_entity_members.join(', ')}` do not have a @key directive. " \
+                'All types that implement an interface with a @key directive must also have a @key directive.'
+            end
+          end
         end
+
+        entities_collection
+      end
+
+      # Walk through all of the types and interfaces and determine which ones are entities
+      # (any type with a "key" directive)
+      # However, for interface entities, don't add them straight away, but first check that
+      # all implementing types of the interfaces are also entities.
+      def collect_entitites(types_schema)
+        federation_entities = []
+        interface_types_map = {}
+
+        entities_collection = types_schema.send(:non_introspection_types).values.flatten.select do |type|
+          # keep track of the interfaces -> type relations.
+          if type.respond_to?(:implements)
+            type.implements.each do |interface|
+              interface_types_map[interface.abstract_type.graphql_name] ||= []
+              interface_types_map[interface.abstract_type.graphql_name] << type.graphql_name
+            end
+          end
+
+          # Only add Type entities to the collection
+          # Interface entities will be added later if all implementing types are entities
+          if type.include?(ApolloFederation::Object) && includes_key_directive?(type)
+            true
+          elsif type.include?(ApolloFederation::Interface) && includes_key_directive?(type)
+            federation_entities << type
+            false
+          else
+            false
+          end
+        end
+
+        [entities_collection, federation_entities, interface_types_map]
       end
 
       def federation_query(query_obj)
@@ -106,6 +152,10 @@ module ApolloFederation
 
         klass.define_service_field
         klass
+      end
+
+      def includes_key_directive?(type)
+        type.federation_directives&.any? { |directive| directive[:name] == 'key' }
       end
     end
   end

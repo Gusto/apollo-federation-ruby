@@ -5,6 +5,7 @@ require 'graphql'
 require 'apollo-federation/schema'
 require 'apollo-federation/field'
 require 'apollo-federation/object'
+require 'apollo-federation/interface'
 
 RSpec.describe ApolloFederation::EntitiesField do
   shared_examples 'entities field' do
@@ -223,7 +224,7 @@ RSpec.describe ApolloFederation::EntitiesField do
               let(:typename) { 'TypeNotInSchema' }
 
               it 'raises' do
-                expect(-> { execute_query }).to raise_error(
+                expect { execute_query }.to raise_error(
                   /The _entities resolver tried to load an entity for type "TypeNotInSchema"/,
                 )
               end
