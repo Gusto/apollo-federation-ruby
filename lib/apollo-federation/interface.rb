@@ -35,6 +35,18 @@ module ApolloFederation
           ],
         )
       end
+
+      def underscore_reference_keys(value = nil)
+        if value.nil?
+          if @underscore_reference_keys.nil?
+            find_inherited_value(:underscore_reference_keys, false)
+          else
+            @underscore_reference_keys
+          end
+        else
+          @underscore_reference_keys = value
+        end
+      end
     end
   end
 end
