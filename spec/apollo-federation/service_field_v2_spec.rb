@@ -1433,6 +1433,55 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
+    it 'returns valid SDL for @key directives on interfaces' do
+      base_field = Class.new(GraphQL::Schema::Field) do
+        include ApolloFederation::Field
+      end
+
+      base_interface = Module.new do
+        include GraphQL::Schema::Interface
+        include ApolloFederation::Interface
+
+        field_class base_field
+      end
+
+      product = Module.new do
+        include base_interface
+
+        graphql_name 'Product'
+        key fields: :upc
+
+        field :upc, String, null: false
+      end
+
+      book = Class.new(base_object) do
+        implements product
+
+        graphql_name 'Book'
+        key fields: :upc
+      end
+
+      schema = Class.new(base_schema) do
+        orphan_types book
+        federation version: '2.3'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
+
+          type Book implements Product @federation__key(fields: "upc") {
+            upc: String!
+          }
+
+          interface Product @federation__key(fields: "upc") {
+            upc: String!
+          }
+        GRAPHQL
+      )
+    end
+
     it 'returns valid SDL for unresolvable @key directives' do
       product = Class.new(base_object) do
         graphql_name 'Product'
