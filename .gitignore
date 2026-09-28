@@ -9,3 +9,4 @@ node_modules/
 .circleci/processed-config.yml
 
 .DS_Store
+gemfiles/graphql_2.6.gemfile.lock

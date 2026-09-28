@@ -1,0 +1,16 @@
+# frozen_string_literal: true
+
+# Runs the GraphQL::Execution::Next-tagged specs (`rspec --tag next_execution`) against the
+# graphql-ruby version that actually supports it -- the main Gemfile pins `graphql ~> 2.0.0`,
+# under which those specs are gated out entirely (see spec/apollo-federation/*_spec.rb's
+# `if defined?(GraphQL::Execution::Next)` guards) and so provide no regression coverage.
+#
+# This intentionally does not run the *full* suite: several unrelated specs (schema-definition
+# SDL printing, `orphan_types`) are not yet compatible with graphql-ruby 2.6.x, which is a
+# separate, pre-existing gap from the one this Gemfile exists to close.
+
+source 'https://rubygems.org'
+
+gemspec path: '..'
+
+gem 'graphql', '~> 2.6.7'

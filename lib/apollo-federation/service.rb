@@ -9,6 +9,7 @@ module ApolloFederation
       'directives, removes federation types, and includes rest of full schema after schema ' \
       'directives have been applied'
 
-    field(:sdl, String, null: true)
+    # hash_key: so Next reads the { sdl: ... } Hash (see ServiceField#_service) directly.
+    field(:sdl, String, null: true, hash_key: :sdl)
   end
 end

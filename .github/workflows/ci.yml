@@ -53,6 +53,31 @@ jobs:
       - name: Run RSpec
         run: bundle exec rspec
 
+  ruby-test-graphql-next:
+    name: Ruby Test (graphql 2.6, Ruby ${{ matrix.ruby }})
+    runs-on:
+      group: gusto-ubuntu-default
+    strategy:
+      matrix:
+        ruby: ['3.2', '3.3', '3.4']
+    env:
+      # The main Gemfile pins `graphql ~> 2.0.0`, under which GraphQL::Execution::Next doesn't
+      # exist and the next_execution-tagged specs are gated out entirely. This Gemfile pins
+      # graphql-ruby to the version that actually supports it, so those specs run for real.
+      BUNDLE_GEMFILE: gemfiles/graphql_2.6.gemfile
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - name: Run RSpec (GraphQL::Execution::Next specs only)
+        run: bundle exec rspec --tag next_execution
+
   integration-tests:
     name: Integration Tests (Ruby ${{ matrix.ruby }})
     runs-on:
@@ -92,7 +117,7 @@ jobs:
       group: gusto-ubuntu-default
     permissions:
       contents: write
-    needs: [ruby-lint, ruby-test, integration-tests]
+    needs: [ruby-lint, ruby-test, ruby-test-graphql-next, integration-tests]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Generate Sudo GitHub Token
