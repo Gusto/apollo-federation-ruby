@@ -21,9 +21,22 @@ jobs:
       contents: write
       pull-requests: write
     steps:
+      # release-please-action defaults to the built-in GITHUB_TOKEN, but GitHub does not run
+      # other workflows (e.g. this repo's CI on pull_request) for anything a GITHUB_TOKEN
+      # creates -- the release PR would sit with no status checks at all. A real GitHub App
+      # token behaves like an external actor, so CI runs on the release PR normally.
+      - name: Generate GitHub App token
+        id: generate_token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.TOKEN_APP_ID }}
+          installation_id: ${{ secrets.TOKEN_APP_INSTALLATION_ID }}
+          private_key: ${{ secrets.TOKEN_APP_PRIVATE_KEY }}
+
       - uses: googleapis/release-please-action@v4
         id: release
         with:
+          token: ${{ steps.generate_token.outputs.token }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
