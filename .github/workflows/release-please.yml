@@ -78,6 +78,10 @@ jobs:
     name: Publish Gem
     needs: release-please
     if: ${{ needs.release-please.outputs.release_created }}
+    # RUBYGEMS_API_KEY is also scoped to the `release` Environment (see the release-please job) --
+    # missing this, GEM_HOST_API_KEY resolves empty and `gem push` fails with "Access Denied"
+    # instead of an obvious permissions error.
+    environment: release
     runs-on:
       group: gusto-ubuntu-default
     permissions:
