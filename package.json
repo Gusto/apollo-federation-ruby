@@ -22,9 +22,6 @@
   "devDependencies": {
     "@babel/core": "^7.10.1",
     "@babel/preset-env": "^7.10.1",
-    "@semantic-release/changelog": "^5.0.1",
-    "@semantic-release/exec": "^5.0.0",
-    "@semantic-release/git": "^9.0.0",
     "babel-jest": "^26.0.1",
     "concurrently": "4.1.0",
     "eslint-config-gusto": "^10.1.0",
@@ -32,8 +29,6 @@
     "jest": "^26.0.1",
     "minimist": "^1.2.6",
     "nodemon": "^2.0.4",
-    "semantic-release": "^19.0.3",
-    "semantic-release-rubygem": "^1.0.3",
     "yargs-parser": "^21.0.1"
   }
 }
