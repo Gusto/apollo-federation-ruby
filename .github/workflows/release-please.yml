@@ -43,6 +43,37 @@ jobs:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
+      # release-please only bumps version.rb and CHANGELOG.md; it has no Bundler awareness, so
+      # Gemfile.lock -- which pins this repo's own path gemspec -- goes stale on every version
+      # bump and fails CI under frozen mode. The old semantic-release job avoided this by
+      # unfreezing Bundler and committing a regenerated lockfile alongside the version bump;
+      # this replicates that directly onto the release PR's branch.
+      - name: Checkout release PR
+        if: steps.release.outputs.pr != ''
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ fromJSON(steps.release.outputs.pr).headBranchName }}
+          token: ${{ steps.generate_token.outputs.token }}
+
+      - name: Set up Ruby
+        if: steps.release.outputs.pr != ''
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+
+      - name: Update and commit Gemfile.lock
+        if: steps.release.outputs.pr != ''
+        run: |
+          bundle config set --local frozen false
+          bundle lock
+          if ! git diff --quiet Gemfile.lock; then
+            git config user.name "release-please[bot]"
+            git config user.email "release-please[bot]@users.noreply.github.com"
+            git add Gemfile.lock
+            git commit -m "chore: update Gemfile.lock"
+            git push
+          fi
+
   publish:
     name: Publish Gem
     needs: release-please
