@@ -12,6 +12,9 @@ concurrency:
 jobs:
   release-please:
     name: Release Please
+    # TOKEN_APP_* are Environment secrets scoped to `release`, not repo secrets -- a job that
+    # doesn't declare this environment sees them as unset, not as a permission error.
+    environment: release
     runs-on:
       group: gusto-ubuntu-default
     outputs:
