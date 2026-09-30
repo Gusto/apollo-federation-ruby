@@ -10,6 +10,16 @@
 
 * Revert "chore(release): 3.10.2 [skip ci]" (#309) ([a3937c6](https://github.com/Gusto/apollo-federation-ruby/commit/a3937c64f0ce9648edc10f74a80a4e825e01b4d4)), closes [#309](https://github.com/Gusto/apollo-federation-ruby/issues/309)
 
+## [3.10.4](https://github.com/Gusto/apollo-federation-ruby/compare/v3.10.3...v3.10.4) (2026-09-30)
+
+
+### Bug Fixes
+
+* authenticate release-please-action with a GitHub App token, not GITHUB_TOKEN ([#320](https://github.com/Gusto/apollo-federation-ruby/issues/320)) ([0231a15](https://github.com/Gusto/apollo-federation-ruby/commit/0231a1573253739573fa2a8b17aeb9a124e73728))
+* Query._entities crashing under GraphQL::Execution::Next ([#317](https://github.com/Gusto/apollo-federation-ruby/issues/317)) ([4b869ba](https://github.com/Gusto/apollo-federation-ruby/commit/4b869ba7b4e5377cef0a08c8967386f38b6b7b97))
+* regenerate Gemfile.lock on the release PR after version bumps ([#322](https://github.com/Gusto/apollo-federation-ruby/issues/322)) ([c6122dc](https://github.com/Gusto/apollo-federation-ruby/commit/c6122dcccb8d246642bc799f5b4e7fb8b749b84c))
+* restore environment: release on the release-please job ([#321](https://github.com/Gusto/apollo-federation-ruby/issues/321)) ([61904d8](https://github.com/Gusto/apollo-federation-ruby/commit/61904d86023f14f6fbd661417e60ecc7ce166ec4))
+
 ## [3.10.1](https://github.com/Gusto/apollo-federation-ruby/compare/v3.10.0...v3.10.1) (2025-04-02)
 
 
