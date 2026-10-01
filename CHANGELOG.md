@@ -10,6 +10,13 @@
 
 * Revert "chore(release): 3.10.2 [skip ci]" (#309) ([a3937c6](https://github.com/Gusto/apollo-federation-ruby/commit/a3937c64f0ce9648edc10f74a80a4e825e01b4d4)), closes [#309](https://github.com/Gusto/apollo-federation-ruby/issues/309)
 
+## [3.10.5](https://github.com/Gusto/apollo-federation-ruby/compare/v3.10.4...v3.10.5) (2026-10-01)
+
+
+### Bug Fixes
+
+* add environment: release to the Publish Gem job ([#323](https://github.com/Gusto/apollo-federation-ruby/issues/323)) ([abbe9c6](https://github.com/Gusto/apollo-federation-ruby/commit/abbe9c652bf4fcfd5a23c238981a91bc5ad47da1))
+
 ## [3.10.4](https://github.com/Gusto/apollo-federation-ruby/compare/v3.10.3...v3.10.4) (2026-09-30)
 
 
