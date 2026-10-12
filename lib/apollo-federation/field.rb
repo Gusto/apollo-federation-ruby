@@ -69,13 +69,9 @@ module ApolloFederation
       end
 
       if override
-        add_directive(
-          name: 'override',
-          arguments: [
-            name: 'from',
-            values: override[:from],
-          ],
-        )
+        arguments = [{ name: 'from', values: override[:from] }]
+        arguments << { name: 'label', values: override[:label] } if override[:label]
+        add_directive(name: 'override', arguments: arguments)
       end
 
       tags.each do |tag|

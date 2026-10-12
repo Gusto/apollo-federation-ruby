@@ -1877,6 +1877,84 @@ RSpec.describe ApolloFederation::ServiceField do
       )
     end
 
+    it 'returns valid SDL for @override directives with label' do
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+        extend_type
+        key fields: :id
+
+        field :id, 'ID', null: false
+        field :inStock, 'Boolean', null: false, override: { from: 'Products', label: 'percent(10)' }
+      end
+
+      schema = Class.new(base_schema) do
+        orphan_types product
+        federation version: '2.7'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.7", import: ["@inaccessible", "@tag"])
+
+          type Product @federation__extends @federation__key(fields: "id") {
+            id: ID!
+            inStock: Boolean! @federation__override(from: "Products", label: "percent(10)")
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'uses specified federation version in @link URL when >= 2.3' do
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+        key fields: :id
+
+        field :id, 'ID', null: false
+      end
+
+      schema = Class.new(base_schema) do
+        orphan_types product
+        federation version: '2.7'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.7", import: ["@inaccessible", "@tag"])
+
+          type Product @federation__key(fields: "id") {
+            id: ID!
+          }
+        GRAPHQL
+      )
+    end
+
+    it 'defaults to v2.3 in @link URL when version < 2.3' do
+      product = Class.new(base_object) do
+        graphql_name 'Product'
+        key fields: :id
+
+        field :id, 'ID', null: false
+      end
+
+      schema = Class.new(base_schema) do
+        orphan_types product
+        federation version: '2.0'
+      end
+
+      expect(execute_sdl(schema)).to match_sdl(
+        <<~GRAPHQL,
+          extend schema
+            @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@inaccessible", "@tag"])
+
+          type Product @federation__key(fields: "id") {
+            id: ID!
+          }
+        GRAPHQL
+      )
+    end
+
     it 'returns valid SDL for @provides directives' do
       product = Class.new(base_object) do
         graphql_name 'Product'
