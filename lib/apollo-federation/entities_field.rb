@@ -13,13 +13,23 @@ module ApolloFederation
     module ClassMethods
       extend GraphQL::Schema::Member::HasFields
 
+      # Returns the `_Entity` union, or nil when there are no entities yet. Safe to call again
+      # with a larger set of entities: the existing union is extended instead of defining a second
+      # `_Entity` type and `_entities` field.
       def define_entities_field(possible_entities)
         # If there are any "entities", define the Entity union and and the Query._entities field
-        return if possible_entities.empty?
+        return @entity_type if possible_entities.empty?
+
+        if @entity_type
+          new_entities = possible_entities - @entity_type.possible_types
+          @entity_type.possible_types(*new_entities) unless new_entities.empty?
+          return @entity_type
+        end
 
         entity_type = Class.new(Entity) do
           possible_types(*possible_entities)
         end
+        @entity_type = entity_type
 
         # resolve_static so Next dispatches to resolve_entities_for_next, not root_value; a
         # separate method from _entities since Next needs a fully-synced Array, not a Lazy.
@@ -31,6 +41,8 @@ module ApolloFederation
         field(:_entities, [entity_type, null: true], null: false, **entities_field_options) do
           argument :representations, [Any], required: true
         end
+
+        entity_type
       end
 
       def _entities(context, representations:)
