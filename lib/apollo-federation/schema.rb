@@ -46,17 +46,77 @@ module ApolloFederation
 
         @orig_query_object = new_query_object
         federation_query_object = federation_query(original_query)
-        federation_query_object.define_entities_field(schema_entities)
+        @federation_entity_type = federation_query_object.define_entities_field(schema_entities)
+        @federation_query_object = federation_query_object
 
         super(federation_query_object)
 
         federation_query_object
       end
 
+      # Types added after `query` can be entities too, so recompute `_Entity` / `Query._entities`
+      # whenever the set of schema types grows. Otherwise the result depends on declaration order
+      # (e.g. `orphan_types` declared after `query` silently dropped every entity).
+      def orphan_types(*new_orphan_types)
+        types = super
+        refresh_entities_field unless new_orphan_types.empty?
+        types
+      end
+
+      def mutation(new_mutation_object = nil)
+        mutation_object = super
+        refresh_entities_field unless new_mutation_object.nil?
+        mutation_object
+      end
+
+      def subscription(new_subscription_object = nil)
+        subscription_object = super
+        refresh_entities_field unless new_subscription_object.nil?
+        subscription_object
+      end
+
       private
 
       def original_query
         @orig_query_object || find_inherited_value(:original_query)
+      end
+
+      def refresh_entities_field
+        # Only the schema that declared `query` owns its federation query object. Subclasses
+        # (including the temporary one built by `schema_entities`) must not redefine it.
+        return unless @federation_query_object
+
+        previous_entities = @federation_entity_type ? @federation_entity_type.possible_types : []
+        entity_type = @federation_query_object.define_entities_field(schema_entities)
+        return if entity_type.nil? || !respond_to?(:add_type_and_traverse, true)
+
+        if @federation_entity_type
+          register_union_members(entity_type, entity_type.possible_types - previous_entities)
+        else
+          register_entities_field(entity_type)
+        end
+      end
+
+      # `query` traversed the Query type before `_entities` existed, so register the new `_Entity`
+      # union and `_Any` scalar, and the references from `Query._entities` to them.
+      def register_entities_field(entity_type)
+        @federation_entity_type = entity_type
+        add_type_and_traverse([entity_type, ApolloFederation::Any], root: false)
+
+        entities_field = @federation_query_object.own_fields['_entities']
+        # graphql-ruby >= 2.3 runs a field's definition block (our `representations:` argument)
+        # lazily, normally while traversing its owner, which already happened in `query`.
+        entities_field.ensure_loaded if entities_field.respond_to?(:ensure_loaded)
+        references_to(entity_type, from: entities_field)
+        references_to(ApolloFederation::Any, from: entities_field.arguments['representations'])
+      end
+
+      # The union was already registered; record membership for the entities just added to it.
+      def register_union_members(entity_type, new_entities)
+        new_entities.each do |entity|
+          memberships = own_union_memberships[entity.graphql_name] ||= []
+          memberships << entity_type unless memberships.include?(entity_type)
+        end
       end
 
       def federation_2_prefix
