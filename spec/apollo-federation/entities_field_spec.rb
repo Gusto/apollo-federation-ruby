@@ -223,7 +223,7 @@ RSpec.describe ApolloFederation::EntitiesField do
               let(:typename) { 'TypeNotInSchema' }
 
               it 'raises' do
-                expect(-> { execute_query }).to raise_error(
+                expect { execute_query }.to raise_error(
                   /The _entities resolver tried to load an entity for type "TypeNotInSchema"/,
                 )
               end
