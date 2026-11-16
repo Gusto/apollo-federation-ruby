@@ -11,8 +11,6 @@ module ApolloFederation
     end
 
     module ClassMethods
-      extend GraphQL::Schema::Member::HasFields
-
       def define_service_field
         # resolve_static so Next dispatches to the class method below, not root_value.
         service_field_options = ApolloFederation::RESOLVE_STATIC_SUPPORTED ? { resolve_static: true } : {}

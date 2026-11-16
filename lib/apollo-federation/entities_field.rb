@@ -11,8 +11,6 @@ module ApolloFederation
     end
 
     module ClassMethods
-      extend GraphQL::Schema::Member::HasFields
-
       def define_entities_field(possible_entities)
         # If there are any "entities", define the Entity union and and the Query._entities field
         return if possible_entities.empty?
