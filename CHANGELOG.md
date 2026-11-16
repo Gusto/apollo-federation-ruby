@@ -10,6 +10,13 @@
 
 * Revert "chore(release): 3.10.2 [skip ci]" (#309) ([a3937c6](https://github.com/Gusto/apollo-federation-ruby/commit/a3937c64f0ce9648edc10f74a80a4e825e01b4d4)), closes [#309](https://github.com/Gusto/apollo-federation-ruby/issues/309)
 
+## [3.10.6](https://github.com/Gusto/apollo-federation-ruby/compare/v3.10.5...v3.10.6) (2026-11-16)
+
+
+### Bug Fixes
+
+* drop unused HasFields extend from federation ClassMethods ([#326](https://github.com/Gusto/apollo-federation-ruby/issues/326)) ([c1ad7f7](https://github.com/Gusto/apollo-federation-ruby/commit/c1ad7f7e3a6e0f782d97ae2bd34626f32fcf5fd1))
+
 ## [3.10.5](https://github.com/Gusto/apollo-federation-ruby/compare/v3.10.4...v3.10.5) (2026-10-01)
 
 
