@@ -285,6 +285,17 @@ class Product < BaseObject
 end
 ```
 
+For progressive/percentage-based migrations ([docs](https://www.apollographql.com/blog/safer-migrations-of-fields-using-progressive-rollouts)), use the `label` argument. Requires `federation version: '2.7'` or higher on your schema:
+
+```ruby
+class MySchema < GraphQL::Schema
+  federation version: '2.7'
+end
+
+# On field definition - routes 10% traffic here, 90% to 'products' subgraph
+field :in_stock, Boolean, null: false, override: { from: 'products', label: 'percent(10)' }
+```
+
 ### The `@tag` directive (Apollo Federation v2)
 
 [Apollo documentation](https://www.apollographql.com/docs/federation/federated-types/federated-directives/#tag)
@@ -330,7 +341,7 @@ Define a `resolve_reference` class method on your object. The method will be pas
 class User < BaseObject
   key fields: :user_id
   field :user_id, ID, null: false
-  
+
   def self.resolve_reference(reference, context)
     USERS.find { |user| user[:userId] == reference[:userId] }
   end
@@ -344,7 +355,7 @@ class User < BaseObject
   key fields: :user_id
   field :user_id, ID, null: false
   underscore_reference_keys true
-  
+
   def self.resolve_reference(reference, context)
     USERS.find { |user| user[:user_id] == reference[:user_id] }
   end

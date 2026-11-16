@@ -64,9 +64,15 @@ module ApolloFederation
 
         <<~SCHEMA
           extend schema
-            @link(url: "https://specs.apollo.dev/federation/v2.3"#{federation_namespace}, import: [#{(IMPORTED_DIRECTIVES.map { |directive| "\"@#{directive}\"" }).join(', ')}])
+            @link(url: "https://specs.apollo.dev/federation/v#{federation_2_link_version}"#{federation_namespace}, import: [#{(IMPORTED_DIRECTIVES.map { |directive| "\"@#{directive}\"" }).join(', ')}])
 
         SCHEMA
+      end
+
+      def federation_2_link_version
+        # Use specified version if >= 2.3, otherwise default to 2.3 for backwards compatibility
+        specified = Gem::Version.new(federation_version.to_s)
+        specified >= Gem::Version.new('2.3') ? federation_version : '2.3'
       end
 
       def schema_entities
